@@ -12,14 +12,14 @@ const app = express();
 const port = process.env.PORT || "8000";
 const patient = require('../src/Models/Patient.js');
 const doctor = require('../src/Models/Doctor.js');
-const admin = require('../src/Models/user.js');
+const admin = require('./src/Models/User.js');
 
 app.use(morgan('dev'));
 app.use(express.json());
 app.use('/', doctorRouter);
 
 mongoose.connect(MongoURI)
-.then(()=>{s
+.then(()=>{
   console.log("MongoDB is now connected!")
 // Starting server
  app.listen(port, () => {
@@ -31,6 +31,6 @@ mongoose.connect(MongoURI)
 
 
 //Server
-app.listen(port, () => {
-    console.log(`App running on ${port}...`);
-})
+// app.listen(port, () => {
+//     console.log(`App running on ${port}...`);
+// })
