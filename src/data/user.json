@@ -1,26 +1,42 @@
 [
     {
-      "username": "john_doe",
-      "name": "John Doe",
+      "username": "mo_salah",
+      "name": "Mohamed Salah",
       "email": "john.doe@example.com",
       "password": "password123",
       "dateOfBirth": "1990-01-15",
-      "type": "administrator"
+      "type": "doctor"
     },
     {
-      "username": "mary_smith",
-      "name": "Mary Smith",
+      "username": "zeina_ayman",
+      "name": "Zeina Ayman",
       "email": "mary.smith@example.com",
       "password": "test@123",
       "dateOfBirth": "1985-08-25",
       "type": "doctor"
     },
     {
-      "username": "sara_jones",
-      "name": "Sara Jones",
+      "username": "seif_basiouny",
+      "name": "Seif Basiouny",
       "email": "sara.jones@example.com",
       "password": "securepass",
-      "dateOfBirth": "1995-05-10",
+      "dateOfBirth": "1995-08-10",
+      "type": "administrator"
+    },
+    {
+      "username": "hamza_wareh",
+      "name": "Hamza Wareh",
+      "email": "hamza.warehs@example.com",
+      "password": "securepass",
+      "dateOfBirth": "1995-07-12",
+      "type": "patient"
+    },
+    {
+      "username": "sara_wasfy",
+      "name": "sara_wasfy",
+      "email": "sara.wasfy@example.com",
+      "password": "securepass",
+      "dateOfBirth": "1995-05-11",
       "type": "patient"
     }
   ]
