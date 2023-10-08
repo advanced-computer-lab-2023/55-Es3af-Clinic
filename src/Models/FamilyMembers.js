@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const patientSchema = require('./Patient')
 
 const familyMemberSchema = new Schema({
   name: {
@@ -30,5 +31,5 @@ const familyMemberSchema = new Schema({
   }
 });
 
-const familyMembers = mongoose.model("familyMembers", patientSchema);
+const familyMembers = mongoose.model("familyMembers", familyMemberSchema);
 module.exports = familyMembers;

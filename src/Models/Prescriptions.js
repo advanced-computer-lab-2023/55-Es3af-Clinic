@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const doctorSchema = require('./Doctor')
+const patientSchema = require('./Patient')
+const medicineSchema = require('Pharmacy/55-Es3af-Pharmacy/src/Models/Medicine.js')
 
 const prescriptionSchema = new Schema ({
     patient : {
@@ -9,7 +12,7 @@ const prescriptionSchema = new Schema ({
     },
     medicine : {
         type : [mongoose.Schema.Types.ObjectId],
-        ref : ''
+        ref : 'medicine'
     },
     doctor : {
         type: mongoose.Schema.Types.ObjectId,
