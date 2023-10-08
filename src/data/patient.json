@@ -1,4 +1,5 @@
 [{
+    "patientId": 991,
     "gender": "male",
     "mobile": "1234567890",
     "emergencyContact": {
@@ -6,6 +7,7 @@
       "mobile": "9876543210"
     },
     "user": {
+        "id": 114,
         "username": "hamza_wareh",
         "name": "Hamza Wareh",
         "email": "hamza.warehs@example.com",
@@ -15,6 +17,7 @@
       }  
   },
   {
+    "patientId": 992,
     "gender": "female",
     "mobile": "9876543210",
     "emergencyContact": {
@@ -22,6 +25,7 @@
       "mobile": "1234567890"
     },
     "user": {
+        "id": 115,
         "username": "sara_wasfy",
         "name": "sara_wasfy",
         "email": "sara.wasfy@example.com",

@@ -1,5 +1,6 @@
 [
     {
+      "id": 111,
       "username": "mo_salah",
       "name": "Mohamed Salah",
       "email": "john.doe@example.com",
@@ -8,6 +9,7 @@
       "type": "doctor"
     },
     {
+      "id": 112,
       "username": "zeina_ayman",
       "name": "Zeina Ayman",
       "email": "mary.smith@example.com",
@@ -16,6 +18,7 @@
       "type": "doctor"
     },
     {
+      "id": 113,
       "username": "seif_basiouny",
       "name": "Seif Basiouny",
       "email": "sara.jones@example.com",
@@ -23,7 +26,8 @@
       "dateOfBirth": "1995-08-10",
       "type": "administrator"
     },
-    {
+    { 
+      "id": 114,
       "username": "hamza_wareh",
       "name": "Hamza Wareh",
       "email": "hamza.warehs@example.com",
@@ -32,6 +36,7 @@
       "type": "patient"
     },
     {
+      "id": 115,
       "username": "sara_wasfy",
       "name": "sara_wasfy",
       "email": "sara.wasfy@example.com",

@@ -1,9 +1,11 @@
  [
       {
+        "doctorId": 441,
         "hourlyRate": 150,
         "affiliation": "Hospital XYZ",
         "educationBackground": "MD, Medical University",
         "user": {
+            "id": 111,
             "username": "mo_salah",
             "name": "Mohamed Salah",
             "email": "john.doe@example.com",
@@ -14,10 +16,12 @@
         "speciality": "Pediatrics"
       },
       {
+        "doctorId": 442,
         "hourlyRate": 120,
         "affiliation": "Medical Center ABC",
         "educationBackground": "MD, University of Medicine",
         "user": {
+            "id": 112,
             "username": "zeina_ayman",
             "name": "Zeina Ayman",
             "email": "mary.smith@example.com",
