@@ -12,7 +12,7 @@ const app = express();
 const port = process.env.PORT || "8000";
 const patient = require('../src/Models/Patient');
 const doctor = require('../src/Models/Doctor')
-const admin = require('../src/Models/user')
+const admin = require('../src/Models/User')
 
 app.use(morgan('dev'));
 app.use(express.json());

@@ -2,6 +2,9 @@ const user = require('../Models/User.js');
 const Doctor = require('../Models/Doctor.js');
 const { default: mongoose } = require("mongoose");
 
+
+const user = JSON.parse(fs.readFileSync('./data/user.json')); 
+
 const addAdmin = async (req, res) => {
   try {
     const { username, password } = req.body;
