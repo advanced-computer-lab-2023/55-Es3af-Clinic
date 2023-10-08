@@ -2,29 +2,37 @@ const patientModel = require("../Models/Patient.js")
 const familyMemberModel = require("../Models/FamilyMembers.js")
 const doctorModel = require("../Models/Doctor.js")
 const { error } = require("console")
+const { default: mongoose } = require('mongoose');
 
-
+const test = async(req, res) => {
+    res.status(200).send('test')
+}
 
 const addFamilyMember = async(req, res) => {
+
+    console.log(req.body)
+
     const member = new familyMemberModel({
         name : req.body.name,
         nationalID : req.body.nationalID,
         age : req.body.age,
         gender : req.body.gender,
-        relation : req.body.relationToPatient,
+        relationToPatient : req.body.relationToPatient,
         patient : req.body.patient
     })
-    familyMemberModel.findOne({Patient: member.Patient}, (error, result) => {
-        if(error){
-            console.error('Error finding document:', error);
-        }
-        else{
-            familyMemberModel.findOne({Name: member.name}, (error, result2) => {
-                if(error){
-                    console.error('Error finding document:', error);
-                }
-                else{
-                    if(result2){
+
+    console.log(`family member is ${member}`)
+    var patient = member.patient
+    console.log(`patient is ${patient}`)
+
+    familyMemberModel.find({Patient: patient})
+        .exec()
+        .then((document) => {
+            console.log(`family members are ${document}`)
+            familyMemberModel.findOne({Name: member.name})
+                .exec()
+                .then((document2) => {
+                    if(document2){
                         console.log('Family member already exists')
                         return
                     }
@@ -33,11 +41,11 @@ const addFamilyMember = async(req, res) => {
                         console.log("request sent")
                         res.status(200).send('Family member added')
                     }
-                }
-            })
-        }
-    })
+                })
+                .catch((err) => {console.error(err)})
 
+        .catch((err) => {console.error(err)})
+        })
 }
 
 const viewFamilyMembers = async(req, res) => {
@@ -66,4 +74,6 @@ const viewDoctors = async(req, res) => {
 const searchDoctors = async(req, res) => {
 
 }
+
+module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test}
 

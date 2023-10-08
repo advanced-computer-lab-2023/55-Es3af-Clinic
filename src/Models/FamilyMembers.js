@@ -31,5 +31,5 @@ const familyMemberSchema = new Schema({
   }
 });
 
-const familyMembers = mongoose.model("familyMembers", familyMemberSchema);
-module.exports = familyMembers;
+const FamilyMembers = mongoose.model("familyMembers", familyMemberSchema);
+module.exports = FamilyMembers;
