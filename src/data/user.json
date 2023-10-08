@@ -1,0 +1,27 @@
+[
+    {
+      "username": "john_doe",
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "password": "password123",
+      "dateOfBirth": "1990-01-15",
+      "type": "administrator"
+    },
+    {
+      "username": "mary_smith",
+      "name": "Mary Smith",
+      "email": "mary.smith@example.com",
+      "password": "test@123",
+      "dateOfBirth": "1985-08-25",
+      "type": "doctor"
+    },
+    {
+      "username": "sara_jones",
+      "name": "Sara Jones",
+      "email": "sara.jones@example.com",
+      "password": "securepass",
+      "dateOfBirth": "1995-05-10",
+      "type": "patient"
+    }
+  ]
+  
