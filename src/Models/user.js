@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
+const userOptions={
+  discriminationKey:'usertype',
+  collection:'users'
+}
 const userSchema = new Schema(
   {
     username: {

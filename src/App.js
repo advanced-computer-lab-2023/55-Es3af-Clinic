@@ -10,16 +10,16 @@ const doctorRouter = require('./routes/doctorRoutes');
 
 const app = express();
 const port = process.env.PORT || "8000";
-const patient = require('../src/Models/Patient');
-const doctor = require('../src/Models/Doctor')
-const admin = require('../src/Models/User')
+const patient = require('../src/Models/Patient.js');
+const doctor = require('../src/Models/Doctor.js');
+const admin = require('../src/Models/user.js');
 
 app.use(morgan('dev'));
 app.use(express.json());
 app.use('/', doctorRouter);
 
 mongoose.connect(MongoURI)
-.then(()=>{
+.then(()=>{s
   console.log("MongoDB is now connected!")
 // Starting server
  app.listen(port, () => {
