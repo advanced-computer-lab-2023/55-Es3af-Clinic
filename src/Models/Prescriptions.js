@@ -4,16 +4,16 @@ const Schema = mongoose.Schema;
 const prescriptionSchema = new Schema ({
     patient : {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Patient',
+        ref: 'patient',
         autoRemove: true,
     },
-    medecin : {
+    medicine : {
         type : [mongoose.Schema.Types.ObjectId],
         ref : ''
     },
     doctor : {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Doctor',
+        ref: 'doctor',
         autoRemove: true,
     },
     status : {
@@ -21,3 +21,6 @@ const prescriptionSchema = new Schema ({
         required : true
     }
 })
+
+const prescription = mongoose.model("prescription", prescriptionSchema)
+module.exports = prescription

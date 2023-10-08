@@ -21,7 +21,7 @@ const familyMemberSchema = new Schema({
   },
   patient: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Patient',
+    ref: 'patient',
     autoRemove: true,
   },
   relationToPatient : {
@@ -30,5 +30,5 @@ const familyMemberSchema = new Schema({
   }
 });
 
-const patient = mongoose.model("patient", patientSchema);
-module.exports = patient;
+const familyMembers = mongoose.model("familyMembers", patientSchema);
+module.exports = familyMembers;
