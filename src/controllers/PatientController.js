@@ -45,10 +45,22 @@ const viewFamilyMembers = async(req, res) => {
     // const members = await familyMemberModel.find({Patient: neededPatient})
     // console.log(members)
     // res.status(200).send(members)
+    try{
+        const user = await user.findOne({ username }).populate('patient');
+    
+        if (user && user.patient) {
+          const familyMembers = user.patient.family_members;
+          return familyMembers;
+        } else {
+          throw new Error('Patient not found');
+        }
+      } catch (error) {
+        throw new Error(`Error viewing family members: ${error.message}`);
+      }
 }
 
 const viewDoctors = async(req, res) => {
-    
+
 }
 
 const searchDoctors = async(req, res) => {
