@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
+const userModer=required("./Usrer.js")
 const patientSchema = new Schema({
   gender: {
     type: String,
@@ -27,4 +27,5 @@ const patientSchema = new Schema({
 });
 
 const patient = mongoose.model("patient", patientSchema);
+const Patient= userModel.discrimination('Patient', patientSchema);
 module.exports = patient;

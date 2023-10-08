@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
+const userModer=required("./Usrer.js")
 const doctorSchema = new Schema({
   hourlyRate: {
     type: Number,
@@ -26,4 +26,5 @@ const doctorSchema = new Schema({
 });
 
 const doctor = mongoose.model("doctor", doctorSchema);
+const Doctor= userModel.discrimination('Doctor', doctorSchema);
 module.exports = doctor;
