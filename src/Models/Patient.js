@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const userSchema = require('./User')
+const userSchema = require('./user')
 
 const patientSchema = new Schema({
   gender: {
