@@ -2,7 +2,7 @@ const fs = require('fs');
 const doctorModel = require("../Models/Doctor");
 const { default: mongoose } = require("mongoose");
 const patient = require("../Models/Patient");
-const user = require("../Models/user.js");
+const user = require("../Models/User.js");
 
 const Patient = JSON.parse(fs.readFileSync('./data/patient.json'));
 const Doctors = JSON.parse(fs.readFileSync('./data/doctor.json'));

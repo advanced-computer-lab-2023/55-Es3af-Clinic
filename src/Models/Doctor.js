@@ -4,7 +4,6 @@ const userSchema = require('./User')
 
 const doctorSchema = new Schema({
   hourlyRate: {
-    
     type: Number,
     required: true,
   },
