@@ -6,7 +6,11 @@ const doctorController = require('../controllers/DoctorController');
 
 const router = express.Router();
 
-router.route('/').get(doctorController.getAllPatients).post(doctorController.createPatient);
+// router.route('/').get(doctorController.getAllPatients);
+router.route('/').get(doctorController.getAllDoctors);
+router.route('/:email').post(doctorController.updateEmail);
+
+//.post(doctorController.createPatient);
 // router.route('/:name').get(doctorController.getPatientByName);
 // router.route('/').get(DoctorController.getAllTours).post(DoctorController.createTour);
 // router.route('/:id').get(DoctorController.getTour).patch(DoctorController.updateTour).delete(DoctorController.deleteTour);

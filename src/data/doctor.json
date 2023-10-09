@@ -1,0 +1,31 @@
+ [
+      {
+        "hourlyRate": 150,
+        "affiliation": "Hospital XYZ",
+        "educationBackground": "MD, Medical University",
+        "user": {
+            "username": "mo_salah",
+            "name": "Mohamed Salah",
+            "email": "john.doe@example.com",
+            "password": "password123",
+            "dateOfBirth": "1990-01-15",
+            "type": "doctor"
+          }, 
+        "speciality": "Pediatrics"
+      },
+      {
+        "hourlyRate": 120,
+        "affiliation": "Medical Center ABC",
+        "educationBackground": "MD, University of Medicine",
+        "user": {
+            "username": "zeina_ayman",
+            "name": "Zeina Ayman",
+            "email": "mary.smith@example.com",
+            "password": "test@123",
+            "dateOfBirth": "1985-08-25",
+            "type": "doctor"
+          },  
+        "speciality": "Orthopedics"
+      }
+]
+  

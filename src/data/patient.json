@@ -1,17 +1,33 @@
 [{
-"id":0, 
-"name": "Mohamed Salah",
-"age": 21
-},
-{
-    "id":1, 
-    "name": "Zeina",
-    "age": 21
-        
-},
-{
-    "id":2, 
-    "name": "Seif",
-    "age": 22
-        
-}]
+    "gender": "male",
+    "mobile": "1234567890",
+    "emergencyContact": {
+      "name": "Emergency Contact 1",
+      "mobile": "9876543210"
+    },
+    "user": {
+        "username": "hamza_wareh",
+        "name": "Hamza Wareh",
+        "email": "hamza.warehs@example.com",
+        "password": "securepass",
+        "dateOfBirth": "1995-07-12",
+        "type": "patient"
+      }  
+  },
+  {
+    "gender": "female",
+    "mobile": "9876543210",
+    "emergencyContact": {
+      "name": "Emergency Contact 2",
+      "mobile": "1234567890"
+    },
+    "user": {
+        "username": "sara_wasfy",
+        "name": "sara_wasfy",
+        "email": "sara.wasfy@example.com",
+        "password": "securepass",
+        "dateOfBirth": "1995-05-11",
+        "type": "patient"
+      } 
+  }
+]
