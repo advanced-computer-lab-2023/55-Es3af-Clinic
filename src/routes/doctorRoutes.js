@@ -8,7 +8,7 @@ const router = express.Router();
 
 // router.route('/').get(doctorController.getAllPatients);
 router.route('/').get(doctorController.getAllDoctors);
-router.route('/:email').post(doctorController.updateEmail);
+router.route('/:id').patch(doctorController.updateEmail);
 
 //.post(doctorController.createPatient);
 // router.route('/:name').get(doctorController.getPatientByName);

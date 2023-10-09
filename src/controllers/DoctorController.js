@@ -33,20 +33,36 @@ exports.getAllPatients = async (req, res) => {
   };
   exports.updateEmail = async(req, res) => {
     const Email = req.body.email;
-    const Name = req.body.name;
-    user.findOneAndUpdate({Email : Email}, {Name: Name}).catch(err => console.log(err));
-    // res.status(200).send("Updated the user with the email " + Email + " in database");   
-   try{
-    res.status(200).send("Updated the user with the email " + Email + " in database").json({
-        status: 'success',
-        data: {
-            Email: Email
-        }
-    });
-}catch(e) {
-    res.status(400).send(e);
-}
+    const id = req.body.id * 1;
+    // Doctors.findOneAndUpdate({Email : Email}, {id: id}).catch(err => console.log(err));
+    const emailToBeUpdated = Doctors.find(el => el.doctorId === id);
+    if(!emailToBeUpdated){
+      return res.status(404).json({
+          status: 'fail',
+          message: 'Invalid ID'
+      });
   }
+  res.status(200).json({
+      status: "success", 
+      data: {
+          Email
+      }
+  });
+};
+
+    // res.status(200).send("Updated the user with the email " + Email + " in database");   
+
+//    try{
+//     res.status(200).send("Updated the user with the email " + Email + " in database").json({
+//         status: 'success',
+//         data: {
+//             Email: Email
+//         }
+//     });
+// }catch(e) {
+//     res.status(400).send(e);
+// }
+//   }
 //   var Name = req.body.name;
 //    var Email = req.body.email;
 //     var Age = req.body.age;
