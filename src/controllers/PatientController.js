@@ -52,9 +52,19 @@ const addFamilyMember = async(req, res) => {
 const viewFamilyMembers = async(req, res) => {
     const neededPatient = req.body.patient
     console.log(`Patient is ${neededPatient}`)
-    const members = await familyMemberModel.find({patient: neededPatient})
-    console.log(members)
-    res.status(200).send(members)
+    familyMemberModel.find({patient: neededPatient})
+        .exec()
+        .then((result) => {
+            if(Object.keys(result).length === 0){
+                res.status(200).send("You don't have any family members added")
+            }
+            else{
+                res.status(200).send(result)
+            }
+        })
+        .catch((err) => {console.error(err)})
+
+
     // try{
     //     const user = await user.findOne({ username }).populate('patient');
     
@@ -70,13 +80,19 @@ const viewFamilyMembers = async(req, res) => {
 }
 
 const viewDoctors = async(req, res) => {
-    const doctors = await doctorModel.find({})
-    console.log(doctors)
-    res.status(200).send(doctors)
+    doctorModel.find({})
+        .exec()
+        .then((result) => {
+            res.status(200).send(result)
+        })
+        .catch((err) => {console.error(err)})
 }
 
 const searchDoctors = async(req, res) => {
+    var docName = req.body.name
+    var docSpec = req.body.speciality
 
+    
 }
 
 module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test}
