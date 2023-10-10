@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const userSchema = require('./user')
+const userModel = require('./user.js')
 
 const patientSchema = new Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
-    autoRemove: true,
-  },
+  // user: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'user',
+  //   autoRemove: true,
+  // },
   gender: {
     type: String,
     enum: ["male", "female"],
@@ -27,6 +27,6 @@ const patientSchema = new Schema({
   }
 });
 
-const patient = mongoose.model("patient", patientSchema);
-// const Patient= userModel.discrimination('Patient', patientSchema);
+//const patient = mongoose.model("patient", patientSchema);
+const patient= userModel.discrimination('patient', patientSchema);
 module.exports = patient;

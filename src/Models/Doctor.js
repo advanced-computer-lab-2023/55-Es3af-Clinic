@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const userSchema = require('./user')
+const userModel = require('./user.js')
 
 const doctorSchema = new Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
-    autoRemove: true,
-  },
+  // user: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'user',
+  //   autoRemove: true,
+  // },
   hourlyRate: {
     type: Number,
     required: true,
@@ -26,6 +26,6 @@ const doctorSchema = new Schema({
   }
 });
 
-const doctor = mongoose.model("doctor", doctorSchema);
-// const Doctor= userModel.discrimination('Doctor', doctorSchema);
+//const doctor = mongoose.model("doctor", doctorSchema);
+const doctor= userModel.discrimination('doctor', doctorSchema);
 module.exports = doctor;

@@ -31,6 +31,6 @@ const doctorSchema = new Schema({
   }
 });
 
-const doctor = mongoose.model("doctor", doctorSchema);
+const doctor = mongoose.model("doctorRequest", doctorSchema);
 // const Doctor= userModel.discrimination('Doctor', doctorSchema);
 module.exports = doctor;
