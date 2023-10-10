@@ -10,6 +10,7 @@ const port = process.env.PORT || "8000";
 const patient = require('./Models/Patient');
 const familyMember = require('./Models/FamilyMembers');
 const patientController = require('./controllers/PatientController')
+const registerPatientController = require('./controllers/RegisterPatientController')
 
 
 mongoose.connect(MongoURI, {dbName: 'Clinic'})
@@ -27,3 +28,4 @@ app.use(express.json())
 app.post("/addFamilyMember", patientController.addFamilyMember);
 app.get("/viewFamilyMembers", patientController.viewFamilyMembers)
 app.get("/viewDoctors", patientController.viewDoctors)
+app.post("/requestPatient", registerPatientController.registerPatient )
