@@ -1,8 +1,8 @@
-const userModel = require('../Models/Patient.js');
-const patientModel = require('../Models/Patient.js')
+const userModel = require('../Models/RequestDoctor.js');
+const doctorModel = require('../Models/Doctor.js')
 const { default: mongoose } = require('mongoose');
 
-const registerPatient = async(req,res) => {
+const requestDoctor = async(req,res) => {
     const newUser= new userModel({
      username: req.body.username,
      name: req.body.name,
@@ -16,14 +16,15 @@ const registerPatient = async(req,res) => {
         .exec()
         .then((result))
         .catch((err) => {console.error(err)})
-    const newPatient= new patientModel({
+    const newDoctor= new doctorModel({
         user : result._id,
-        gender:req.body.gender,
-        mobile:req.body.mobile,
-        emergencyContact:req.body.emergencyContact
+        hourlyRate: req.body.hourlyRate,
+        affiliation: req.body.affiliation,
+        educationBackground: req.body.educationBackground,
+        speciality: req.body.speciality,
     });
-    newPatient.save().catch(err => console.log(err));
-    res.status(200).send("created");
+    newDoctor.save().catch(err => console.log(err));
+    res.status(200).send("Request sent.");
  }
 
-module.exports = {registerPatient};
+module.exports = {requestDoctor};
