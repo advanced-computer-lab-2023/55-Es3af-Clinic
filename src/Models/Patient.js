@@ -3,6 +3,11 @@ const Schema = mongoose.Schema;
 const userSchema = require('./user')
 
 const patientSchema = new Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+    autoRemove: true,
+  },
   gender: {
     type: String,
     enum: ["male", "female"],
@@ -19,12 +24,7 @@ const patientSchema = new Schema({
     mobile: {
       type: String,
     }
-  },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
-    autoRemove: true,
-  },
+  }
 });
 
 const patient = mongoose.model("patient", patientSchema);
