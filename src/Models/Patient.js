@@ -25,6 +25,11 @@ const patientSchema = new Schema({
     ref: 'user',
     autoRemove: true,
   },
+  package: {
+    type: String,
+    ref: 'package',
+    default : 'none'
+  }
 });
 
 const patient = mongoose.model("patient", patientSchema);
