@@ -1,4 +1,4 @@
-const userModel = require('../controllers/User.js');
+const userModel = require('../Models/user.js');
 const { default: mongoose } = require('mongoose');
 
 const createUser = async(req,res) => {

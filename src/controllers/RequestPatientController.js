@@ -1,4 +1,4 @@
-const userModel = require('../controllers/Patient.js');
+const userModel = require('../Models/Patient.js');
 const { default: mongoose } = require('mongoose');
 
 const requestPatient = async(req,res) => {
