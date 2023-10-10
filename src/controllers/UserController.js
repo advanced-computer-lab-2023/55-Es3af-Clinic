@@ -1,4 +1,3 @@
-// #Task route solution
 const userModel = require('../controllers/User.js');
 const { default: mongoose } = require('mongoose');
 
