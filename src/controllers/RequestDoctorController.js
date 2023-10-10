@@ -24,14 +24,14 @@ const requestDoctor = async(req,res) => {
                            .exec()
                            .then((result))
                            .catch((err) => {console.error(err)})
-                       const newPatient= new patientModel({
+                       const newDoctor= new doctorModel({
                            user: result._id,
                            hourlyRate: req.body.hourlyRate,
                            affiliation: req.body.affiliation,
                            educationBackground: req.body.educationBackground,
                            speciality: req.body.speciality
                        });
-                       newPatient.save().catch(err => console.log(err));
+                       newDoctor.save().catch(err => console.log(err));
                        res.status(200).send("Request sent.");
                 }
                 else{
