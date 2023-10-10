@@ -1,12 +1,28 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const userSchema = require('./user')
+const userModel = require('./user.js')
 
-const doctorSchema = new Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
-    autoRemove: true,
+const doctorReqSchema = new Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+    dateOfBirth: {
+    type: Date,
+    required: true
   },
   hourlyRate: {
     type: Number,
@@ -31,6 +47,5 @@ const doctorSchema = new Schema({
   }
 });
 
-const doctor = mongoose.model("doctorRequest", doctorSchema);
-// const Doctor= userModel.discrimination('Doctor', doctorSchema);
-module.exports = doctor;
+const docReq = mongoose.model("docReq", doctorReqSchema);
+module.exports = docReq;

@@ -8,6 +8,18 @@ const patientSchema = new Schema({
   //   ref: 'user',
   //   autoRemove: true,
   // },
+  name: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  dateOfBirth: {
+    type: Date,
+    required: true
+  },
   gender: {
     type: String,
     enum: ["male", "female"],
@@ -28,5 +40,5 @@ const patientSchema = new Schema({
 });
 
 //const patient = mongoose.model("patient", patientSchema);
-const patient= userModel.discrimination('patient', patientSchema);
+const patient= userModel.discriminator('patient', patientSchema);
 module.exports = patient;

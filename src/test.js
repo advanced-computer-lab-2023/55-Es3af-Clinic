@@ -12,6 +12,7 @@ const familyMember = require('./Models/FamilyMembers');
 const patientController = require('./controllers/PatientController')
 const registerPatientController = require('./controllers/RegisterPatientController');
 const requestDoctorController = require('./controllers/RequestDoctorController');
+const UserController= require('./controllers/UserController');
 
 
 mongoose.connect(MongoURI, {dbName: 'Clinic'})
@@ -31,3 +32,6 @@ app.get("/viewFamilyMembers", patientController.viewFamilyMembers)
 app.get("/viewDoctors", patientController.viewDoctors)
 app.post("/registerPatient", registerPatientController.registerPatient)
 app.post("/requestDoctor", requestDoctorController.requestDoctor)
+app.get("/users", UserController.getUsers)
+app.get("/patients", patientController.getPatients)
+app.get("/getDocReq", requestDoctorController.getDocReq)
