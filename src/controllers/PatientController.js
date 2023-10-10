@@ -1,11 +1,27 @@
 const patientModel = require("../Models/Patient.js")
 const familyMemberModel = require("../Models/FamilyMembers.js")
 const doctorModel = require("../Models/Doctor.js")
+const userModel = require('../Models/user.js')
+const packageModel = require('../Models/Packages.js')
 const { error } = require("console")
 const { default: mongoose } = require('mongoose');
+const { disconnect } = require("process")
 
 const test = async(req, res) => {
-    res.status(200).send('test')
+    const newDoc = new doctorModel({
+        username: 'doc1',
+        name: 'doc1',
+        email: 'doc1@email.com',
+        password: 'doc1',
+        dateOfBirth: '2002-11-11',
+        type: 'doctor',
+        hourlyRate: 4,
+        affiliation: 'hospital',
+        educationBackground: 'uni',
+        speciality: 'surgery'
+    })
+    newDoc.save().catch(err => console.error(err))
+    res.status(200).send(newDoc)
 }
 
 const addFamilyMember = async(req, res) => {
@@ -18,12 +34,12 @@ const addFamilyMember = async(req, res) => {
         age : req.body.age,
         gender : req.body.gender,
         relationToPatient : req.body.relationToPatient,
-        patient : req.body.patient
+        patient : req.body.patient //will be the username since it's unique
     })
 
     console.log(`family member is ${member}`)
-    var patient = member.patient
-    console.log(`patient is ${patient}`)
+    //var patient = member.patient
+    //console.log(`patient is ${patient}`)
 
     familyMemberModel.find({patient: patient})
         .exec()
@@ -82,18 +98,87 @@ const viewFamilyMembers = async(req, res) => {
 const viewDoctors = async(req, res) => {
     doctorModel.find({})
         .exec()
-        .then((result) => {
-            res.status(200).send(result)
+        .then((docResult) => {
+            if(Object.keys(docResult).length === 0) {
+                res.status(200).send('There is no doctors')
+            }
+            else{
+                var patient = req.body.patient
+                var discount = 0
+                patientModel.findById(patient)
+                    .exec()
+                    .then((patientResult) => {
+                        console.log(`patient is ${patientResult}`)
+                        if(patientResult.package !== 'none'){
+                            packageModel.findById(patientResult.package)
+                                .exec()
+                                .then((packageResult) => {discount = packageResult.sessionDiscount})
+                                .catch((err) => {console.error(err)})
+                        }
+                    })
+                    .catch((err) => {console.error(err)})
+                console.log(docResult)
+                var docPrice = (docResult.hourlyRate * 1.1) - discount
+                userModel.findById(docResult.user)
+                    .exec()
+                    .then((docUserResult) => {
+                        console.log(`user is ${docUserResult}`)
+                        var docInfo = {
+                            name: docUserResult.name,
+                            speciality: docResult.speciality,
+                            price : docPrice
+                        }
+                        res.status(200).send(docInfo)
+                    })
+                    .catch((err) => {console.error(err)})
+                res.status(200).send(docResult)
+            }
         })
         .catch((err) => {console.error(err)})
 }
 
-const searchDoctors = async(req, res) => {
+const searchDoctorsByName = async(req, res) => {
     var docName = req.body.name
-    var docSpec = req.body.speciality
-
-    
+    doctorModel.find({name: docName})
+        .exec()
+        .then((result) => {
+            if(Object.keys(result).length === 0){
+                res.status(200).send(`There is no results for ${docName}`)
+            }
+            else {res.status(200).send(result)}
+        })
+        .catch((err) => {console.error(err)})
 }
 
-module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test}
+const searchDoctorsBySpeciality = async(req, res) =>{
+    var docSpec = req.body.speciality
+    doctorModel.find({speciality : docSpec})
+        .exec()
+        .then((result) => {
+            if(Object.keys(result).length === 0){
+                res.status(200).send(`There is no results for ${docSpec}`)
+            }
+            else {res.status(200).send(result)}
+        })
+        .catch((err) => {console.error(err)})
+}
+
+const searchByNameSpec = async(req, res) => {
+
+}
+
+const searchBySpecDate = async(req, res) => {
+
+}
+
+const viewDocInfo = async(req, res) => {
+
+}
+
+const viewPrescriptions = async(req, res) => {
+
+}
+
+
+module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctorsByName, searchDoctorsBySpeciality,searchByNameSpec, test}
 
