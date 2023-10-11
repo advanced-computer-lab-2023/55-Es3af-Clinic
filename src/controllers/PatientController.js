@@ -315,7 +315,22 @@ const viewDocInfo = async(req, res) => {
 
 const viewPrescriptions = async(req, res) => {
 
+        const neededPatient = req.body.patient
+        console.log(`Patient is ${neededPatient}`)
+        PrescriptionsModel.find({patient: neededPatient})
+            .exec()
+            .then((result) => {
+                if(Object.keys(result).length === 0){
+                    res.status(200).send("You don't have any prescriptions added")
+                }
+                else{
+                    res.status(200).send(result)
+                }
+            })
+            .catch((err) => {console.error(err)})
+
 }
+
 
 
 
@@ -328,4 +343,4 @@ const getPatients = async (req, res) => {
 
 //module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test, getPatients}
 
-module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctorsByName, searchDoctorsBySpeciality,searchByNameSpec, test, getPatients}
+module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctorsByName, searchDoctorsBySpeciality,searchByNameSpec, test, getPatients, viewPrescriptions}

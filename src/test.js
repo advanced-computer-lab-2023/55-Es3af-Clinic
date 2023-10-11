@@ -46,3 +46,4 @@ app.get("/filterAppointmentsByDateAndStatus", DoctorController.filterAppointment
 
 
 app.get('/searchDoc', patientController.searchDoctorsByName)
+app.get('/viewPrescriptions', patientController.viewPrescriptions)
