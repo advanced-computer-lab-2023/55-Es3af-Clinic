@@ -363,4 +363,4 @@ const getPatients = async (req, res) => {
 
 //module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test, getPatients}
 
-module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctorsByName, searchDoctorsBySpeciality,searchByNameSpec, test, getPatients, viewPrescriptions}
+module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctorsByName, searchDoctorsBySpeciality,searchByNameSpec, test, getPatients, viewPrescriptions, filterprescriptionsbydatedoctorstatus}
