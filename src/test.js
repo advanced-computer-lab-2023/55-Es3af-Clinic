@@ -48,4 +48,6 @@ app.get("/filterPatientsByUpcomingPendingAppointments", DoctorController.filterP
 
 
 app.get('/searchDoc', patientController.searchDoctorsByName)
-app.get('/viewPrescriptions', patientController.viewPrescriptions)
+app.get('/viewPrescriptions', patientController.viewPrescriptions);
+
+app.get('/filterprescriptions',patientController.filterprescriptionsbydatedoctorstatus)

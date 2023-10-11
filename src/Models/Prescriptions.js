@@ -22,8 +22,19 @@ const prescriptionSchema = new Schema ({
     status : {
         enum : ["filled", "unfilled"],
         required : true
+    },
+    date : {
+        type: Date,
+        required : true
+
+
     }
 })
-
+//prescriptionSchema.pre('save',function(next){
+  //  if (this.isModified('status')&& this.status == 'filled'){
+    //    this.date = new Date();
+    //}
+    //next();
+//});
 const prescription = mongoose.model("prescription", prescriptionSchema)
 module.exports = prescription
