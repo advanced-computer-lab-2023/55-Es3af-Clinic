@@ -14,8 +14,8 @@ const { default: mongoose } = require('mongoose');
             mobile: req.body.mobile,
             emergencyContact: req.body.emergencyContact
         });
-        newPatient.save();
-        return res.redirect('/');
+        newPatient.save().catch(err => console.log(err));
+        res.status(200).send("Patient Registered.");
     }
     catch(error){
         registerPatient.status(400).send({error:error});

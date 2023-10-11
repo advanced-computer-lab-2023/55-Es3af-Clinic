@@ -1,5 +1,5 @@
 const userModel = require('../Models/RequestDoctor.js');
-const { default: mongoose } = require('mongoose');
+const {default: mongoose} = require('mongoose');
 const doctorReqModel = require('../Models/RequestDoctor.js');
 
 
