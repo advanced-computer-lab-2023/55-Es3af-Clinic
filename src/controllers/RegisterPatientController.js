@@ -12,7 +12,8 @@ const { default: mongoose } = require('mongoose');
             dateOfBirth: req.body.dateOfBirth,
             gender: req.body.gender,
             mobile: req.body.mobile,
-            emergencyContact: req.body.emergencyContact
+            emergencyContact: req.body.emergencyContact,
+            package: req.body.package
         });
         newPatient.save().catch(err => console.log(err));
         res.status(200).send("Patient Registered.");

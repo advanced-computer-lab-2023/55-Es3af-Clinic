@@ -39,7 +39,7 @@ const patientSchema = new Schema({
   },
   package: {
     type: String,
-    ref: 'package',
+    //ref: 'package',
     default: 'none'
   }
 });
