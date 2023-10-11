@@ -88,13 +88,12 @@ exports.updateDoctor = async(req, res) => {
 
 //View a list of all my patients:
 exports.getAllMyPatients = async (req, res) => {
+  const doctorId = req.query.Id;
   try{
-    const appointments = await appointment.find({doctor: req.query.Id});
-    const patients = await patientModel.findById(appointments.patient);
-    // const appointments = await appointment.find({doctor: req.query.Id}).select({patient});
-
-    // console.log(appointments);
-    // const patients = appointments.select(patient);
+    const appointments = await appointment.find({ doctor: doctorId });
+    const patientIds = appointments.map(appointment => appointment.patient);
+    const patients = await patientModel.find({ _id: { $in: patientIds } });
+   
     res.status(200).json({
       status: 'success',
       data: {
@@ -111,42 +110,37 @@ exports.getAllMyPatients = async (req, res) => {
 
 //filter appointments by date/status:
 
-exports.filterAppointmentsByDate = async(req, res) => {
-  // const {date} = req.query; 
-  try{
-    //  const Appointment = await appointment.findOne(req.query);
-    //Tour.findOne({_id: req.params.id})
-    const Appointment = await appointment.find({date: req.query.Date});
+exports.filterAppointmentsByDateAndStatus = async (req, res) => {
+  const { date, status } = req.query;
+
+  try {
+    let filter = {};
+
+    // Check if date is provided
+    if (date) {
+      filter.date = date;
+    }
+
+    // Check if status is provided
+    if (status) {
+      filter.status = status;
+    }
+
+    const appointments = await appointment.find(filter);
+
     res.status(200).json({
       status: 'success',
       data: {
-       appointment: Appointment
-     }
-    })
-  }catch(err){
-    res.status(400).json({
-      message: err.err
-    })
-  }
-}
-exports.filterAppointmentsByStatus = async(req, res) => {
-  const {status} = req.query; 
-  try{
-     const Appointment = await appointment.find({status: req.query.status});
-    //Tour.findOne({_id: req.params.id})
-    // const Appointment = await appointment.findOne({status});
-    res.status(200).json({
-      status: 'success',
-      data: {
-       appointment: Appointment
-     }
-    })
-  }catch(err){
+        appointments
+      }
+    });
+  } catch (err) {
     res.status(400).json({
       message: err.message
-    })
+    });
   }
-}
+};
+
 
 
 //view information and health records of patient registered with me:
