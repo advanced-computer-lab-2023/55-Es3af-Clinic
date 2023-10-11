@@ -180,5 +180,14 @@ const viewPrescriptions = async(req, res) => {
 }
 
 
-module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctorsByName, searchDoctorsBySpeciality,searchByNameSpec, test}
 
+const getPatients = async (req, res) => {
+    //retrieve all patients from the database
+    const patients= await patientModel.find({});
+    console.log(patients);
+    res.status(200).send(patients);
+   }
+
+//module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test, getPatients}
+
+module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctorsByName, searchDoctorsBySpeciality,searchByNameSpec, test, getPatients}
