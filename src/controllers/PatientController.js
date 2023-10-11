@@ -121,23 +121,30 @@ const viewDoctors = async(req, res) => {
 
     doctorModel.find({})
         .exec()
-        .then((docResult) => {
+        .then(async (docResult) => {
             if(Object.keys(docResult).length === 0) {
                 res.status(200).send('There is no doctors')
             }
             else{
                 const docArr = []
                 const docPrice = []
-                docResult.forEach((result) => {
-                    docArr.push(result)
-                    docPrice.push(doctorPrice(patient, result.username))
-                } )
+                for(const doctor of docResult) {
+                    docArr.push(doctor)
+                    var price
+                    try{
+                        console.log(`doctor is ${doctor}`)
+                        price = await doctorPrice(patient, doctor.username)
+                        console.log(`returned price from function is ${price}`)
+                        docPrice.push(price)
+                    }
+                    catch(err){console.error(err)}
+                }
                 const docInfo = []
                 for(let i = 0; i < docArr.length; i++){
                     let info = {
                         name: docArr[i].name,
                         speciality: docArr[i].speciality,
-                        price: docPrices[i]
+                        price: docPrice[i]
                     }
                 docInfo.push(info)
                 }
@@ -208,57 +215,91 @@ const viewDoctors = async(req, res) => {
                         
                 //     })
                 //     .catch((err) => {console.error(err)})
-                //res.status(200).send(docResult)
+                res.status(200).send(docInfo)
             }
         })
         .catch((err) => {console.error(err)})
 }
 
-function doctorPrice(patientUsername, doctorUsername){
-    var discount = 0
-    var sessionPrice = 0
-    //var hourlyRate = 0
-    doctorModel.findOne({username: doctorUsername})
-        .exec()
-        .then((doctor) => {
-            sessionPrice = doctor.hourlyRate * 1.1
-        })
-        .catch((err) => {console.error(err)})
+async function doctorPrice(patientUsername, doctorUsername){
 
-    patientModel.findOne({username: patientUsername})
-        .exec()
-        .then((patient) => {
-            if(patientResult.package !== 'none'){
-                packageModel.findOne({type: patient.package})
-                .exec()
-                .then((package) => {
-                    discount = package.sessionDiscount
-                    sessionPrice = sessionPrice * (1 - discount)
-                    return sessionPrice
-                })
-                .catch((err) => {console.error(err)})
-            }
-            else{
-                sessionPrice = hourlyRate * 1.1
-                return sessionPrice
-            }
-        })
-        .catch((err) => {console.error(err)})
+        let sessionPrice;
+        const doctor = await doctorModel.findOne({username: doctorUsername});
+        console.log(`doctor in function is ${doctor}`)
+        sessionPrice = doctor.hourlyRate * 1.1
+        const patient = await patientModel.findOne({username: patientUsername});
+        console.log(`patient in function is ${patient}`)
+        if (patient.package !== 'none') {
+            const package = await packageModel.findOne({type: patient.package})
+            console.log(`package in function is ${package}`)
+            sessionPrice = sessionPrice * (1 - package.sessionDiscount)
+        }
+        return sessionPrice
+        //var hourlyRate = 0
+        // doctorModel.findOne({username: doctorUsername})
+        //     .exec()
+        //     .then((doctor) => {
+        //         sessionPrice = doctor.hourlyRate * 1.1
+        //         console.log(`initial price is ${sessionPrice} inside function`)
+        //     })
+        //     .catch((err) => {console.error(err)})
+
+        // patientModel.findOne({username: patientUsername})
+        //     .exec()
+        //     .then((patient) => {
+        //         console.log(`patient is ${patient} inside function`)
+        //         if(patient.package !== 'none'){
+        //             packageModel.findOne({type: patient.package})
+        //             .exec()
+        //             .then((package) => {
+        //                 console.log(`package is ${package} inside function`)
+        //                 discount = package.sessionDiscount
+        //                 sessionPrice = sessionPrice * (1 - discount)
+        //                 console.log(`price is ${sessionPrice} inside function inside if package`)
+        //                 //return sessionPrice
+        //             })
+        //             .catch((err) => {console.error(err)})
+        //         }
+        //         else{
+        //             sessionPrice = hourlyRate * 1.1
+        //             console.log(`price is ${sessionPrice} inside function inside else package`)
+        //         }
+                
+        //     })
+        //     return sessionPrice
+        //})
+        //.catch((err) => {console.error(err)})
 }
 
 const searchDoctorsByName = async(req, res) => {
-    var docName = req.query.name
+    var docName = req.query.docName
+    var patientUsername = req.body.username
     doctorModel.find({name: docName})
         .exec()
-        .then((result) => {
+        .then(async (result) => {
+            console.log(`doctors are ${result}`)
             if(Object.keys(result).length === 0){
                 res.status(200).send(`There is no results for ${docName}`)
             }
-            else {res.status(200).send(result)}
+            else {
+                const info = []
+                for(var doctor of result){
+                    var price = await doctorPrice(patientUsername, doctor.username)
+                    console.log(`doc price is ${price}`)
+                    var docInfo = {
+                        name: result.name,
+                        speciality: result.speciality,
+                        price: price
+                    }
+                    info.push(docInfo)
+                }
+                res.status(200).send(info)
+            }
         })
         .catch((err) => {console.error(err)})
 }
 
+//search by name and/or speciality hakhodha men salah wel price metzabat fe search by name
 const searchDoctorsBySpeciality = async(req, res) =>{
     var docSpec = req.query.speciality
     doctorModel.find({speciality : docSpec})
@@ -297,8 +338,8 @@ const viewDocInfo = async(req, res) => {
     const patientUsername = req.body.Pusername
     doctorModel.findOne({username: docUsername})
         .exec()
-        .then((info) => {
-            var price = doctorPrice(patientUsername, docUsername)
+        .then(async (info) => {
+            var price = await doctorPrice(patientUsername, docUsername)
 
             var docInfo = {
                 name: info.name,
@@ -307,7 +348,7 @@ const viewDocInfo = async(req, res) => {
                 speciality: info.speciality,
                 price: price
             }
-
+            console.log(docInfo)
             res.status(200).send(docInfo)
         })
         .catch((err) => {console.error(err)})
@@ -328,4 +369,4 @@ const getPatients = async (req, res) => {
 
 //module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test, getPatients}
 
-module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctorsByName, searchDoctorsBySpeciality,searchByNameSpec, test, getPatients}
+module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctorsByName, searchDoctorsBySpeciality,searchByNameSpec, test, getPatients, viewDocInfo}
