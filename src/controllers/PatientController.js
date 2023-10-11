@@ -330,9 +330,13 @@ const viewPrescriptions = async(req, res) => {
             .catch((err) => {console.error(err)})
 
 }
+const filterprescriptionsbydate = async(req, res) => {
+    try{
+        const prescriptions
+    }
 
 
-
+}
 
 const getPatients = async (req, res) => {
     //retrieve all patients from the database
