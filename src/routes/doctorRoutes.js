@@ -6,9 +6,9 @@ const doctorController = require('../controllers/DoctorController');
 
 const router = express.Router();
 
-// router.route('/').get(doctorController.getAllPatients);
-router.route('/').get(doctorController.getAllDoctors);
-router.route('/:id').patch(doctorController.updateEmail);
+router.route('/getPatients').get(doctorController.getAllPatients);
+// router.route('/getDoctors').get(doctorController.getAllDoctors);
+// router.route('/getDoctor/:id').patch(doctorController.updateEmail);
 
 //.post(doctorController.createPatient);
 // router.route('/:name').get(doctorController.getPatientByName);
