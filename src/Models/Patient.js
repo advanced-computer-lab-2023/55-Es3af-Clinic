@@ -36,6 +36,11 @@ const patientSchema = new Schema({
     mobile: {
       type: String,
     }
+  },
+  package: {
+    type: String,
+    ref: 'package',
+    default: 'none'
   }
 });
 
