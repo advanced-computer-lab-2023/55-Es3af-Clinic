@@ -23,7 +23,6 @@ const getUsers = async (req, res) => {
    res.status(200).send(users);
   }
 
-
 const updateUser = async (req, res) => {
    //update a user in the database
    var Username= req.body.username;
