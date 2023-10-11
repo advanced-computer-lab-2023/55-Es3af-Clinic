@@ -6,6 +6,7 @@ const packageModel = require('../Models/Packages.js')
 const { error } = require("console")
 const { default: mongoose } = require('mongoose');
 const { disconnect } = require("process")
+const prescription = require('../Models/Prescriptions.js')
 
 const test = async(req, res) => {
     // const newDoc = new doctorModel({
@@ -363,4 +364,4 @@ const getPatients = async (req, res) => {
 
 //module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test, getPatients}
 
-module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctorsByName, searchDoctorsBySpeciality,searchByNameSpec, test, getPatients, viewPrescriptions, filterprescriptionsbydatedoctorstatus}
+module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctorsByName, searchDoctorsBySpeciality,searchByNameSpec, test, getPatients, viewPrescriptions}
