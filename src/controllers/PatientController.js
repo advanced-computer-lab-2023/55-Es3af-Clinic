@@ -330,13 +330,29 @@ const viewPrescriptions = async(req, res) => {
             .catch((err) => {console.error(err)})
 
 }
-const filterprescriptionsbydate = async(req, res) => {
-    try{
-        const prescriptions
+exports.filterprescriptionsbydatedoctorstatus = async(req, res) => {
+    const {date, doctor, status} = req.query;
+    try {
+        let filter = {};
+        if (date){
+            filter.date = date;
+        }
+        if (status){
+            filter.status = status;
+        }
+        if (doctor){
+            filter.doctor = doctor;
+        }
+        const prescription = await prescription.find(filter)
+        res.status(200).send(filter)
+    }catch (err) {
+        console.error(err);
+
+    }
+
     }
 
 
-}
 
 const getPatients = async (req, res) => {
     //retrieve all patients from the database
