@@ -35,6 +35,7 @@ app.get("/filterAppointmentsByDate", DoctorController.filterAppointmentsByDate);
 app.get("/filterAppointmentsByStatus", DoctorController.filterAppointmentsByStatus);
 app.post("/registerPatient", registerPatientController.registerPatient)
 app.post("/requestDoctor", requestDoctorController.requestDoctor)
+app.post('/test', patientController.test)
 app.get("/users", UserController.getUsers)
 app.get("/patients", patientController.getPatients)
 app.get("/getDocReq", requestDoctorController.getDocReq)
@@ -45,3 +46,4 @@ app.post("/createAppointment", DoctorController.createAppointment);
 app.get("/getAllMyPatients", DoctorController.getAllMyPatients);
 
 
+app.get('/searchDoc', patientController.searchDoctorsByName)
