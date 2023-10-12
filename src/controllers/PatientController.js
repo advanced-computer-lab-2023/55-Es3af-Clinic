@@ -6,7 +6,7 @@ const packageModel = require('../Models/Packages.js')
 const { error } = require("console")
 const { default: mongoose } = require('mongoose');
 const { disconnect } = require("process")
-const prescription = require('../Models/Prescriptions.js')
+
 
 const test = async(req, res) => {
     // const newDoc = new doctorModel({
@@ -331,7 +331,7 @@ const viewPrescriptions = async(req, res) => {
             .catch((err) => {console.error(err)})
 
 }
-exports.filterprescriptionsbydatedoctorstatus = async(req, res) => {
+const filterprescriptionsbydatedoctorstatus = async(req, res) => {
     const {date, doctor, status} = req.query;
     try {
         let filter = {};
@@ -344,7 +344,7 @@ exports.filterprescriptionsbydatedoctorstatus = async(req, res) => {
         if (doctor){
             filter.doctor = doctor;
         }
-        const prescription = await prescription.find(filter)
+        await PrescriptionsModel.find(filter)
         res.status(200).send(filter)
     }catch (err) {
         console.error(err);
@@ -364,4 +364,4 @@ const getPatients = async (req, res) => {
 
 //module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test, getPatients}
 
-module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctorsByName, searchDoctorsBySpeciality,searchByNameSpec, test, getPatients, viewPrescriptions}
+module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctorsByName, searchDoctorsBySpeciality,searchByNameSpec, test, getPatients, viewPrescriptions, filterprescriptionsbydatedoctorstatus}

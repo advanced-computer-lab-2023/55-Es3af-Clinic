@@ -16,6 +16,7 @@ const UserController= require('./controllers/UserController');
 const DoctorController = require('./controllers/DoctorController');
 
 
+
 mongoose.connect(MongoURI, {dbName: 'Clinic'})
 .then(()=>{
   console.log("MongoDB is now connected!")
