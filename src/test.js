@@ -41,10 +41,13 @@ app.get('/getPatients', DoctorController.getAllPatients);
 app.get('/getDoctors', DoctorController.getAllDoctors);
 app.patch('/updateDoctors/:id', DoctorController.updateDoctor);
 app.post("/createAppointment", DoctorController.createAppointment);
-app.get("/filterAppointmentsByDate", DoctorController.filterAppointmentsByDate);
-app.get("/filterAppointmentsByDateAndStatus", DoctorController.filterAppointmentsByDateAndStatus);
+//app.get("/filterAppointmentsByDate", DoctorController.filterAppointmentsByDate);
+app.get("/filterAppointmentsByDateAndStatus", patientController.filterAppointmentsByDateAndStatus);
 
 
-app.get('/searchDoc', patientController.searchDoctorsByName)
+
+app.get('/searchDoc', patientController.searchByNameSpec)
 app.get('/viewDocInfo', patientController.viewDocInfo)
 app.get('/viewPrescriptions', patientController.viewPrescriptions)
+app.get('/specDate', patientController.searchBySpecDate)
+

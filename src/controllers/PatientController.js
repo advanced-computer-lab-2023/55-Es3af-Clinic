@@ -3,6 +3,7 @@ const familyMemberModel = require("../Models/FamilyMembers.js")
 const doctorModel = require("../Models/Doctor.js")
 const userModel = require('../Models/user.js')
 const packageModel = require('../Models/Packages.js')
+const appointmentModel = require('../Models/Appointments.js')
 const { error } = require("console")
 const { default: mongoose } = require('mongoose');
 const { disconnect } = require("process")
@@ -45,6 +46,7 @@ const test = async(req, res) => {
     res.status(200).send(package)
 }
 
+//working fine and testing fine
 const addFamilyMember = async(req, res) => {
 
     console.log(req.body)
@@ -86,6 +88,7 @@ const addFamilyMember = async(req, res) => {
         })
 }
 
+//working fine testing fine
 const viewFamilyMembers = async(req, res) => {
     const neededPatient = req.body.patient
     console.log(`Patient is ${neededPatient}`)
@@ -116,6 +119,7 @@ const viewFamilyMembers = async(req, res) => {
     //   }
 }
 
+//working fine testing fine
 const viewDoctors = async(req, res) => {
     var patient = req.body.patient //username
 
@@ -221,12 +225,14 @@ const viewDoctors = async(req, res) => {
         .catch((err) => {console.error(err)})
 }
 
+//working fine
 async function doctorPrice(patientUsername, doctorUsername){
 
         let sessionPrice;
         const doctor = await doctorModel.findOne({username: doctorUsername});
         console.log(`doctor in function is ${doctor}`)
         sessionPrice = doctor.hourlyRate * 1.1
+        console.log(`patient username in function ${patientUsername}`)
         const patient = await patientModel.findOne({username: patientUsername});
         console.log(`patient in function is ${patient}`)
         if (patient.package !== 'none') {
@@ -271,68 +277,199 @@ async function doctorPrice(patientUsername, doctorUsername){
         //.catch((err) => {console.error(err)})
 }
 
-const searchDoctorsByName = async(req, res) => {
-    var docName = req.query.docName
-    var patientUsername = req.body.username
-    doctorModel.find({name: docName})
-        .exec()
-        .then(async (result) => {
-            console.log(`doctors are ${result}`)
-            if(Object.keys(result).length === 0){
-                res.status(200).send(`There is no results for ${docName}`)
-            }
-            else {
-                const info = []
-                for(var doctor of result){
-                    var price = await doctorPrice(patientUsername, doctor.username)
-                    console.log(`doc price is ${price}`)
-                    var docInfo = {
-                        name: result.name,
-                        speciality: result.speciality,
-                        price: price
-                    }
-                    info.push(docInfo)
-                }
-                res.status(200).send(info)
-            }
-        })
-        .catch((err) => {console.error(err)})
-}
+//working fine testing fine
+// const searchDoctorsByName = async(req, res) => {
+//     var docName = req.query.docName
+//     var patientUsername = req.body.username
+//     doctorModel.find({name: docName})
+//         .exec()
+//         .then(async (result) => {
+//             console.log(`doctors are ${result}`)
+//             if(Object.keys(result).length === 0){
+//                 res.status(200).send(`There is no results for ${docName}`)
+//             }
+//             else {
+//                 const info = []
+//                 for(var doctor of result){
+//                     var price = await doctorPrice(patientUsername, doctor.username)
+//                     console.log(`doc price is ${price}`)
+//                     var docInfo = {
+//                         name: result.name,
+//                         speciality: result.speciality,
+//                         price: price
+//                     }
+//                     info.push(docInfo)
+//                 }
+//                 res.status(200).send(info)
+//             }
+//         })
+//         .catch((err) => {console.error(err)})
+// }
 
-//search by name and/or speciality hakhodha men salah wel price metzabat fe search by name
-const searchDoctorsBySpeciality = async(req, res) =>{
-    var docSpec = req.query.speciality
-    doctorModel.find({speciality : docSpec})
-        .exec()
-        .then((result) => {
-            if(Object.keys(result).length === 0){
-                res.status(200).send(`There is no results for ${docSpec}`)
-            }
-            else {res.status(200).send(result)}
-        })
-        .catch((err) => {console.error(err)})
-}
 
-const searchByNameSpec = async(req, res) => {
-    var docSearch = {
-        name: req.query.name,
-        spec: req.query.speciality
+// const searchDoctorsBySpeciality = async(req, res) =>{
+//     var docSpec = req.query.speciality
+//     doctorModel.find({speciality : docSpec})
+//         .exec()
+//         .then((result) => {
+//             if(Object.keys(result).length === 0){
+//                 res.status(200).send(`There is no results for ${docSpec}`)
+//             }
+//             else {res.status(200).send(result)}
+//         })
+//         .catch((err) => {console.error(err)})
+// }
+
+async function viewDoctorDetails (doctor, patientUsername){
+    //const patient = patientModel.findOneAndDelete({username: patientUsername})
+    var details = {
+        name: doctor.name,
+        speciality: doctor.speciality,
+        price : await doctorPrice(patientUsername, doctor.username)
     }
-    doctorModel.find({$and: [{name: docSearch.name}, {speciality: docSearch.spec}]})
-        .exec()
-        .then((result) => {
-            if(Object.keys(result).length === 0){
-                res.status(200).send(`There is no results for ${docSpec}`)
+    console.log(`details ${details}`)
+    return details
+}
+
+//working and testing fine
+const searchByNameSpec = async(req, res) => {
+    const {name, spec} = req.query
+    const patientUsername = req.body.username
+    console.log(`name ${name} spec ${spec}`)
+    var search = {}
+    if(name){search.name = name
+    console.log(search)}
+    if(spec){search.speciality = spec}
+    try{
+        console.log(search)
+        const doctor = await doctorModel.find(search)
+        console.log(`doctors ${doctor}`)
+        if(Object.keys(doctor).length === 0){
+            res.status(200).send(`There is no results for ${search}`)
+        }
+        else{
+            const info = []
+            for(var doc of doctor){
+                info.push(await viewDoctorDetails(doc, patientUsername))
             }
-            else {res.status(200).send(result)}
-        })
-        .catch((err) => {console.error(err)})
+            console.log(`all info ${info}`)
+            res.status(200).send(info)
+        }
+    }
+    catch(err){console.error(err)}
+    // var docSearch = {
+    //     name: req.query.name,
+    //     spec: req.query.speciality
+    // }
+    // doctorModel.find({$and: [{name: docSearch.name}, {speciality: docSearch.spec}]})
+    //     .exec()
+    //     .then((result) => {
+    //         if(Object.keys(result).length === 0){
+    //             res.status(200).send(`There is no results for ${docSpec}`)
+    //         }
+    //         else {res.status(200).send(result)}
+    //     })
+    //     .catch((err) => {console.error(err)})
 }
 
 const searchBySpecDate = async(req, res) => {
+    const { date, speciality } = req.query;
+    const patientID = req.body.patient
 
-}
+    try {
+      let filter = {patient: patientID};
+      var appointments = []
+      
+    //   if (date) {filter.date = date}
+    //   if (speciality) {
+    //     const doctors = await doctorModel.findOne({speciality: speciality})
+    //     console.log(`doctors ${doctors}`)
+    //     var docApp = []
+    //     if(Object.keys(doctors).length === 0){ res.status(200).send('no doctors available in that speciality')}
+    //     else if(Object.keys(doctors).length === 1){
+    //         var appointment = await appointmentModel.find({doctor: doctor._id.valueOf()})
+    //         if(Object.keys(appointment).length === 0){res.status(200).send('doctor does not have any upcoming appointments')}
+    //         else if(Object.keys(appointment).length === 1){
+    //             if(date){
+    //                 if(date >= (app.date.getMinutes + app.duration)){
+    //                     docApp.push(app)
+    //                 }
+    //             }
+    //             else{docApp.push(appointment)}
+    //         }
+    //         else{
+    //             for(var app of appointment){
+    //                 if(date){
+    //                     if(date >= (app.date.getMinutes + app.duration)){
+    //                         docApp.push(app)
+    //                     }
+    //                 }
+    //                 else{docApp.push(appointment)}
+    //             }
+    //         }
+    //     }
+    //     else{
+    //         for(var doctor of doctors){
+    //             var appointment = await appointmentModel.find({doctor: doctor._id.valueOf()})
+    //             if(Object.keys(appointment).length === 0){res.status(200).send('doctor does not have any upcoming appointments')}
+    //             else if(Object.keys(appointment).length === 1){
+    //                 if(date){
+    //                     if(date >= (app.date.getMinutes + app.duration)){
+    //                         appointments.push(app)
+    //                     }
+    //                 }
+    //                 else{appointments.push(appointment)}
+    //             }
+    //             else{
+    //                 for(var app of appointment){
+    //                     if(date){
+    //                         if(date >= (app.date.getMinutes + app.duration)){
+    //                             appointments.push(app)
+    //                         }
+    //                     }
+    //                     else{appointments.push(appointment)}
+    //                 }
+    //             }
+    //         }
+    //     }
+    //   }
+    //   else{
+    //     var appointment = await appointmentModel.find({doctor: doctor._id.valueOf()})
+    //     if(Object.keys(appointment).length === 0){res.status(200).send('doctor does not have any upcoming appointments')}
+    //     else if(Object.keys(appointment).length === 1){
+    //         if(date){
+    //             if(date >= (app.date.getMinutes + app.duration)){
+    //                 docApp.push(app)
+    //             }
+    //         }
+    //         else{docApp.push(appointment)}
+    //     }
+    //     else{
+    //         for(var app of appointment){
+    //             if(date){
+    //                 if(date >= (app.date.getMinutes + app.duration)){
+    //                     docApp.push(app)
+    //                 }
+    //             }
+    //             else{docApp.push(appointment)}
+    //         }
+    //     }
+    //   }
 
+      res.status(200).send(appointments)
+
+      //const appointments = await appointmentModel.find(filter);
+      //console.log(appointments)
+
+      //res.status(200).send(appointments);
+    }
+    catch (err) {
+      console.error(err)
+    };
+};
+
+
+//working fine testing fine
 const viewDocInfo = async(req, res) => {
     const docUsername = req.body.Dusername  //need to work on this
     const patientUsername = req.body.Pusername
@@ -354,6 +491,30 @@ const viewDocInfo = async(req, res) => {
         .catch((err) => {console.error(err)})
 }
 
+//working and testing fine
+const filterAppointmentsByDateAndStatus = async (req, res) => {
+    const { date, status } = req.query;
+    const patientID = req.body.patient
+
+    try {
+      let filter = {patient: patientID};
+      if (date) {filter.date = {$gte: date};}
+      if (status) {filter.status = status;}
+
+      const appointments = await appointmentModel.find(filter);
+      console.log(appointments)
+
+      if(appointments){res.status(200).send(appointments);}
+      else{res.status(200).send('no results')}
+      
+    }
+    catch (err) {
+      res.status(400).json({
+        message: err.message
+      });
+    }
+  };
+
 const viewPrescriptions = async(req, res) => {
 
         const neededPatient = req.body.patient
@@ -372,9 +533,9 @@ const viewPrescriptions = async(req, res) => {
 
 }
 const filterprescriptionsbydate = async(req, res) => {
-    try{
-        const prescriptions
-    }
+    // try{
+    //     const prescriptions
+    // }
 
 
 }
@@ -388,4 +549,4 @@ const getPatients = async (req, res) => {
 
 //module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test, getPatients}
 
-module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctorsByName, searchDoctorsBySpeciality,searchByNameSpec, test, getPatients, viewDocInfo, viewPrescriptions}
+module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, filterAppointmentsByDateAndStatus,searchByNameSpec, test, getPatients, viewDocInfo, viewPrescriptions, searchBySpecDate}
