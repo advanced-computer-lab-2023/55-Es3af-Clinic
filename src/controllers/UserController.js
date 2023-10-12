@@ -6,11 +6,7 @@ const createUser = async(req,res) => {
    //Username, Name, Email, Password, DateOfBirth, Type
    const newUser= new userModel({
     Username: req.body.username,
-    Name: req.body.name,
-    Email: req.body.email,
-    Password: req.body.password,
-    DateOfBirth: req.body.dateOfBirth,
-    Type:req.body.dateOfBirth
+    Password: req.body.password
    });
    newUser.save().catch(err => console.log(err));
    res.status(200).send("created");
@@ -26,14 +22,9 @@ const getUsers = async (req, res) => {
 const updateUser = async (req, res) => {
    //update a user in the database
    var Username= req.body.username;
-   var Name= req.body.name;
-   var Email= req.body.email;
    var Password= req.body.password;
-   var DateOfBirth= req.body.dateOfBirth;
-   var Type= req.body.tyoe;
 
-   userModel.findOneAndUpdate({Username:Username},{Name:Name, Email:Email, Password:Password,
-     DateOfBirth:DateOfBirth, Type:Type }).catch(err=> console.log(err));
+   userModel.findOneAndUpdate({Username:Username},{ Password:Password}).catch(err=> console.log(err));
    res.status(200).send("Updated");
 
   }
