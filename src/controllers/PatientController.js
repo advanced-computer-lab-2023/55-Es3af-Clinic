@@ -290,9 +290,111 @@ const searchByNameSpec = async(req, res) => {
 }
 
 const searchBySpecDate = async(req, res) => {
+    const { date, speciality } = req.query;
+    const patientID = req.body.patient
 
-}
+    try {
+      let filter = {patient: patientID};
+      var appointments = []
+      if(date){
+        const appoint = await appointmentModel.find({date: date})
+        if(!appoint){res.status(200).send('no appointments at that time')}
+        else{
+            for(var app of appoint){
+                if(app.date )
+            }
+        }
+      }
+    //   if (date) {filter.date = date}
+    //   if (speciality) {
+    //     const doctors = await doctorModel.findOne({speciality: speciality})
+    //     console.log(`doctors ${doctors}`)
+    //     var docApp = []
+    //     if(Object.keys(doctors).length === 0){ res.status(200).send('no doctors available in that speciality')}
+    //     else if(Object.keys(doctors).length === 1){
+    //         var appointment = await appointmentModel.find({doctor: doctor._id.valueOf()})
+    //         if(Object.keys(appointment).length === 0){res.status(200).send('doctor does not have any upcoming appointments')}
+    //         else if(Object.keys(appointment).length === 1){
+    //             if(date){
+    //                 if(date >= (app.date.getMinutes + app.duration)){
+    //                     docApp.push(app)
+    //                 }
+    //             }
+    //             else{docApp.push(appointment)}
+    //         }
+    //         else{
+    //             for(var app of appointment){
+    //                 if(date){
+    //                     if(date >= (app.date.getMinutes + app.duration)){
+    //                         docApp.push(app)
+    //                     }
+    //                 }
+    //                 else{docApp.push(appointment)}
+    //             }
+    //         }
+    //     }
+    //     else{
+    //         for(var doctor of doctors){
+    //             var appointment = await appointmentModel.find({doctor: doctor._id.valueOf()})
+    //             if(Object.keys(appointment).length === 0){res.status(200).send('doctor does not have any upcoming appointments')}
+    //             else if(Object.keys(appointment).length === 1){
+    //                 if(date){
+    //                     if(date >= (app.date.getMinutes + app.duration)){
+    //                         appointments.push(app)
+    //                     }
+    //                 }
+    //                 else{appointments.push(appointment)}
+    //             }
+    //             else{
+    //                 for(var app of appointment){
+    //                     if(date){
+    //                         if(date >= (app.date.getMinutes + app.duration)){
+    //                             appointments.push(app)
+    //                         }
+    //                     }
+    //                     else{appointments.push(appointment)}
+    //                 }
+    //             }
+    //         }
+    //     }
+    //   }
+    //   else{
+    //     var appointment = await appointmentModel.find({doctor: doctor._id.valueOf()})
+    //     if(Object.keys(appointment).length === 0){res.status(200).send('doctor does not have any upcoming appointments')}
+    //     else if(Object.keys(appointment).length === 1){
+    //         if(date){
+    //             if(date >= (app.date.getMinutes + app.duration)){
+    //                 docApp.push(app)
+    //             }
+    //         }
+    //         else{docApp.push(appointment)}
+    //     }
+    //     else{
+    //         for(var app of appointment){
+    //             if(date){
+    //                 if(date >= (app.date.getMinutes + app.duration)){
+    //                     docApp.push(app)
+    //                 }
+    //             }
+    //             else{docApp.push(appointment)}
+    //         }
+    //     }
+    //   }
 
+      res.status(200).send(appointments)
+
+      //const appointments = await appointmentModel.find(filter);
+      //console.log(appointments)
+
+      //res.status(200).send(appointments);
+    }
+    catch (err) {
+      console.error(err)
+    };
+};
+
+
+//working fine testing fine
 const viewDocInfo = async(req, res) => {
     const docUsername = req.body.Dusername  //need to work on this
     const patientUsername = req.body.Pusername
@@ -331,7 +433,7 @@ const viewPrescriptions = async(req, res) => {
             .catch((err) => {console.error(err)})
 
 }
-const filterprescriptionsbydatedoctorstatus = async(req, res) => {
+const filterprescriptionsbydate = async(req, res) => {
     const {date, doctor, status} = req.query;
     try {
         let filter = {};
