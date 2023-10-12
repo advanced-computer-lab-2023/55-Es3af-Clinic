@@ -379,7 +379,15 @@ const searchBySpecDate = async(req, res) => {
     try {
       let filter = {patient: patientID};
       var appointments = []
-      
+      if(date){
+        const appoint = await appointmentModel.find({date: date})
+        if(!appoint){res.status(200).send('no appointments at that time')}
+        else{
+            for(var app of appoint){
+                if(app.date )
+            }
+        }
+      }
     //   if (date) {filter.date = date}
     //   if (speciality) {
     //     const doctors = await doctorModel.findOne({speciality: speciality})
@@ -533,9 +541,24 @@ const viewPrescriptions = async(req, res) => {
 
 }
 const filterprescriptionsbydate = async(req, res) => {
-    // try{
-    //     const prescriptions
-    // }
+    const {date, doctor, status} = req.query;
+    try {
+        let filter = {};
+        if (date){
+            filter.date = date;
+        }
+        if (status){
+            filter.status = status;
+        }
+        if (doctor){
+            filter.doctor = doctor;
+        }
+        await PrescriptionsModel.find(filter)
+        res.status(200).send(filter)
+    }catch (err) {
+        console.error(err);
+
+    }
 
 
 }

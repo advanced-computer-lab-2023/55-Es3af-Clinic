@@ -16,6 +16,7 @@ const UserController= require('./controllers/UserController');
 const DoctorController = require('./controllers/DoctorController');
 
 
+
 mongoose.connect(MongoURI, {dbName: 'Clinic'})
 .then(()=>{
   console.log("MongoDB is now connected!")
@@ -44,10 +45,17 @@ app.post("/createAppointment", DoctorController.createAppointment);
 //app.get("/filterAppointmentsByDate", DoctorController.filterAppointmentsByDate);
 app.get("/filterAppointmentsByDateAndStatus", patientController.filterAppointmentsByDateAndStatus);
 
-
+app.get("/filterAppointmentsByDateAndStatus", DoctorController.filterAppointmentsByDateAndStatus);
+app.get("/getAllMyPatients", DoctorController.getAllMyPatients);
+app.get("/searchPatientByName", DoctorController.searchPatientByName);
+app.get("/filterPatientsByUpcomingPendingAppointments", DoctorController.filterPatientsByUpcomingPendingAppointments);
 
 app.get('/searchDoc', patientController.searchByNameSpec)
 app.get('/viewDocInfo', patientController.viewDocInfo)
 app.get('/viewPrescriptions', patientController.viewPrescriptions)
 app.get('/specDate', patientController.searchBySpecDate)
+app.get('/searchDoc', patientController.searchDoctorsByName)
+app.get('/viewPrescriptions', patientController.viewPrescriptions);
+
+app.get('/filterprescriptions',patientController.filterprescriptionsbydatedoctorstatus)
 
