@@ -384,7 +384,7 @@ const searchBySpecDate = async(req, res) => {
         if(!appoint){res.status(200).send('no appointments at that time')}
         else{
             for(var app of appoint){
-                if(app.date )
+                if(app.date ){}
             }
         }
       }

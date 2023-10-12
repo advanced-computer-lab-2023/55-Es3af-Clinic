@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const userModel = require('./user.js')
+const packageModel = require('./Packages.js')
 
 const patientSchema = new Schema({
   // user: {
@@ -29,17 +30,17 @@ const patientSchema = new Schema({
     type: String,
     required: true,
   },
-  emergencyContact: {
-    name: {
-      type: String,
-    },
-    mobile: {
-      type: String,
-    }
+  emergencyContactName: {
+    type: String,
+    required: true,
+  },
+  emergencyContactMobile: {
+    type: String,
+    required: true,
   },
   package: {
-    type: String,
-    //ref: 'package',
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'package',
     default: 'none'
   }
 });
