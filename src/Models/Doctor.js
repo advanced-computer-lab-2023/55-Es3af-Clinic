@@ -34,7 +34,7 @@ const doctorSchema = new Schema({
   },
   speciality: {
     type: String,
-    required: true
+    default:"General",
   }
 });
 
