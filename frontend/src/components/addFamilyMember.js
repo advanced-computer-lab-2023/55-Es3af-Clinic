@@ -1,9 +1,9 @@
-import "./App.css";
+import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
-import memberService from "../services/familyMemberService";
+import MemberService from "../services/familyMemberService";
 
-function addMember() {
+function AddMember() {
     const initialUserState = {
         name: "",
         nationalID: "",
@@ -13,12 +13,17 @@ function addMember() {
         relationToPatient: ""
     };
 
-    const member = useState(initialUserState)
+    const [member,setMember] = useState(initialUserState)
 
+    const handleInputChange = (event) => {
+
+      const { name,  value } = event.target;
+      setMember({...member, [name]:value});  
+    };
     async function addMember2(e) {
         e.preventDefault();
         // no need to console log response data, only for testing
-        memberService.addMember2(member)
+        MemberService.addMember2(member)
           .then((response) => {
             console.log(response.data);
           })
@@ -89,4 +94,4 @@ function addMember() {
     );
 }
 
-export default addMember
+export default AddMember

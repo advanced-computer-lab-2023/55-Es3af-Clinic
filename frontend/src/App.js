@@ -1,5 +1,6 @@
 
 import './App.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   return (
@@ -21,12 +22,12 @@ function App() {
           </a>
         </div>
         <div>
-          <a href="/doctor-requests/newRequest" rel="noopener noreferrer">
+          <a href="/requestDoctor" rel="noopener noreferrer">
             <button className="btn btn-primary"> Request Doctor </button>
           </a>
         </div>
         <div>
-          <a href="/patient/registerPatient" rel="noopener noreferrer">
+          <a href="/register" rel="noopener noreferrer">
             <button className="btn btn-primary"> Register as Patient </button>
           </a>
         </div>

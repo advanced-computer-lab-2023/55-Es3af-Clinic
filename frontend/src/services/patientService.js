@@ -1,9 +1,9 @@
 import http from "./http-common";
 
-class patientService {
-    getAll() {
-      return http.get("/patient/patients");
+class PatientService {
+  viewDoctors() {
+      return http.get("/patient/viewDoctors");
     }
 }  
 
-export default new memberService()
+export default new PatientService();

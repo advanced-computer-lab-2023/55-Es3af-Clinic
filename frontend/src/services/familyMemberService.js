@@ -1,13 +1,13 @@
 import http from "./http-common";
 
-class memberService {
+class MemberService {
     getAll(){
-        return http.get('/members')
+        return http.get('/patient/familyMembers')
     }
 
-    async getMembers (member) {
-        return http.post('/members/add', member)
+    async addMember2 (member) {
+        return http.post('/patient/addFamilyMember', member)
     }
 }
 
-export default new memberService()
+export default new MemberService()
