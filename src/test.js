@@ -47,8 +47,8 @@ app.use("/", router);
 // app.post("/createAppointment", DoctorController.createAppointment);
 //app.get("/filterAppointmentsByDate", DoctorController.filterAppointmentsByDate);
 //app.get("/filterAppointmentsByDateAndStatus", patientController.filterAppointmentsByDateAndStatus);
-app.get("/viewDoctorData", AdminController.viewDoctorData);
-app.get("/listUsers", AdminController.listUsers);
+//app.get("/viewDoctorData", AdminController.viewDoctorData);
+//app.get("/listUsers", AdminController.listUsers);
 
 // app.get("/filterAppointmentsByDateAndStatus", DoctorController.filterAppointmentsByDateAndStatus);
 // app.get("/getAllMyPatients", DoctorController.getAllMyPatients);

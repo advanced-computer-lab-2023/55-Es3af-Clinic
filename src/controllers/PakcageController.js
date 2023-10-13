@@ -45,7 +45,7 @@ const createPackage = async (req, res) => {
 const listPackages = async (req, res) => {
   try {
     const packages = await Package.find();
-    res.send(packages);
+    res.status(200).json(packages);
   } catch (e) {
     res.status(400).send(e);
   }

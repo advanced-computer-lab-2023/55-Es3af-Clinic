@@ -23,9 +23,10 @@ const listUsers = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    res.send(await user.findByIdAndDelete(req.params.id));
+    await user.findByIdAndDelete(req.params.id)
+   res.status(204).json({status: 'success', data : null});
   } catch (e) {
-    res.status(400).send(e);
+    res.status(400).json({status: fail , message: e});
   }
 };
 
