@@ -10,6 +10,8 @@ const { disconnect } = require("process")
 
 const test = async(req, res) => {
     // const newDoc = new doctorModel({
+
+
     //     // username: 'doc2',
     //     // name: 'doc2',
     //     // email: 'doc2@email.com',
@@ -34,16 +36,28 @@ const test = async(req, res) => {
     // newDoc.save().catch(err => console.error(err))
     // res.status(200).send(newDoc)
 
-    const package = new packageModel({
-        type: 'Gold',
-        price: 6000,
-        sessionDiscount: 0.6,
-        medicationDiscount: 0.3,
-        familyMemberDiscount: 0.15
-    })
-    package.save().catch(err => console.error(err))
-    console.log(package)
-    res.status(200).send(package)
+//     const package = new packageModel({
+//         type: 'Gold',
+//         price: 6000,
+//         sessionDiscount: 0.6,
+//         medicationDiscount: 0.3,
+//         familyMemberDiscount: 0.15
+//     })
+//     package.save().catch(err => console.error(err))
+//     console.log(package)
+//     res.status(200).send(package)
+
+    const app = await appointmentModel.find({date: req.query.date})
+    res.status(200).send(app)
+}
+
+const getPatient = async(req, res) => {
+    try{
+        const patient = await patientModel.findById(req.params.id)
+        res.send(patient)
+    } catch(e){
+        res.status(400).send(e)
+    }
 }
 
 //working fine and testing fine
@@ -377,17 +391,67 @@ const searchBySpecDate = async(req, res) => {
     const patientID = req.body.patient
 
     try {
-      let filter = {patient: patientID};
-      var appointments = []
-      if(date){
-        const appoint = await appointmentModel.find({date: date})
-        if(!appoint){res.status(200).send('no appointments at that time')}
-        else{
-            for(var app of appoint){
-                if(app.date ){}
-            }
+        let filter = {patient: patientID};
+        var appointments = [] //ids doctors that are busy
+        var doctors = []
+        var result = []
+
+        const appTest = await appointmentModel.find({date: req.query.date})
+        console.log(appTest)
+
+        if(speciality && !date){
+            var doctor = await doctorModel.find({speciality: speciality})
+            if(doctor){res.status(200).send(doctor)}
+            else{res.status(200).send('no doctors with this speciality')}
         }
-      }
+
+
+        else if(date){
+            const appoint = await appointmentModel.find({date: req.query.date})
+            console.log(`result of find is ${appoint}`)
+            if(!appoint){res.status(200).send('no appointments at that time')}
+            else{
+
+                for(var app of appoint){
+                    var appDate = new Date(app.date)
+                    console.log(appDate)
+
+                    // var addedDate = {
+                    //     startDate: app.date,
+                    //     unit: 'minute',
+                    //     amount: app.duration
+                    // }
+                    var newDate = new Date((appDate.getTime() + (app.duration*60000))-60000*120)
+
+                    console.log(`new date ${newDate}`)
+                    // console.log(new Date(app.date.toLocaleString()).getHours())
+                    // console.log(app.date.getMinutes())
+                    console.log(`given date is ${date}`)
+                    if(newDate > date){
+                        
+                        appointments.push(app.doctor._id.valueOf())}
+                }
+                const allDoctors = await doctorModel.find({})
+                for(var doc of allDoctors){
+                    var id = doc._id.valueOf()
+                    if(!appointments.includes(id)){
+                        console.log(appointments)
+                        doctors.push(doc)}
+                }
+            }
+            console.log(`else if date`)
+            console.log(doctors)
+        }
+        console.log(`finished else if date`)
+        if(date && speciality){
+            for(doc of doctors){
+                if(doc.speciality == speciality){result.push(doc)}
+            }
+            res.status(200).send(result)
+        }
+        else {
+            console.log(`else if date only`)
+            res.status(200).send(doctors)}
     //   if (date) {filter.date = date}
     //   if (speciality) {
     //     const doctors = await doctorModel.findOne({speciality: speciality})
@@ -464,7 +528,7 @@ const searchBySpecDate = async(req, res) => {
     //     }
     //   }
 
-      res.status(200).send(appointments)
+      //res.status(200).send(result)
 
       //const appointments = await appointmentModel.find(filter);
       //console.log(appointments)
@@ -572,4 +636,4 @@ const getPatients = async (req, res) => {
 
 //module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test, getPatients}
 
-module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, filterAppointmentsByDateAndStatus,searchByNameSpec, test, getPatients, viewDocInfo, viewPrescriptions, searchBySpecDate}
+module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, filterAppointmentsByDateAndStatus,searchByNameSpec, test, getPatients, viewDocInfo, viewPrescriptions, searchBySpecDate, getPatient}
