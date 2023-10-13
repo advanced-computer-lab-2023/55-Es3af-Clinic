@@ -51,8 +51,8 @@ app.use("/", router);
 // app.get("/getAllMyPatients", DoctorController.getAllMyPatients);
 // app.get("/searchPatientByName", DoctorController.searchPatientByName);
 //app.get("/filterPatientsByUpcomingPendingAppointments", DoctorController.filterPatientsByUpcomingPendingAppointments);
-//app.get("/viewHealthRecords", DoctorController.viewHealthRecords);
-//app.post("/createHealthRecords", DoctorController.createHealthRecords);
+// app.get("/viewHealthRecords", DoctorController.viewHealthRecords);
+// app.post("/createHealthRecords", DoctorController.createHealthRecords);
 
 // app.get('/searchDoc', patientController.searchByNameSpec)
 // app.get('/viewDocInfo', patientController.viewDocInfo)
