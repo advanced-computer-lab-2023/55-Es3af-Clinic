@@ -1,8 +1,8 @@
 const Router = require('express')
-const {registerPatientController} = require('../controllers/RegisterPatientController')
+const RegisterPatientController = require('../controllers/RegisterPatientController')
 
 const registerPatientRoutes = new Router();
 
-registerPatientRoutes.post('/',registerPatientController.registerPatient)
+registerPatientRoutes.post('/',RegisterPatientController.registerPatient)
 
 module.exports = {registerPatientRoutes}
