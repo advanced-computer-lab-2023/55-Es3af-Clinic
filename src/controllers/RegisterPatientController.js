@@ -12,7 +12,8 @@ const { default: mongoose } = require('mongoose');
             dateOfBirth: req.body.dateOfBirth,
             gender: req.body.gender,
             mobile: req.body.mobile,
-            emergencyContact: req.body.emergencyContact,
+            emergencyContactName: req.body.emergencyContactName,
+            emergencyContactMobile: req.body.emergencyContactMobile,
             package: req.body.package
         });
         newPatient.save().catch(err => console.log(err));
