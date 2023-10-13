@@ -104,7 +104,7 @@ const addFamilyMember = async(req, res) => {
 
 //working fine testing fine
 const viewFamilyMembers = async(req, res) => {
-    const neededPatient = req.body.patient
+    const neededPatient = req.query.patient
     console.log(`Patient is ${neededPatient}`)
     familyMemberModel.find({patient: neededPatient})
         .exec()
@@ -117,7 +117,6 @@ const viewFamilyMembers = async(req, res) => {
             }
         })
         .catch((err) => {console.error(err)})
-
 
     // try{
     //     const user = await user.findOne({ username }).populate('patient');

@@ -13,7 +13,7 @@ root.render(
   <Routes>
     <Route path="/" element ={<App />} />
     <Route path="/patient/*" element={<PatientPage />} />
-    </Routes>
+  </Routes>
   </BrowserRouter>
 );
 

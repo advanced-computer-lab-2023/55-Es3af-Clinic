@@ -2,6 +2,7 @@ import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 import AddMember from "./addFamilyMember";
+import MembersList from "./viewFamilyMembers"
 
 function PatientPage() {
   return (
@@ -9,6 +10,8 @@ function PatientPage() {
       <Route path="/" element={<PatientHome />} />
 
       <Route path="/addFamilyMember" element={<AddMember />} />
+      <Route path="/familyMembers" element={<MembersList />} />
+
     </Routes>
   );
 }

@@ -1,5 +1,5 @@
 const Router = require('express')
-const {requestDoctorController} = require('../controllers/RequestDoctorController')
+const requestDoctorController = require('../controllers/RequestDoctorController');
 
 const requestDoctorRoutes = new Router();
 
