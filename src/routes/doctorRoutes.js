@@ -8,9 +8,9 @@ const doctorRouter = express.Router();
 
 doctorRouter.route('/getPatients').get(doctorController.getAllPatients);
 doctorRouter.route('/getAllDoctors').get(doctorController.getAllDoctors);
-doctorRouter.route('/createHealthRecords').get(doctorController.createHealthRecords);
-doctorRouter.route('/createAppointment').get(doctorController.createAppointment);
-doctorRouter.route('/updateDoctor').get(doctorController.updateDoctor);
+doctorRouter.route('/createHealthRecords').post(doctorController.createHealthRecords);
+doctorRouter.route('/createAppointment').post(doctorController.createAppointment);
+doctorRouter.route('/updateDoctor').patch(doctorController.updateDoctor);
 doctorRouter.route('/viewHealthRecords').get(doctorController.viewHealthRecords);
 doctorRouter.route('/searchPatientByName').get(doctorController.searchPatientByName);
 doctorRouter.route('/getAllMyPatients').get(doctorController.getAllMyPatients);
