@@ -51,6 +51,15 @@ const test = async(req, res) => {
     res.status(200).send(app)
 }
 
+const getPatient = async(req, res) => {
+    try{
+        const patient = await patientModel.findById(req.params.id)
+        res.send(patient)
+    } catch(e){
+        res.status(400).send(e)
+    }
+}
+
 //working fine and testing fine
 const addFamilyMember = async(req, res) => {
 
@@ -627,4 +636,4 @@ const getPatients = async (req, res) => {
 
 //module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test, getPatients}
 
-module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, filterAppointmentsByDateAndStatus,searchByNameSpec, test, getPatients, viewDocInfo, viewPrescriptions, searchBySpecDate}
+module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, filterAppointmentsByDateAndStatus,searchByNameSpec, test, getPatients, viewDocInfo, viewPrescriptions, searchBySpecDate, getPatient}
