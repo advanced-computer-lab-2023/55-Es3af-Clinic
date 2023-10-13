@@ -45,9 +45,11 @@ app.get("/filterAppointmentsByDateAndStatus", DoctorController.filterAppointment
 app.get("/getAllMyPatients", DoctorController.getAllMyPatients);
 app.get("/searchPatientByName", DoctorController.searchPatientByName);
 app.get("/filterPatientsByUpcomingPendingAppointments", DoctorController.filterPatientsByUpcomingPendingAppointments);
+app.get("/viewHealthRecords", DoctorController.viewHealthRecords);
+app.post("/createHealthRecords", DoctorController.createHealthRecords);
 
 
 app.get('/searchDoc', patientController.searchDoctorsByName)
-app.get('/viewPrescriptions', patientController.viewPrescriptions);
+// app.get('/viewPrescriptions', patientController.viewPrescriptions);
 
-app.get('/filterprescriptions',patientController.filterprescriptionsbydatedoctorstatus)
+// app.get('/filterprescriptions',patientController.filterprescriptionsbydatedoctorstatus)

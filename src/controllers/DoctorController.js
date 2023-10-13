@@ -4,13 +4,14 @@ const { default: mongoose } = require("mongoose");
 const patientModel = require("../Models/Patient");
 const user = require("../Models/user.js");
 const appointment = require('../Models/Appointments.js');
+const healthRecord = require("../Models/HealthRecord.js");
 
 // const Patient = JSON.parse(fs.readFileSync('./data/patient.json'));
 // const Doctors = JSON.parse(fs.readFileSync('./data/doctor.json'));
 
 
 
-exports.getAllPatients = async (req, res) => {
+const getAllPatients = async (req, res) => {
   try{
     const patients = await patientModel.find({});
     res.status(200).json({
@@ -26,7 +27,7 @@ exports.getAllPatients = async (req, res) => {
     })
  }
 }
-  exports.getAllDoctors = async (req, res) => {
+  const getAllDoctors = async (req, res) => {
     try{
       const doctors = await doctorModel.find({});
       res.status(200).json({
@@ -45,7 +46,7 @@ exports.getAllPatients = async (req, res) => {
 
 //Create Appointment:
 
-exports.createAppointment =async (req, res) => {
+const createAppointment =async (req, res) => {
   try{
     const newAppointment = await appointment.create(req.body);
 
@@ -63,9 +64,27 @@ exports.createAppointment =async (req, res) => {
   }
 }
 
+//create Health Records:
+const createHealthRecords =async (req, res) => {
+  try{
+    const newHealthRecord = await healthRecord.create(req.body);
+
+    res.status(201).json({
+      status: 'success',
+      data: {
+        newHealthRecord
+      }
+    });
+  }catch(err) {
+    res.status(400).json({
+      status: 'fail', 
+      message: "Inavalid data sent"
+    })
+  }
+}
 
 //edit/ update my email, hourly rate or affiliation (hospital):
-exports.updateDoctor = async(req, res) => {
+const updateDoctor = async(req, res) => {
   const doctorId = req.params.id;
   const {email, hourlyRate, affiliation} = req.body;
     try{
@@ -84,10 +103,65 @@ exports.updateDoctor = async(req, res) => {
         })
       } 
 }
-//view information and health records of patient registered with me
+//view information and health records of patient registered with me:
+const viewHealthRecords = async (req, res) => {
+  const doctorId = req.query.doctorId;  // Doctor's ID
+  const patientId = req.query.patientId;  // Patient's ID
+
+  try {
+    const doctor = await doctorModel.findById(doctorId);
+    if (!doctor) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Doctor not found'
+      });
+    }
+
+    const healthRecords = await healthRecord.find({patient: patientId});
+    // const patient = await patientModel.findById(patientId);
+
+      // .populate('healthRecords');  
+
+      // console.log(patient)
+
+    if (!healthRecords) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Patient not found'
+      });
+    }
+
+    const Appointment = await appointment.findOne({ doctor: doctorId, patient: patientId });
+    // console.log(Appointment)
+    if (!Appointment) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Patient is not registered with this doctor'
+      });
+    }
+
+    // const healthRecords = patient.healthRecords; 
+    console.log(healthRecords)
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        healthRecords
+        // patient
+        
+      }
+    });
+  } catch (err) {
+    res.status(400).json({
+      message: err.message
+    });
+  }
+};
+
+
 
 //View a list of all my patients:
-exports.getAllMyPatients = async (req, res) => {
+const getAllMyPatients = async (req, res) => {
   const doctorId = req.query.Id;
   try{
     const appointments = await appointment.find({ doctor: doctorId });
@@ -108,7 +182,7 @@ exports.getAllMyPatients = async (req, res) => {
 }
 //Search for a patient by name:
 
-exports.searchPatientByName = async (req, res) => {
+const searchPatientByName = async (req, res) => {
   const { name } = req.query
   const doctorId = req.body.Id;
     
@@ -135,7 +209,7 @@ exports.searchPatientByName = async (req, res) => {
 
 //filter appointments by date/status:
 
-exports.filterAppointmentsByDateAndStatus = async (req, res) => {
+const filterAppointmentsByDateAndStatus = async (req, res) => {
   const { date, status } = req.query;
 
   try {
@@ -167,7 +241,7 @@ exports.filterAppointmentsByDateAndStatus = async (req, res) => {
 };
 
 //filter patients based on upcoming appointments:
-exports.filterPatientsByUpcomingPendingAppointments = async (req, res) => {
+const filterPatientsByUpcomingPendingAppointments = async (req, res) => {
   const doctorId = req.query.Id;  
 
   try {
@@ -193,6 +267,8 @@ exports.filterPatientsByUpcomingPendingAppointments = async (req, res) => {
   }
 };
 
+
+module.exports = {getAllPatients, getAllDoctors, createHealthRecords, createAppointment, updateDoctor, viewHealthRecords, searchPatientByName,  getAllMyPatients, filterAppointmentsByDateAndStatus, filterPatientsByUpcomingPendingAppointments}
 
 //view information and health records of patient registered with me:
 
