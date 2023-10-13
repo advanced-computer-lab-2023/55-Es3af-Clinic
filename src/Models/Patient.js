@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 const userModel = require('./user.js')
 const packageModel = require('./Packages.js')
 
+
 const patientSchema = new Schema({
   // user: {
   //   type: mongoose.Schema.Types.ObjectId,
@@ -40,9 +41,10 @@ const patientSchema = new Schema({
   },
   package: {
     type: String,
-    //ref: 'package',
+    ref: 'package',
     default: 'none'
-  }
+  },
+  // healthRecords: [{ type: Schema.Types.ObjectId, ref: 'HealthRecord' }]
 });
 
 //const patient = mongoose.model("patient", patientSchema);
