@@ -12,4 +12,4 @@ adminRoutes.get('/viewDoctorData',adminController.viewDoctors)
 
 
 
-module.exports = {patientRoutes}
+module.exports = {adminRoutes}
