@@ -1,8 +1,8 @@
 import http from "./http-common";
 
 class MemberService {
-    getAll(){
-        return http.get('/patient/familyMembers')
+    getAll(patient){
+        return http.get('/patient/familyMembers', {params:{patient}})
     }
 
     async addMember2 (member) {
