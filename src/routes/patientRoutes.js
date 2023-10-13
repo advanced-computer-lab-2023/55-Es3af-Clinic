@@ -1,8 +1,15 @@
-const express = require('express')
+const Router = require('express')
 const patientController = require('../controllers/PatientController')
 
-const router = express.Router()
+const patientRoutes = new Router();
 
-router.route('/viewDoctors').get(patientController.viewDoctors)
+patientRoutes.get('/viewDoctors',patientController.viewDoctors)
+patientRoutes.route('/:id', patientController.getPatient)
+patientRoutes.get('/familyMembers', patientController.viewFamilyMembers)
+patientRoutes.post('/addFamilyMember', patientController.addFamilyMember)
+patientRoutes.get("/doctorInfo/:id",patientController.viewDocInfo);
 
-module.exports = router
+
+
+
+module.exports = {patientRoutes}

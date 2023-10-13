@@ -4,9 +4,9 @@ const doctorController = require('../controllers/DoctorController');
 
 
 
-const router = express.Router();
+const doctorRouter = express.Router();
 
-router.route('/getPatients').get(doctorController.getAllPatients);
+doctorRouter.route('/getPatients').get(doctorController.getAllPatients);
 // router.route('/getDoctors').get(doctorController.getAllDoctors);
 // router.route('/getDoctor/:id').patch(doctorController.updateEmail);
 
@@ -15,4 +15,4 @@ router.route('/getPatients').get(doctorController.getAllPatients);
 // router.route('/').get(DoctorController.getAllTours).post(DoctorController.createTour);
 // router.route('/:id').get(DoctorController.getTour).patch(DoctorController.updateTour).delete(DoctorController.deleteTour);
 
-module.exports = router;
+module.exports = {doctorRouter};
