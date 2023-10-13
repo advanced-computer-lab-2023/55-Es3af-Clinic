@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './index.css';
 import App from './App';
 import PatientPage from './components/patient'
+import RegisterPatient from './components/RegisterPatient'
 //import page that i want to test
 
 
@@ -13,6 +14,7 @@ root.render(
   <Routes>
     <Route path="/" element ={<App />} />
     <Route path="/patient/*" element={<PatientPage />} />
+    <Route path="/register/*" element={<RegisterPatient />} />
   </Routes>
   </BrowserRouter>
 );

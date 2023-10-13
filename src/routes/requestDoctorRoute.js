@@ -1,8 +1,8 @@
 const Router = require('express')
-const requestDoctorController = require('../controllers/RequestDoctorController');
+const RequestDoctorController = require('../controllers/RequestDoctorController')
 
 const requestDoctorRoutes = new Router();
 
-requestDoctorRoutes.post('/',requestDoctorController.requestDoctor)
+requestDoctorRoutes.post('/',RequestDoctorController.requestDoctor)
 
 module.exports = {requestDoctorRoutes}
