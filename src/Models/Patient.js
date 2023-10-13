@@ -39,8 +39,8 @@ const patientSchema = new Schema({
     required: true,
   },
   package: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'package',
+    type: String,
+    //ref: 'package',
     default: 'none'
   }
 });

@@ -166,7 +166,6 @@ const viewDoctors = async(req, res) => {
                     }
                 docInfo.push(info)
                 }
-
                 //var discount = 0
 
 
@@ -587,7 +586,8 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
     }
   };
 
-const viewPrescriptions = async(req, res) => {
+
+  const viewPrescriptions = async(req, res) => {
 
         const neededPatient = req.body.patient
         console.log(`Patient is ${neededPatient}`)
@@ -604,6 +604,7 @@ const viewPrescriptions = async(req, res) => {
             .catch((err) => {console.error(err)})
 
 }
+
 const filterprescriptionsbydate = async(req, res) => {
     const {date, doctor, status} = req.query;
     try {
