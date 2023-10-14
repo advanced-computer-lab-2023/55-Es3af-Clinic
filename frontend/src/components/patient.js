@@ -5,6 +5,7 @@ import AddMember from "./addFamilyMember";
 import MembersList from "./viewFamilyMembers"
 import DoctorsList from "./viewDoctors";
 import PrescriptionList from "./viewPrescriptions";
+import DoctorInfo from './doctorInfo'
 
 function PatientPage() {
   return (
@@ -14,7 +15,7 @@ function PatientPage() {
       <Route path="/addFamilyMember" element={<AddMember />} />
       <Route path="/familyMembers" element={<MembersList />} />
       <Route path="/viewDoctors" element={<DoctorsList />} />
-      <Route path="/viewPrescriptions" element={<PrescriptionList />} />
+      <Route path= '/doctorInfo/:id' element={<DoctorInfo />}/>
 
     </Routes>
   );

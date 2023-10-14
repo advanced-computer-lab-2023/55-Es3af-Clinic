@@ -167,6 +167,7 @@ const viewDoctors = async(req, res) => {
                 const docInfo = []
                 for(let i = 0; i < docArr.length; i++){
                     let info = {
+                        id: docArr[i]._id.valueOf(),
                         name: docArr[i].name,
                         speciality: docArr[i].speciality,
                         price: docPrice[i]
@@ -549,12 +550,12 @@ const searchBySpecDate = async(req, res) => {
 
 //working fine testing fine
 const viewDocInfo = async(req, res) => {
-    const docUsername = req.body.Dusername  //need to work on this
-    const patientUsername = req.body.Pusername
-    doctorModel.findOne({username: docUsername})
+    const doctorID = req.params.id  //need to work on this
+    const patient = "faraaaah3"
+    doctorModel.findById(doctorID)
         .exec()
         .then(async (info) => {
-            var price = await doctorPrice(patientUsername, docUsername)
+            var price = await doctorPrice(patient, info.username)
 
             var docInfo = {
                 name: info.name,
@@ -596,7 +597,7 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 
   const viewPrescriptions = async(req, res) => {
 
-        const neededPatient = req.query.id
+        const neededPatient = req.params.id
         console.log(`Patient is ${neededPatient}`)
         PrescriptionsModel.find({patient: neededPatient})
             .exec()
