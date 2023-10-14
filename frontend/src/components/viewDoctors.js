@@ -1,9 +1,9 @@
 import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
-import MemberService from "../services/familyMemberService";
+import PatientService from "../services/patientService";
 
-const MembersList = (props) => {
+const DoctorsList = (props) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -11,7 +11,7 @@ const MembersList = (props) => {
   }, []);
 
   const retrieveMembers = () => {
-    MemberService.getAll("faraaaah3")
+    PatientService.viewDoctors("faraaaah3")
         .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data)) {
@@ -44,24 +44,18 @@ const MembersList = (props) => {
                    Name: {user.name}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                  National ID:  {user.nationalID}
+                  Speciality:  {user.speciality}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                    Age: {user.age}
+                    Hourly Rate: {user.price}
                   </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                    Gender: {user.gender}
-                  </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                    Relation To Patient: {user.relationToPatient}
-                  </h3> 
                 </div>
               </div>
             );
           })
         ) : (
           <div>
-            <h2>No Family Members</h2>
+            <h2>No Doctors</h2>
           </div>
         )}
       </div>
@@ -69,4 +63,4 @@ const MembersList = (props) => {
   );
 
 }
-export default MembersList;
+export default DoctorsList;

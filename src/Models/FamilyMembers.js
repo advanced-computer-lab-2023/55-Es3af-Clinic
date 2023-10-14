@@ -27,7 +27,7 @@ const familyMemberSchema = new Schema({
   },
   relationToPatient : {
     type: String,
-    enum: ["Wife/Husband", "Child"]
+    enum: ["Wife", "Child","Husband","Mother","Father","Sibling","Wife/Husband"]
   }
 });
 

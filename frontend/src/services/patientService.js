@@ -1,8 +1,8 @@
 import http from "./http-common";
 
 class PatientService {
-  viewDoctors() {
-      return http.get("/patient/viewDoctors");
+  viewDoctors(patient) {
+      return http.get("/patient/viewDoctors",{params:{patient}});
     }
 }  
 

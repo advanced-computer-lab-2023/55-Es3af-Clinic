@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 import AddMember from "./addFamilyMember";
 import MembersList from "./viewFamilyMembers"
+import DoctorsList from "./viewDoctors";
 
 function PatientPage() {
   return (
@@ -11,6 +12,7 @@ function PatientPage() {
 
       <Route path="/addFamilyMember" element={<AddMember />} />
       <Route path="/familyMembers" element={<MembersList />} />
+      <Route path="/viewDoctors" element={<DoctorsList />} />
 
     </Routes>
   );
