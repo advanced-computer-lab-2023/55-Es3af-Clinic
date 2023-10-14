@@ -9,7 +9,7 @@ function AddMember() {
         nationalID: "",
         age: 0,
         gender: "",
-        patient: "6527e28f5cc826d33648fb3f",
+        //patient: "patientSara",
         relationToPatient: ""
     };
 
@@ -23,7 +23,7 @@ function AddMember() {
     async function addMember2(e) {
         e.preventDefault();
         // no need to console log response data, only for testing
-        MemberService.addMember2(member)
+        MemberService.addMember2(member,"faraaaah3")
           .then((response) => {
             console.log(response.data);
           })

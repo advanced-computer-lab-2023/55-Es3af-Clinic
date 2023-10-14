@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
-//const cors = require("cors");
+const cors = require("cors");
 const{router}=require("../src/routes/main")
 //require("dotenv").config();
 //const {createUser,getUsers, updateUser, deleteUser} = require("./Routes/userController");
@@ -16,7 +16,7 @@ const port = process.env.PORT || "8000";
 // const requestDoctorController = require('./controllers/RequestDoctorController');
 // const UserController= require('./controllers/UserController');
 // const DoctorController = require('./controllers/DoctorController');
-const admin = require('./routes/adminRoutes');
+// const admin = require('./routes/adminRoutes');
 
 
 mongoose.connect(MongoURI, {dbName: 'Clinic'})
@@ -29,9 +29,11 @@ mongoose.connect(MongoURI, {dbName: 'Clinic'})
 })
 .catch(err => console.log(err));
 
-//app.use(cors());
+app.use(cors());
 app.use(express.json())
+
 app.use("/", router);
+
 // app.post("/addFamilyMember", patientController.addFamilyMember);
 // app.get("/viewFamilyMembers", patientController.viewFamilyMembers)
 // app.get("/viewDoctors", patientController.viewDoctors)

@@ -5,8 +5,8 @@ class MemberService {
         return http.get('/patient/familyMembers', {params:{patient}})
     }
 
-    async addMember2 (member) {
-        return http.post('/patient/addFamilyMember', member)
+    async addMember2 (member, patientUser) {
+        return http.post('/patient/addFamilyMember', member, {params:{patient:patientUser}})
     }
 }
 

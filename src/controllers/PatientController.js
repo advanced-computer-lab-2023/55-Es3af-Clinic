@@ -4,6 +4,7 @@ const doctorModel = require("../Models/Doctor.js")
 const userModel = require('../Models/user.js')
 const packageModel = require('../Models/Packages.js')
 const appointmentModel = require('../Models/Appointments.js')
+const PrescriptionsModel = require('../Models/Prescriptions.js')
 const { error } = require("console")
 const { default: mongoose } = require('mongoose');
 const { disconnect } = require("process")
@@ -62,7 +63,8 @@ const getPatient = async(req, res) => {
 
 //working fine and testing fine
 const addFamilyMember = async(req, res) => {
-
+    const patient =req.query.patient;
+    const patientID=await userModel.findOne({ username: patient });
     console.log(req.body)
 
     const member = new familyMemberModel({
@@ -71,9 +73,9 @@ const addFamilyMember = async(req, res) => {
         age : req.body.age,
         gender : req.body.gender,
         relationToPatient : req.body.relationToPatient,
-        patient : req.body.patient //id zy ma heya
+        patient : patientID._id //id zy ma heya
     })
-
+    
     console.log(`family member is ${member}`)
     //var patient = member.patient
     //console.log(`patient is ${patient}`)
@@ -103,38 +105,44 @@ const addFamilyMember = async(req, res) => {
 }
 
 //working fine testing fine
-const viewFamilyMembers = async(req, res) => {
-    const neededPatient = req.query.patient
-    console.log(`Patient is ${neededPatient}`)
-    familyMemberModel.find({patient: neededPatient})
+const viewFamilyMembers = async (req, res) => {
+    const neededPatient = req.query.patient;
+    console.log(`Patient is ${neededPatient}`);
+    
+    try {
+      const neededPatientID = await userModel.findOne({ username: neededPatient });
+      
+      if (!neededPatientID) {
+        console.log("Patient not found.");
+        res.status(404).send("Patient not found");
+        return;
+      }
+      
+      console.log("Patient ID:", neededPatientID._id);
+      
+      familyMemberModel
+        .find({ patient: neededPatientID._id })
         .exec()
         .then((result) => {
-            if(Object.keys(result).length === 0){
-                res.status(200).send("You don't have any family members added")
-            }
-            else{
-                res.status(200).send(result)
-            }
+          if (Object.keys(result).length === 0) {
+            res.status(200).send("You don't have any family members added");
+          } else {
+            res.status(200).send(result);
+          }
         })
-        .catch((err) => {console.error(err)})
-
-    // try{
-    //     const user = await user.findOne({ username }).populate('patient');
-    
-    //     if (user && user.patient) {
-    //       const familyMembers = user.patient.family_members;
-    //       return familyMembers;
-    //     } else {
-    //       throw new Error('Patient not found');
-    //     }
-    //   } catch (error) {
-    //     throw new Error(`Error viewing family members: ${error.message}`);
-    //   }
-}
+        .catch((err) => {
+          console.error(err);
+          res.status(500).send("Internal Server Error");
+        });
+    } catch (error) {
+      console.error("Error finding patient:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  };
 
 //working fine testing fine
 const viewDoctors = async(req, res) => {
-    var patient = req.body.patient //username
+    var patient = req.query.patient //username
 
     doctorModel.find({})
         .exec()
@@ -588,7 +596,7 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 
   const viewPrescriptions = async(req, res) => {
 
-        const neededPatient = req.body.patient
+        const neededPatient = req.query
         console.log(`Patient is ${neededPatient}`)
         PrescriptionsModel.find({patient: neededPatient})
             .exec()
