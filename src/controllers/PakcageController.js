@@ -1,4 +1,5 @@
-const Package = require('../Models/package.js');
+const Package = require('../Models/Packages.js');
+
 const silverPackage = {
     type: 'Silver',
     price: 3600,
