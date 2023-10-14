@@ -11,17 +11,17 @@ const MyPatientList = (props) => {
   }, []);
 
   const retrievePatients = () => {
-    DoctorService.getAllMyPatients("doc1") // Pass the correct doctor username or ID
+    DoctorService.getAllMyPatients("doc1")
       .then((response) => {
-        const data = response.data.patients;
-        if (Array.isArray(data)) {
-          setPatients(data);
+        console.log(response.data);
+        if (Array.isArray(response.data.data.patients)) {
+          setPatients(response.data.data.patients);
         } else {
-          console.log("Data is not an array:", data);
+          console.log("Data is not an array:", response.data);
         }
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((e) => {
+        console.log(e);
       });
   };
 
@@ -29,34 +29,44 @@ const MyPatientList = (props) => {
     <div>
       <div className="App-header">
         {patients.length > 0 ? (
-          patients.map((patient) => (
-            <div
-              className="card"
-              key={patient._id}
-              style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
-            >
-              <div className="card-body">
-                <h3 className="card-title" style={{ color: "white" }}>
-                  Name: {patient.name}
-                </h3>
-                <h3 className="card-title" style={{ color: "white" }}>
-                  Email: {patient.email}
-                </h3>
-                <h3 className="card-title" style={{ color: "white" }}>
-                  Date Of Birth: {patient.dateOfBirth}
-                </h3>
-                <h3 className="card-title" style={{ color: "white" }}>
-                  Gender: {patient.gender}
-                </h3>
-                <h3 className="card-title" style={{ color: "white" }}>
-                  Mobile: {patient.mobile}
-                </h3>
-                <h3 className="card-title" style={{ color: "white" }}>
-                  Health Records: {patient.healthRecords.join(", ")}
-                </h3>
+          patients.map((patient) => {
+            return (
+              <div
+                className="card"
+                key={patient._id}
+                style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
+              >
+                <div className="card-body">
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Name: {patient.name}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Email: {patient.email}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Date Of Birth: {patient.dateOfBirth}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Gender: {patient.gender}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Mobile: {patient.mobile}
+                  </h3>
+                  {patient.emergencyContact && (
+                    <h3 className="card-title" style={{ color: "white" }}>
+                      Emergency Contact: {patient.emergencyContact.name} - {patient.emergencyContact.mobile}
+                    </h3>
+                  )}
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Package: {patient.package}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Health Records: {patient.healthRecords.join(", ")}
+                  </h3>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <div>
             <h2>No Patients</h2>
