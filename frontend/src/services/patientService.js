@@ -4,6 +4,9 @@ class PatientService {
   viewDoctors(patient) {
       return http.get("/patient/viewDoctors",{params:{patient}});
     }
+  viewPrescriptions(id) {
+    return http.get(`/patient/viewPrescriptions/${id}`);
+  }
 }  
 
 export default new PatientService();
