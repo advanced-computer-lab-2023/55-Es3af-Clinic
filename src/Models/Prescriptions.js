@@ -21,11 +21,11 @@
    },
      status : {
         enum : ["filled", "unfilled"],
-        required : true
+       // required : true
      },
        date : {
          type: Date,
-         required : true
+        // required : true
 
 
     }

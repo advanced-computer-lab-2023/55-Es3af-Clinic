@@ -596,7 +596,7 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 
   const viewPrescriptions = async(req, res) => {
 
-        const neededPatient = req.query
+        const neededPatient = req.query.id
         console.log(`Patient is ${neededPatient}`)
         PrescriptionsModel.find({patient: neededPatient})
             .exec()
