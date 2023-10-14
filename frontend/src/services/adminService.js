@@ -10,7 +10,9 @@ class AdminService {
   }
 
   deleteUser(id) {
-    return http.delete(`/user/${id}`);
+    console.log("manga")
+    console.log(id)
+    return http.delete(`/admin/deleteUser/${id}`);
   }
 
   viewDoctorData() {
