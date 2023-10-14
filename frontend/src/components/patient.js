@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import AddMember from "./addFamilyMember";
 import MembersList from "./viewFamilyMembers"
 import DoctorsList from "./viewDoctors";
+import PrescriptionList from "./viewPrescriptions";
 
 function PatientPage() {
   return (
@@ -13,6 +14,7 @@ function PatientPage() {
       <Route path="/addFamilyMember" element={<AddMember />} />
       <Route path="/familyMembers" element={<MembersList />} />
       <Route path="/viewDoctors" element={<DoctorsList />} />
+      <Route path="/viewPrescriptions" element={<PrescriptionList />} />
 
     </Routes>
   );
