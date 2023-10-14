@@ -15,10 +15,10 @@ function DeleteAdmin() {
     setUser({ ...user, [name]: value });
   };
 
-  async function deleteAdmin(e) {
+  async function deleteUser(e) {
     e.preventDefault();
     // no need to console log response data, only for testing
-    AdminService.deleteAdmin(user.username)
+    AdminService.deleteUser(user.username)
       .then((response) => {
         console.log(response.data);
       })
