@@ -1,16 +1,16 @@
 import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
-import createPackage from "./createPackage";
+import CreatePackage from "./createPackage";
 import PackageServiceService from "../services/packageService";
-function AdminPage() {
+function PackagePage() {
   return (
     <Routes>
       <Route path="/" element={<PackageHome />} />
 
       <Route path="/createPackage" element={<CreatePackage />} />
 
-      <Route path="/listPackages" element={<ListPackages />} />
+      {/* <Route path="/listPackages" element={<ListPackages />} /> */}
 
 
 
@@ -46,4 +46,4 @@ function PackageHome() {
   );
 }
 
-export default AdminPage; 
+export default PackagePage; 
