@@ -7,11 +7,11 @@ class PatientService {
   viewDocInfo(id){
     return http.get(`/patient/doctorInfo/${id}`)
   }
-}
-    }
   viewPrescriptions(id) {
     return http.get(`/patient/viewPrescriptions/${id}`);
   }
-}  
+}
+
+
 
 export default new PatientService();
