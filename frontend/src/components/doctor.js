@@ -2,6 +2,7 @@ import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 import MyPatientList from "../components/viewAllMyPatients";
+import UpdateDoctor from "../components/updateDoctor";
 
 
 
@@ -10,6 +11,7 @@ function DoctorPage() {
     <Routes>
       <Route path="/" element={<DoctorHome />} />
       <Route path="/getAllMyPatients" element={< MyPatientList/>} />
+      <Route path="/updateDoctor" element={< UpdateDoctor/>} />
     </Routes>
   );
 }
