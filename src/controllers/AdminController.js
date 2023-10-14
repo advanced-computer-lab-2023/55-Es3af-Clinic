@@ -32,7 +32,7 @@ await user.findByIdAndDelete(req.params.id)
 
 const viewDoctorData = async (req, res) => {
   try {
-    const doctorsData = await Doctor.find({}, 'hourlyRate affiliation educationBackground speciality');
+    const doctorsData = await Doctor.find({}, 'hourlyRate affiliation education Background speciality');
     res.send(doctorsData);
   } catch (e) {
     res.status(400).send(e);
