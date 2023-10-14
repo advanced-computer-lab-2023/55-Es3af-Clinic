@@ -4,6 +4,7 @@ const doctorModel = require("../Models/Doctor.js")
 const userModel = require('../Models/user.js')
 const packageModel = require('../Models/Packages.js')
 const appointmentModel = require('../Models/Appointments.js')
+const PrescriptionsModel = require('../Models/Prescriptions.js')
 const { error } = require("console")
 const { default: mongoose } = require('mongoose');
 const { disconnect } = require("process")
@@ -595,7 +596,7 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 
   const viewPrescriptions = async(req, res) => {
 
-        const neededPatient = req.body.patient
+        const neededPatient = req.query
         console.log(`Patient is ${neededPatient}`)
         PrescriptionsModel.find({patient: neededPatient})
             .exec()
