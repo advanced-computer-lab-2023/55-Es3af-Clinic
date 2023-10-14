@@ -19,12 +19,8 @@ root.render(
     <Route path="/patient/*" element={<PatientPage />} />
     <Route path="/doctor/*" element={<DoctorPage />} />
     <Route path="/register/*" element={<RegisterPatient />} />
-<<<<<<< HEAD
     <Route path="/requestDoctor/*" element={<RequestDoctor/>} />
-=======
-    <Route path="requestDoctor/*" element={<RequestDoctor/>} />
-    <Route path="admin/*" element={<AdminPage/>} />
->>>>>>> 99193c6 (admin services and components)
+    <Route path="/admin/*" element={<AdminPage/>} />
     </Routes>
   </BrowserRouter>
 );
