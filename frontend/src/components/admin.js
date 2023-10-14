@@ -47,6 +47,11 @@ function AdminHome() {
             <button className="btn btn-primary"> View doctor data </button>
           </a>
         </div>
+        <div>
+          <a href="/packages/" rel="noopener noreferrer">
+            <button className="btn btn-primary"> Packages </button>
+          </a>
+        </div>
       </header>
     </div>
   );
