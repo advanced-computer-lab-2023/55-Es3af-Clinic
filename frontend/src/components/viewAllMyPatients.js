@@ -47,7 +47,7 @@ const MyPatientList = (props) => {
                      Email: {user.email}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                     Date Of Birth : {user.dateOfBirth}
+                     Date Of Birth: {user.dateOfBirth}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
                      Gender: {user.gender}
