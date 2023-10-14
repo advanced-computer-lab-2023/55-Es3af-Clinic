@@ -613,12 +613,13 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 
 }
 
-const filterprescriptionsbydate = async(req, res) => {
+const filterprescriptionsbydatestatusdoctor = async(req, res) => {
     const {date, doctor, status} = req.query;
+    const patientid = req.params.id;
     try {
-        let filter = {};
+        let filter = {patient: patientid};
         if (date){
-            filter.date = date;
+            filter.date = {$gte: date};
         }
         if (status){
             filter.status = status;
@@ -626,8 +627,8 @@ const filterprescriptionsbydate = async(req, res) => {
         if (doctor){
             filter.doctor = doctor;
         }
-        await PrescriptionsModel.find(filter)
-        res.status(200).send(filter)
+       const prescription = await PrescriptionsModel.find(filter)
+        res.status(200).send(prescription)
     }catch (err) {
         console.error(err);
 
@@ -645,4 +646,4 @@ const getPatients = async (req, res) => {
 
 //module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test, getPatients}
 
-module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, filterAppointmentsByDateAndStatus,searchByNameSpec, test, getPatients, viewDocInfo, viewPrescriptions, searchBySpecDate, getPatient}
+module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, filterAppointmentsByDateAndStatus,searchByNameSpec, test, getPatients, viewDocInfo, viewPrescriptions, searchBySpecDate, getPatient, filterprescriptionsbydatestatusdoctor}

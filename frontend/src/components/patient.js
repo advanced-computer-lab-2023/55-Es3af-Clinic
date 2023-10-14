@@ -35,6 +35,9 @@ function PatientHome() {
             <a href="/patient/viewDoctors" rel="noopener noreferrer">
             <button className="btn btn-primary"> view Doctors </button>
           </a>
+          <a href="/patient/viewPrescriptions/" rel="noopener noreferrer">
+            <button className="btn btn-primary"> view Prescriptions </button>
+          </a>
         </div>
       </header>
     </div>
