@@ -85,8 +85,9 @@ const createHealthRecords =async (req, res) => {
 
 //edit/ update my email, hourly rate or affiliation (hospital):
 const updateDoctor = async(req, res) => {
-  const doctorId = req.params.id;
+  const doctorId = req.query;
   const {email, hourlyRate, affiliation} = req.body;
+  console.log(req.query);
     try{
         //const newBlog = await blogModel.findByIdAndUpdate(req.params.id, req.body);
        
