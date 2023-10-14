@@ -22,23 +22,23 @@ function PackagePage() {
   );
 }
 
-function PackageHome() {
+function AdminHome() {
   return (
     <div className="App">
       <header className="App-header">
         <div>
-          <a href="/package/createPackage" rel="noopener noreferrer">
-            <button className="btn btn-primary"> Create Package </button>
+          <a href="/admin/addAdmin" rel="noopener noreferrer">
+            <button className="btn btn-primary"> create Package </button>
           </a>
         </div>
         <div>
-          <a href="/package/deletePackage" rel="noopener noreferrer">
+          <a href="/admin/deleteUser" rel="noopener noreferrer">
             <button className="btn btn-primary"> Delete Package </button>
           </a>
         </div>
         <div>
-          <a href="/package/listPackages" rel="noopener noreferrer">
-            <button className="btn btn-primary"> View Packages </button>
+          <a href="/admin/listUsers" rel="noopener noreferrer">
+            <button className="btn btn-primary"> Update Package </button>
           </a>
         </div>
       </header>
