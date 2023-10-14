@@ -596,7 +596,7 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 
   const viewPrescriptions = async(req, res) => {
 
-        const neededPatient = req.query.id
+        const neededPatient = req.params.id
         console.log(`Patient is ${neededPatient}`)
         PrescriptionsModel.find({patient: neededPatient})
             .exec()
@@ -612,7 +612,7 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 
 }
 
-const filterprescriptionsbydate = async(req, res) => {
+const filterprescriptionsbydatestatusdoctor = async(req, res) => {
     const {date, doctor, status} = req.query;
     try {
         let filter = {};
@@ -644,4 +644,4 @@ const getPatients = async (req, res) => {
 
 //module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test, getPatients}
 
-module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, filterAppointmentsByDateAndStatus,searchByNameSpec, test, getPatients, viewDocInfo, viewPrescriptions, searchBySpecDate, getPatient}
+module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, filterAppointmentsByDateAndStatus,searchByNameSpec, test, getPatients, viewDocInfo, viewPrescriptions, searchBySpecDate, getPatient, filterprescriptionsbydatestatusdoctor}
