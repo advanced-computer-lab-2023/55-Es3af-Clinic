@@ -614,10 +614,11 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 
 const filterprescriptionsbydatestatusdoctor = async(req, res) => {
     const {date, doctor, status} = req.query;
+    const patientid = req.params.id;
     try {
-        let filter = {};
+        let filter = {patient: patientid};
         if (date){
-            filter.date = date;
+            filter.date = {$gte: date};
         }
         if (status){
             filter.status = status;
@@ -625,8 +626,8 @@ const filterprescriptionsbydatestatusdoctor = async(req, res) => {
         if (doctor){
             filter.doctor = doctor;
         }
-        await PrescriptionsModel.find(filter)
-        res.status(200).send(filter)
+       const prescription = await PrescriptionsModel.find(filter)
+        res.status(200).send(prescription)
     }catch (err) {
         console.error(err);
 
