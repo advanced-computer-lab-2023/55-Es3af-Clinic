@@ -7,7 +7,6 @@ import PatientPage from './components/patient'
 import RegisterPatient from './components/RegisterPatient'
 import RequestDoctor from "./components/RequestDoctor"
 import DoctorPage from './components/doctor';
-import AdminPage from './components/admin';
 //import page that i want to test
 
 
