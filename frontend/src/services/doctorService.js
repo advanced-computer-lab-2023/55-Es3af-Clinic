@@ -5,7 +5,10 @@ class DoctorService {
       return http.get("/doctor/getAllMyPatients",{params:{doctor}});
     }
     async updateDoctor(doctorId, updatedDoctorData) {
-      return http.patch(`/doctor/updateDoctor/${doctorId}`, updatedDoctorData);
+      return http.patch(`/doctor/updateDoctor?doctorId= ${doctorId}`, updatedDoctorData);
+    }
+    async selectPatient(doctorId, patientId) {
+      return http.patch("/doctor/selectPatient", { doctorId, patientId });
     }
 }  
 
