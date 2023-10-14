@@ -44,6 +44,12 @@ const patientSchema = new Schema({
     ref: 'package',
     default: 'none'
   },
+  assignedDoctor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'doctor', 
+    default: null
+  }
+  
   // healthRecords: [{ type: Schema.Types.ObjectId, ref: 'HealthRecord' }]
 });
 

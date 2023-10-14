@@ -267,9 +267,40 @@ const filterPatientsByUpcomingPendingAppointments = async (req, res) => {
   }
 };
 
+// select a patient from the list of patients:
+const selectPatient = async (req, res) => {
+  const { doctorId, patientId } = req.query;  
 
-module.exports = {getAllPatients, getAllDoctors, createHealthRecords, createAppointment, updateDoctor, viewHealthRecords, searchPatientByName,  getAllMyPatients, filterAppointmentsByDateAndStatus, filterPatientsByUpcomingPendingAppointments}
+  try {
+    const patient = await patientModel.findById(patientId);
+
+    if (!patient) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Patient not found'
+      });
+    }
+
+    patient.assignedDoctor = doctorId;
+    await patient.save();
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        message: 'Patient assigned to doctor successfully'
+      }
+    });
+  } catch (err) {
+    res.status(400).json({
+      message: err.message
+    });
+  }
+};
 
 
-//select a patient from the list of patients:
+
+module.exports = {getAllPatients, getAllDoctors, createHealthRecords, createAppointment, updateDoctor, viewHealthRecords, searchPatientByName,  getAllMyPatients, filterAppointmentsByDateAndStatus, filterPatientsByUpcomingPendingAppointments, selectPatient}
+
+
+
 

@@ -16,6 +16,7 @@ doctorRouter.route('/searchPatientByName').get(doctorController.searchPatientByN
 doctorRouter.route('/getAllMyPatients').get(doctorController.getAllMyPatients);
 doctorRouter.route('/filterAppointmentsByDateAndStatus').get(doctorController.filterAppointmentsByDateAndStatus);
 doctorRouter.route('/filterPatientsByUpcomingPendingAppointments').get(doctorController.filterPatientsByUpcomingPendingAppointments);
+doctorRouter.route('/selectPatient').patch(doctorController.selectPatient);
 
 // router.route('/getDoctors').get(doctorController.getAllDoctors);
 // router.route('/getDoctor/:id').patch(doctorController.updateEmail);
