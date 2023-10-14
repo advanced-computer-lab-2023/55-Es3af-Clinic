@@ -162,24 +162,36 @@ const viewHealthRecords = async (req, res) => {
 
 //View a list of all my patients:
 const getAllMyPatients = async (req, res) => {
-  const doctorId = req.query.Id;
-  try{
-    const appointments = await appointment.find({ doctor: doctorId });
+  const doctorUser = req.query.doctor;
+  try {
+    const doctor = await user.findOne({ username: doctorUser });
+
+    if (!doctor) {
+      res.status(404).json({
+        message: 'Doctor not found'
+      });
+      return;
+    }
+
+    console.log(doctor._id);
+
+    const appointments = await appointment.find({ doctor: doctor._id });
     const patientIds = appointments.map(appointment => appointment.patient);
     const patients = await patientModel.find({ _id: { $in: patientIds } });
-   
+
     res.status(200).json({
       status: 'success',
       data: {
         patients
       }
-    })
-  } catch(err) {
-    res.status(400).json({
+    });
+  } catch (err) {
+    res.status(500).json({
       message: err.message
-    })
- }
-}
+    });
+  }
+};
+
 //Search for a patient by name:
 
 const searchPatientByName = async (req, res) => {

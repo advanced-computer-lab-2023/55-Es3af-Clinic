@@ -1,8 +1,8 @@
 import http from "./http-common";
 
 class DoctorService {
-    getAllMyPatients(doctorId) {
-      return http.get("/doctor/getAllMyPatients",{params:{doctorId}});
+    getAllMyPatients(doctor) {
+      return http.get("/doctor/getAllMyPatients",{params:{doctor}});
     }
 }  
 
