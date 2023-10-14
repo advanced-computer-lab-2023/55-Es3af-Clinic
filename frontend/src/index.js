@@ -19,6 +19,7 @@ root.render(
     <Route path="/doctor/*" element={<DoctorPage />} />
     <Route path="/register/*" element={<RegisterPatient />} />
     <Route path="requestDoctor/*" element={<RequestDoctor/>} />
+    <Route path="/admin/*" element={<AdminPage/>} />
     </Routes>
   </BrowserRouter>
 );
