@@ -33,24 +33,30 @@ const PrescriptionList = (props) => {
             users.map((user) => {
               return (
   
-                <div
+                <><div
                   className="card"
                   key={user._id}
                   style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
                 >
-                  
+
                   <div className="card-body">
-                    <h3 className="card-title" style={{ color: "white" }}>
-                     Doctor: {user.doctor}
+                  <h3 className="card-title" style={{ color: "white" }}>
+                      Medicine: {user.medicine}
                     </h3>
                     <h3 className="card-title" style={{ color: "white" }}>
-                    Status:  {user.status}
+                      Doctor: {user.doctor.name}
                     </h3>
                     <h3 className="card-title" style={{ color: "white" }}>
-                    Date: {user.date}
+                      Status:  {user.status}
+                    </h3>
+                    <h3 className="card-title" style={{ color: "white" }}>
+                      Date: {user.date}
                     </h3>
                   </div>
-                </div>
+                </div><div>
+                    <a href="/patient/filterprescriptionsbydatestatusdoctor" rel="noopener noreferrer">
+                      <button className="btn btn-primary"> filter Prescriptions </button>
+                    </a> </div></>
               );
             })
           ) : (
