@@ -11,7 +11,7 @@ const UsersList = (props) => {
   }, []);
 
   const retrieveUsers = () => {
-    AdminService.getAll()
+    AdminService.listUsers()
       .then((response) => {
         console.log(response.data);
         setUsers(response.data);

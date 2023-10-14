@@ -12,6 +12,11 @@ function App() {
           </a>
         </div>
         <div>
+          <a href="/packages" rel="noopener noreferrer">
+            <button className="btn btn-primary"> Packages </button>
+          </a>
+        </div>
+        <div>
           <a href="/doctor" rel="noopener noreferrer">
             <button className="btn btn-primary"> Doctor </button>
           </a>
