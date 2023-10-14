@@ -1,12 +1,15 @@
 import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
+import MyPatientList from "../components/viewAllMyPatients";
+
 
 
 function DoctorPage() {
   return (
     <Routes>
       <Route path="/" element={<DoctorHome />} />
+      <Route path="/getAllMyPatients" element={< MyPatientList/>} />
     </Routes>
   );
 }
