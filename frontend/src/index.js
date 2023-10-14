@@ -6,6 +6,7 @@ import App from './App';
 import PatientPage from './components/patient'
 import RegisterPatient from './components/RegisterPatient'
 import RequestDoctor from "./components/RequestDoctor"
+import DoctorPage from './components/doctor';
 //import page that i want to test
 
 
@@ -15,6 +16,7 @@ root.render(
   <Routes>
     <Route path="/" element ={<App />} />
     <Route path="/patient/*" element={<PatientPage />} />
+    <Route path="/doctor/*" element={<DoctorPage />} />
     <Route path="/register/*" element={<RegisterPatient />} />
     <Route path="requestDoctor/*" element={<RequestDoctor/>} />
     </Routes>
