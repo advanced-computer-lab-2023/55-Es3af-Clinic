@@ -33,7 +33,7 @@ class PatientService {
   }
 
   
-}
+
 
   FilteredAppointmentsList(patientid, date, status) {
     const queryParams = {};
@@ -62,11 +62,9 @@ class PatientService {
 
     return http.get(`/patient/filterAppointmentsByDateAndStatus/${patientid}`, {
       params: queryParams,
-    });
+    }); }
     
   }
-  
-}
 
 
 export default new PatientService();
