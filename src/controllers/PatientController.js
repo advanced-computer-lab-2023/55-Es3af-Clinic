@@ -562,14 +562,15 @@ const viewDocInfo = async(req, res) => {
 //working and testing fine
 const filterAppointmentsByDateAndStatus = async (req, res) => {
     const { date, status } = req.query;
-    const patientID = req.body.patient
+    const patientID = req.params.id;
 
     try {
       let filter = {patient: patientID};
       if (date) {filter.date = {$gte: date};}
       if (status) {filter.status = status;}
 
-      const appointments = await appointmentModel.find(filter);
+      const appointments = await appointmentModel.find(filter)
+      .populate('doctor', 'name -_id -__t');
       console.log(appointments)
 
       if(appointments){res.status(200).send(appointments);}
@@ -589,6 +590,7 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
         const neededPatient = req.params.id
         console.log(`Patient is ${neededPatient}`)
         PrescriptionsModel.find({patient: neededPatient})
+            .populate('doctor', 'name -_id -__t')
             .exec()
             .then((result) => {
                 if(Object.keys(result).length === 0){
@@ -608,15 +610,20 @@ const filterprescriptionsbydatestatusdoctor = async(req, res) => {
     try {
         let filter = {patient: patientid};
         if (date){
-            filter.date = {$gte: date};
+            filter.date = date;
         }
         if (status){
             filter.status = status;
         }
         if (doctor){
-            filter.doctor = doctor;
+            
+            const doctor1 = await userModel.findOne({ name: doctor });
+            if (doctor1) {
+                filter.doctor = doctor1.id;
+            }
         }
        const prescription = await PrescriptionsModel.find(filter)
+       .populate('doctor', 'name -_id -__t')
         res.status(200).send(prescription)
     }catch (err) {
         console.error(err);

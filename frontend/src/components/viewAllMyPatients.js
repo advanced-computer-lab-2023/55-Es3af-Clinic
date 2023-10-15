@@ -54,14 +54,14 @@ const MyPatientList = (props) => {
                   </h3>
                   {patient.emergencyContact && (
                     <h3 className="card-title" style={{ color: "white" }}>
-                      Emergency Contact: {patient.emergencyContact.name} - {patient.emergencyContact.mobile}
+                      Emergency Contact: {patient.emergencyContactName} - {patient.emergencyContactMobile}
                     </h3>
                   )}
                   <h3 className="card-title" style={{ color: "white" }}>
                     Package: {patient.package}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                    Health Records: {patient.healthRecords.join(", ")}
+                    Health Records: {patient.healthRecords}
                   </h3>
                 </div>
               </div>

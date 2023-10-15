@@ -1,9 +1,11 @@
+import "../App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import DoctorService from "../services/doctorService";
 
 function SelectPatientList() {
   const [patients, setPatients] = useState([]);
-  const [selectedPatientId, setSelectedPatientId] = useState(null);
+  //const [selectedPatientId, setSelectedPatientId] = useState(null);
 
   useEffect(() => {
     // Fetch the list of patients
@@ -12,42 +14,82 @@ function SelectPatientList() {
 
   const fetchPatients = async () => {
     try {
-      const response = await DoctorService.getAllMyPatients("doc1"); 
-      setPatients(response.data.patients);
+      const response = await DoctorService.getAllPatients(); 
+      setPatients(response.data.data.patients);
     } catch (error) {
       console.error("Error fetching patients:", error.message);
     }
   };
 
-  const handlePatientSelect = (patientId) => {
-    setSelectedPatientId(patientId);
-  };
-
-  const handleAssignPatient = async () => {
-    try {
-      await DoctorService.selectPatient("6525afac114367999aba79df", selectedPatientId); 
-    } catch (error) {
-      console.error("Error assigning patient:", error.message);
+  const selectPatient = (patientId) => {
+    // Check if patientId is available
+    if (patientId) {
+      DoctorService.selectPatient("6525afac114367999aba79df", patientId)
+        .then((response) => {
+          console.log(response.data);
+          window.location.reload(false);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     }
   };
+  
+  
+    
 
   return (
     <div>
-      <h2>List of Patients</h2>
-      <ul>
-        {patients.map((patient) => (
-          <li key={patient._id}>
-            {patient.name}{" "}
-            <button onClick={() => handlePatientSelect(patient._id)}>Select</button>
-          </li>
-        ))}
-      </ul>
+      <div className="App-header">
+        {patients.length > 0 ? (
+             patients
+            .map((user) => {
+              return (
+              <div
+                className="card"
+                key={user._id}
+                style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
+              >
+                <div className="card-body">
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Name:{user.name}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Date Of Birth: {user.dateOfBirth}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Gender: {user.gender}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Mobile: {user.mobile}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Package: {user.package}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Health Records: {user.healthRecords}
+                  </h3>
+<button
+  style={{ backgroundColor: "green" }}
+  data-user-id={user._id} // Set the user's ID as a data attribute
+  onClick={() => selectPatient(user.username)}
+>
+  Select
+</button>
 
-      {selectedPatientId && (
-        <button onClick={handleAssignPatient}>Assign Selected Patient</button>
-      )}
+
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div>
+            <h2>No Patients</h2>
+          </div>
+        )}
+      </div>
     </div>
   );
-}
+};
 
 export default SelectPatientList;

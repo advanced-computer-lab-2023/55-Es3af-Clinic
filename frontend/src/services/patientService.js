@@ -14,6 +14,25 @@ class PatientService {
     console.log('search in service before get')
     return http.get(`http://localhost:8000/patient/search?name=${name}&speciality=${spec}`)
   }
+  FilteredPrescriptionList(patientid, date, doctor, status) {
+    const queryParams = {};
+
+    if (date) {
+      queryParams.date = date;
+    }
+    if (doctor) {
+      queryParams.doctor = doctor;
+    }
+    if (status) {
+      queryParams.status = status;
+    }
+
+    return http.get(`/patient/filterprescriptionsbydatestatusdoctor/${patientid}`, {
+      params: queryParams,
+    });
+  }
+
+  
 }
 
 

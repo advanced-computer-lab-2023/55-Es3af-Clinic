@@ -7,6 +7,8 @@ import DoctorsList from "./viewDoctors";
 import PrescriptionList from "./viewPrescriptions";
 import DoctorInfo from './doctorInfo'
 import SearchDoctor from './search'
+import FilteredPrescriptionList from "./filterprescriptionsbydatestatusdoctor";
+import FilteredAppointmentsList from "./filterAppointmentsByDateAndStatuspatient";  
 
 function PatientPage() {
   return (
@@ -19,6 +21,9 @@ function PatientPage() {
       <Route path= '/doctorInfo/:id' element={<DoctorInfo />}/>
       <Route path= '/search' element = {<SearchDoctor />}/>
 
+      <Route path="/viewPrescriptions" element={<PrescriptionList />} />
+      <Route path="/filterprescriptionsbydatestatusdoctor" element={<FilteredPrescriptionList />} />
+      <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
     </Routes>
   );
 }
@@ -42,6 +47,9 @@ function PatientHome() {
           </a>
           <a href="/patient/search/" rel="noopener noreferrer">
             <button className="btn btn-primary"> Search </button>
+            </a>
+          <a href="/patient/filterAppointmentsByDateAndStatus/" rel="noopener noreferrer">
+            <button className="btn btn-primary"> filter Appointments </button>
           </a>
         </div>
       </header>

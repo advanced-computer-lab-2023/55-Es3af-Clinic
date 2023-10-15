@@ -5,7 +5,7 @@ import AdminService from "../services/adminService";
 
 function DeleteAdmin() {
   const initialUserState = {
-    username: "",
+    id: "",
   };
 
   const [user, setUser] = useState(initialUserState);
@@ -16,9 +16,10 @@ function DeleteAdmin() {
   };
 
   async function deleteUser(e) {
+    const {value} = e.target
     e.preventDefault();
-    // no need to console log response data, only for testing
-    AdminService.deleteUser(user.username)
+    console.log(value)
+    AdminService.deleteUser(value)
       .then((response) => {
         console.log(response.data);
       })
@@ -30,22 +31,23 @@ function DeleteAdmin() {
   return (
     <div className="App">
       <header className="App-header">
-        <form className="App-header" onSubmit={deleteAdmin}>
+        <form className="App-header" >
           <div className="form-group">
-            <label htmlFor="InputUsername">Username</label>
+            <label htmlFor="InputId">Admin ID</label>
             <input
               type="text"
               className="form-control"
-              id="username"
-              name="username"
-              value={user.username}
-              placeholder="Enter username to delete"
+              id="id"
+              name="id"
+              value={user.id}
+              placeholder="Enter ID to delete"
               onChange={handleInputChange}
             ></input>
           </div>
 
-          <button type="submit" className="btn btn-danger">
-            Delete Admin
+          <button className="btn btn-danger" onClick={(user) => deleteUser(user)}
+value={user.id}>
+            Delete User
           </button>
         </form>
       </header>

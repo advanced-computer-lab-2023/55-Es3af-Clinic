@@ -43,13 +43,24 @@ const createPackage = async (req, res) => {
   }
 };
 
-const listPackages = async (req, res) => {
-  try {
-    const packages = await Package.find();
-    res.status(200).json(packages);
-  } catch (e) {
-    res.status(400).send(e);
-  }
+const updatePackage = async (req, res) => {
+  const {type, price, sessionDiscount, medicationDiscount, familyMemberDiscount}= req.body;
+  
+ // var Name = req.body.Name;
+  //var Price = req.body.Price;
+  //var ActiveIngredients = req.body.ActiveIngredients;
+  packageModel
+    .findOneAndUpdate(
+      { type: type },
+      { price: price},
+      { sessionDiscount: sessionDiscount }, 
+      { medicationDiscount: medicationDiscount}, 
+      { familyMemberDiscount: familyMemberDiscount}
+    )
+    .catch((err) => console.log(err));
+  res
+    .status(200)
+    .send("Package is updated successfully");
 };
 
 const deletePackage = async (req, res) => {

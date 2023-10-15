@@ -6,15 +6,15 @@ const doctorController = require('../controllers/DoctorController');
 
 const doctorRouter = express.Router();
 
+doctorRouter.route('/updateDoctor').put(doctorController.updateDoctor);
 doctorRouter.route('/getPatients').get(doctorController.getAllPatients);
 doctorRouter.route('/getAllDoctors').get(doctorController.getAllDoctors);
 doctorRouter.route('/createHealthRecords').post(doctorController.createHealthRecords);
 doctorRouter.route('/createAppointment').post(doctorController.createAppointment);
-doctorRouter.route('/updateDoctor').patch(doctorController.updateDoctor);
 doctorRouter.route('/viewHealthRecords').get(doctorController.viewHealthRecords);
 doctorRouter.route('/searchPatientByName').get(doctorController.searchPatientByName);
 doctorRouter.route('/getAllMyPatients').get(doctorController.getAllMyPatients);
-doctorRouter.route('/filterAppointmentsByDateAndStatus').get(doctorController.filterAppointmentsByDateAndStatus);
+doctorRouter.route('/filterAppointmentsByDateAndStatus/:id').get(doctorController.filterAppointmentsByDateAndStatus);
 doctorRouter.route('/filterPatientsByUpcomingPendingAppointments').get(doctorController.filterPatientsByUpcomingPendingAppointments);
 doctorRouter.route('/selectPatient').patch(doctorController.selectPatient);
 
