@@ -54,7 +54,7 @@ const MyPatientList = (props) => {
                   </h3>
                   {patient.emergencyContact && (
                     <h3 className="card-title" style={{ color: "white" }}>
-                      Emergency Contact: {patient.emergencyContact.name} - {patient.emergencyContact.mobile}
+                      Emergency Contact: {patient.emergencyContactName} - {patient.emergencyContactMobile}
                     </h3>
                   )}
                   <h3 className="card-title" style={{ color: "white" }}>
