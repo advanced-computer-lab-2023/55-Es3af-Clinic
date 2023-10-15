@@ -225,9 +225,10 @@ const searchPatientByName = async (req, res) => {
 
 const filterAppointmentsByDateAndStatus = async (req, res) => {
   const { date, status } = req.query;
+  const doctorid = req.params.id;
 
   try {
-    let filter = {};
+    let filter = {doctor: doctorid};
 
     // Check if date is provided
     if (date) {
@@ -239,14 +240,9 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
       filter.status = status;
     }
 
-    const appointments = await appointment.find(filter);
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        appointments
-      }
-    });
+    const appointments = await appointment.find(filter)
+       .populate('patient', 'name -_id -__t')
+        res.status(200).send(appointments)
   } catch (err) {
     res.status(400).json({
       message: err.message
@@ -284,11 +280,12 @@ const filterPatientsByUpcomingPendingAppointments = async (req, res) => {
 // select a patient from the list of patients:
 const selectPatient = async (req, res) => {
   const { doctorId, patientId } = req.query;  
-  console.log("yes")
+  console.log("Patient ID:"+patientId)
   try {
     const patient = await patientModel.findById(patientId);
 
     if (!patient) {
+      console.log("fail")
       return res.status(404).json({
         status: 'fail',
         message: 'Patient not found'
@@ -297,7 +294,7 @@ const selectPatient = async (req, res) => {
 
         patient.assignedDoctor = doctorId;
     await patient.save();
-
+    console.log("yes2")
     res.status(200).json({
       status: 'success',
       data: {

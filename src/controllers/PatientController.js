@@ -619,7 +619,7 @@ const filterprescriptionsbydatestatusdoctor = async(req, res) => {
     try {
         let filter = {patient: patientid};
         if (date){
-            filter.date = {$gte: date};
+            filter.date = date;
         }
         if (status){
             filter.status = status;
