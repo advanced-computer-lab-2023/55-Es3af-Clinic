@@ -36,7 +36,7 @@ class PatientService {
   }
 
   
-}
+
 
   FilteredAppointmentsList(patientid, date, status) {
     const queryParams = {};
