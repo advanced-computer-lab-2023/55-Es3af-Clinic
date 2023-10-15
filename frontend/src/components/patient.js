@@ -5,8 +5,11 @@ import AddMember from "./addFamilyMember";
 import MembersList from "./viewFamilyMembers"
 import DoctorsList from "./viewDoctors";
 import PrescriptionList from "./viewPrescriptions";
+import DoctorInfo from './doctorInfo'
+import SearchDoctor from './search'
 import FilteredPrescriptionList from "./filterprescriptionsbydatestatusdoctor";
-import FilteredAppointmentsList from "./filterAppointmentsByDateAndStatuspatient";  
+import FilteredAppointmentsList from "./filterAppointmentsByDateAndStatuspatient"; 
+import FilterDoctors from "./Filterdoctors";
 
 function PatientPage() {
   return (
@@ -16,9 +19,14 @@ function PatientPage() {
       <Route path="/addFamilyMember" element={<AddMember />} />
       <Route path="/familyMembers" element={<MembersList />} />
       <Route path="/viewDoctors" element={<DoctorsList />} />
+      <Route path= '/doctorInfo/:id' element={<DoctorInfo />}/>
+      <Route path= '/search' element = {<SearchDoctor />}/>
+
       <Route path="/viewPrescriptions" element={<PrescriptionList />} />
       <Route path="/filterprescriptionsbydatestatusdoctor" element={<FilteredPrescriptionList />} />
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
+      <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
+
     </Routes>
   );
 }
@@ -40,8 +48,14 @@ function PatientHome() {
           <a href="/patient/viewPrescriptions/" rel="noopener noreferrer">
             <button className="btn btn-primary"> view Prescriptions </button>
           </a>
+          <a href="/patient/search/" rel="noopener noreferrer">
+            <button className="btn btn-primary"> Search </button>
+            </a>
           <a href="/patient/filterAppointmentsByDateAndStatus/" rel="noopener noreferrer">
             <button className="btn btn-primary"> filter Appointments </button>
+          </a>
+          <a href="/patient/searchBySpecDate/" rel="noopener noreferrer">
+            <button className="btn btn-primary"> filter Doctors </button>
           </a>
         </div>
       </header>

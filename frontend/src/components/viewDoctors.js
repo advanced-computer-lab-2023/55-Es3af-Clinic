@@ -31,14 +31,15 @@ const DoctorsList = (props) => {
       <div className="App-header">
         {users.length > 0 ? (
           users.map((user) => {
+            // const doctorID = user._id.valueOf()
+            // console.log(doctorID)
             return (
 
               <div
                 className="card"
-                key={user._id}
+                key={user.id}
                 style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
               >
-                
                 <div className="card-body">
                   <h3 className="card-title" style={{ color: "white" }}>
                    Name: {user.name}
@@ -49,6 +50,9 @@ const DoctorsList = (props) => {
                   <h3 className="card-title" style={{ color: "white" }}>
                     Hourly Rate: {user.price}
                   </h3>
+                  <a href= {`/patient/doctorInfo/${user.id}`} rel="noopener noreferrer">
+                    <button className = "btn btn-primary">View Details</button>
+                  </a>
                 </div>
               </div>
             );

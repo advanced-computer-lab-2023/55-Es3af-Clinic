@@ -1,10 +1,11 @@
 import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
-import doctorService from "../services/doctorService";
+import PatientService from "../services/patientService";
+import DoctorInfo from "./doctorInfo";
 
 
-function SearchPatient() {
+function SearchDoctor() {
     console.log('7aga')
   const [results, setResults] = useState([]);
   const [name, setName] = useState('')
@@ -22,9 +23,17 @@ function SearchPatient() {
 
     //const speciality = event.target.speciality.value
 
-    const response = await DoctorService.searchPatientByName(name);
+    const response = await PatientService.search(name, spec);
     console.log('after response')
-    setResults(response.data);
+    //setResults(response.data);
+    if (Array.isArray(response.data)) {
+        setResults(response.data);
+    }
+    else {
+        // Handle the case where response.data is not an array
+        console.log("Data is not an array:", response.data);
+      }
+    
     console.log(response.data)
   };
 
@@ -33,15 +42,25 @@ function SearchPatient() {
       <header className="App-header">
         <form className="App-header" onSubmit= {search}>
           <div className="form-group">
-            <label htmlFor="InputName">Patient name</label>
+            <label htmlFor="InputName">Doctor name</label>
             <input
               type="string"
               className="form-control"
               id="Name"
               name="Name"
-              placeholder="enter patient name"
+              placeholder="enter doctor name"
               value = {name}
               onChange={handleNameChange}
+            />
+            <label htmlFor="InputSpec">Speciality</label>
+            <input
+              type="string"
+              className="form-control"
+              id="spec"
+              name="spec"
+              placeholder="enter speciality"
+              value = {spec}
+              onChange={handleSpecChange}
             />
           </div>
           <button type="submit" className="btn btn-primary">
@@ -49,27 +68,34 @@ function SearchPatient() {
           </button>
           <p>results</p>
           {results.length > 0 ? (
-        results.map((result) => {
+          results.map((result) => {
             return (
               <div
                 className="card"
-                key={result._id}  // Use the appropriate key (e.g., result._id)
+                key={""}
                 style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
               >
                 <div className="card-body">
                   <h3 className="card-title" style={{ color: "white" }}>
-                    Name: {result.Name}  {/* Update to result.Name */}
+                   name: {result.name}
                   </h3>
-                  <a href={`/doctor/searchPatientByName?name=${result.Name}`} rel="noopener noreferrer">
-                    <button className="btn btn-primary">View Details</button>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                   price: {result.price}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                   speciality: {result.speciality}
+                  </h3>
+                  <a href= {`/patient/doctorInfo/${result.id}`} rel="noopener noreferrer">
+                    <button className = "btn btn-primary">View Details</button>
                   </a>
-                </div>
+                  </div>
+
               </div>
             );
-          })          
+          })
         ) : (
           <div>
-            <h2>No patients found</h2>
+            <h2>No doctors found</h2>
           </div>
         )}
         </form>
@@ -78,4 +104,4 @@ function SearchPatient() {
   );
 }
 
-export default SearchPatient;
+export default SearchDoctor;
