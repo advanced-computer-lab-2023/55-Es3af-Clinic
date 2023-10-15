@@ -1,6 +1,7 @@
 const user = require('../Models/user.js');
 const Doctor = require('../Models/Doctor.js');
 const { default: mongoose } = require("mongoose");
+const DoctorRequest = require ('../Models/RequestDoctor');
 
 
 
@@ -32,7 +33,7 @@ await user.findByIdAndDelete(req.params.id)
 
 const viewDoctorData = async (req, res) => {
   try {
-    const doctorsData = await Doctor.find({}, 'hourlyRate affiliation education Background speciality');
+    const doctorsData = await DoctorRequest.find({}, 'hourlyRate affiliation education Background speciality');
     res.send(doctorsData);
   } catch (e) {
     res.status(400).send(e);

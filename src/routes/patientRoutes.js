@@ -10,6 +10,6 @@ patientRoutes.post('/addFamilyMember', patientController.addFamilyMember)
 patientRoutes.get("/doctorInfo/:id",patientController.viewDocInfo);
 patientRoutes.get("/viewPrescriptions/:id",patientController.viewPrescriptions)
 patientRoutes.get("/filterPrescriptions/:id", patientController.filterprescriptionsbydatestatusdoctor)
-
+patientRoutes.get("/filterprescriptionsbydatestatusdoctor/:id", patientController.filterprescriptionsbydatestatusdoctor)
 
 module.exports = {patientRoutes}
