@@ -72,7 +72,7 @@ function SelectPatientList() {
 <button
   style={{ backgroundColor: "green" }}
   data-user-id={user._id} // Set the user's ID as a data attribute
-  onClick={() => selectPatient(user._id)}
+  onClick={() => selectPatient(user.username)}
 >
   Select
 </button>
