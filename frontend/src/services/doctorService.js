@@ -31,7 +31,7 @@ class DoctorService {
         params: queryParams,
       });
     }
-    async searchPatientByName(name) {
+    async SearchPatientByName(name) {
       return http.get(`/doctor/searchPatientByName?name=${name}`);
     }
     

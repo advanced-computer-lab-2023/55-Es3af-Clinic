@@ -1,7 +1,7 @@
 import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
-import DoctorService from "../services/doctorService";
+import doctorService from "../services/doctorService";
 
 
 function SearchPatient() {
