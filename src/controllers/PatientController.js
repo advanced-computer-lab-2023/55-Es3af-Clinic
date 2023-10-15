@@ -599,6 +599,7 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
         const neededPatient = req.params.id
         console.log(`Patient is ${neededPatient}`)
         PrescriptionsModel.find({patient: neededPatient})
+            .populate('doctor', 'name -_id -__t')
             .exec()
             .then((result) => {
                 if(Object.keys(result).length === 0){
@@ -624,9 +625,14 @@ const filterprescriptionsbydatestatusdoctor = async(req, res) => {
             filter.status = status;
         }
         if (doctor){
-            filter.doctor = doctor;
+            
+            const doctor1 = await userModel.findOne({ name: doctor });
+            if (doctor1) {
+                filter.doctor = doctor1.id;
+            }
         }
        const prescription = await PrescriptionsModel.find(filter)
+       .populate('doctor', 'name -_id -__t')
         res.status(200).send(prescription)
     }catch (err) {
         console.error(err);

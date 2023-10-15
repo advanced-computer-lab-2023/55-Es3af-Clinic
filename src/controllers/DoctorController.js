@@ -14,6 +14,7 @@ const healthRecord = require("../Models/HealthRecord.js");
 const getAllPatients = async (req, res) => {
   try{
     const patients = await patientModel.find({});
+    console.log("success")
     res.status(200).json({
       status: 'success',
       data: {
@@ -283,7 +284,7 @@ const filterPatientsByUpcomingPendingAppointments = async (req, res) => {
 // select a patient from the list of patients:
 const selectPatient = async (req, res) => {
   const { doctorId, patientId } = req.query;  
-
+  console.log("yes")
   try {
     const patient = await patientModel.findById(patientId);
 
@@ -294,7 +295,7 @@ const selectPatient = async (req, res) => {
       });
     }
 
-    patient.assignedDoctor = doctorId;
+        patient.assignedDoctor = doctorId;
     await patient.save();
 
     res.status(200).json({

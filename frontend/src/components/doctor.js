@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 import MyPatientList from "../components/viewAllMyPatients";
 import UpdateDoctor from "../components/updateDoctor";
-import SelectPatientList from "../components//selectPatient";
+import SelectPatientList from "../components/selectPatient";
 
 
 
@@ -13,7 +13,7 @@ function DoctorPage() {
       <Route path="/" element={<DoctorHome />} />
       <Route path="/getAllMyPatients" element={< MyPatientList/>} />
       <Route path="/updateDoctor" element={< UpdateDoctor/>} />
-      <Route path="/selectPatient" element={< SelectPatientList/>} />
+      <Route path="/getPatients" element={< SelectPatientList/>} />
 
     </Routes>
   );
