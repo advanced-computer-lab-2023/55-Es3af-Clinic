@@ -253,11 +253,12 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 //filter patients based on upcoming appointments:
 const filterPatientsByUpcomingPendingAppointments = async (req, res) => {
   const doctorId = req.query.Id;  
-
+  const inputDate = req.query.date;
+  console.log("doctorID "+ doctorId+"    date "+inputDate)
   try {
     const upcomingPendingAppointments = await appointment.find({
       doctor: doctorId,
-      date: { $gte: new Date() },  // Filter for future appointments
+      date: { $gte: new Date(inputDate) },  // Filter for future appointments
       status: "pending"  // Filter for pending status
     });
 
@@ -279,7 +280,8 @@ const filterPatientsByUpcomingPendingAppointments = async (req, res) => {
 
 // select a patient from the list of patients:
 const selectPatient = async (req, res) => {
-  const { doctorId, patientUser } = req.query;
+  const doctorId = req.query.doctorId;
+  const patientUser=req.query.patientUser
   console.log("Patient Username:"+patientUser)
   const patientId= await user.findOne({username: patientUser})
   console.log("Patient ID:"+patientId)
