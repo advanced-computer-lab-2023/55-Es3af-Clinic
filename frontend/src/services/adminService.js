@@ -1,20 +1,20 @@
 import http from "./http-common";
 
 class AdminService {
-  addAdmin(username, password) {
-    return http.post("/admin/addAdmin", { username, password });
-  }
+    addAdmin(user) {
+        return http.post("/admin/addAdmin", user);
+      }
 
   listUsers() {
     return http.get("/admin/listUsers");
   }
 
   deleteUser(id) {
-    return http.delete('/admin/deleteUser/${id}');
+    return http.delete(`/admin/deleteUser/${id}`);
   }
 
   viewDoctorData() {
-    return http.get('/admin/viewDoctorData');
+    return http.get("/admin/viewDoctorData");
   }
 }
 

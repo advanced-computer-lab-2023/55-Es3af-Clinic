@@ -15,7 +15,7 @@ function DoctorPage() {
       <Route path="/getAllMyPatients" element={< MyPatientList/>} />
       {/* <Route path="/updateDoctor" element={< UpdateDoctor/>} /> */}
       <Route path="/updateDoctor2" element={< EditDoctor/>} />
-      <Route path="/selectPatient" element={< SelectPatientList/>} />
+      <Route path="/getPatients" element={< SelectPatientList/>} />
 
     </Routes>
   );
