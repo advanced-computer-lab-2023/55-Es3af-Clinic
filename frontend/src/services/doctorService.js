@@ -10,7 +10,7 @@ class DoctorService {
       });
     }
     
-    async selectPatient(doctorId, patientId) {
+    selectPatient(doctorId, patientId) {
       return http.patch('/doctor/selectPatient',{params:{doctorId,patientUser:patientId}})
     }
     
@@ -30,6 +30,9 @@ class DoctorService {
       return http.get(`/doctor/filterAppointmentsByDateAndStatus/${doctorid}`, {
         params: queryParams,
       });
+    }
+    filterPatient(doctorId,inputDate){
+      return http.get('/doctor/filterPatientsByUpcomingPendingAppointments',{params:{doctorId,inputDate}})
     }
 }  
 
