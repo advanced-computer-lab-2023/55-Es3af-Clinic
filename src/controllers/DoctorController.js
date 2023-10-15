@@ -84,26 +84,26 @@ const createHealthRecords =async (req, res) => {
 }
 
 //edit/ update my email, hourly rate or affiliation (hospital):
-const updateDoctor = async(req, res) => {
-  const doctorId = req.query;
-  const {email, hourlyRate, affiliation} = req.body;
-  console.log(req.query);
-    try{
-        //const newBlog = await blogModel.findByIdAndUpdate(req.params.id, req.body);
-       
-        updatedDoctor = await doctorModel.findByIdAndUpdate(doctorId, {email, hourlyRate, affiliation}, {new: true});
-        res.status(200).json({
-          status: 'success',
-          data: {
-            updatedDoctor
-          }
-        })
-      }catch(err){
-        res.status(400).json({
-          message: err.message
-        })
-      } 
-}
+const updateDoctor = async (req, res) => {
+  const doctorId = req.query.doctorId; 
+  const { email, hourlyRate, affiliation } = req.body;
+
+  try {
+    const updatedDoctor = await doctorModel.findByIdAndUpdate(doctorId, { email: email, hourlyRate: hourlyRate, affiliation: affiliation }, { new: true });
+    console.log("dakhalna 2")
+    res.status(200).json({
+      status: 'success',
+      data: {
+        updatedDoctor
+      }
+    });
+  } catch (err) {
+    res.status(400).json({
+      message: err.message
+    });
+  }
+};
+
 //view information and health records of patient registered with me:
 const viewHealthRecords = async (req, res) => {
   const doctorId = req.query.doctorId;  // Doctor's ID
