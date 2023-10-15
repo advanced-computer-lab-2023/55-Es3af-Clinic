@@ -1,76 +1,81 @@
-import React, { useState } from 'react';
-import DoctorService from '../services/doctorService';
+import "../App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { useState } from "react";
+import DoctorService from "../services/doctorService";
 
-const SearchPatientByName = () => {
-    const [results, setResults] = useState([]);
-    const [query, setQuery] = useState("");  // Add query state
-  
-    const handleSearch = async (event) => {
-      event.preventDefault();
-      try {
-        const response = await DoctorService.searchPatientByName(query);
-        console.log('Response:', response);
-        if (response && response.data && response.data.patients) {
-          setResults(response.data.patients);
-        } else {
-          setResults([]);
-        }
-      } catch (error) {
-        console.error('Error searching patients:', error.message);
-        setResults([]);
-      }
-    };
-  
-    const handleInputChange = (event) => {
-      setQuery(event.target.value);  // Update the query state
-    };
-  
-    return (
-      <div className="App">
-        <header className="App-header">
-          <form className="App-header" onSubmit={handleSearch}>
-            <div className="form-group">
-              <label htmlFor="InputUsername">Patient Name</label>
-              <input
-                type="string"
-                className="form-control"
-                id="Name"
-                name="Name"
-                placeholder="Enter Patient Name"
-                value={query}  // Update input value to use the query state
-                onChange={handleInputChange}  // Update input onChange to update the query state
-              />
-            </div>
-            <button type="submit" className="btn btn-primary">
-              Search
-            </button>
-            <p>Results</p>
-            {results.length > 0 ? (
-              results.map((result) => {
-                return (
-                  <div
-                    className="card"
-                    key={result._id}
-                    style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
-                  >
-                    <div className="card-body">
-                      <h3 className="card-title" style={{ color: "white" }}>
-                        Name: {result.name}
-                      </h3>
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div>
-                <h2>No Patients</h2>
-              </div>
-            )}
-          </form>
-        </header>
-      </div>
-    );
+
+function SearchPatient() {
+    console.log('7aga')
+  const [results, setResults] = useState([]);
+  const [name, setName] = useState('')
+  const [spec, setSpec] = useState('')
+  const handleNameChange = (event) => {
+        setName(event.target.value);
+      };
+      const handleSpecChange = (event) => {
+        setSpec(event.target.value);
+      };
+      console.log(name)
+  const search = async (event) => {
+    event.preventDefault();
+    console.log('before response')
+
+    //const speciality = event.target.speciality.value
+
+    const response = await DoctorService.searchPatientByName(name);
+    console.log('after response')
+    setResults(response.data);
+    console.log(response.data)
   };
-  
-  export default SearchPatientByName;
-  
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <form className="App-header" onSubmit= {search}>
+          <div className="form-group">
+            <label htmlFor="InputName">Patient name</label>
+            <input
+              type="string"
+              className="form-control"
+              id="Name"
+              name="Name"
+              placeholder="enter patient name"
+              value = {name}
+              onChange={handleNameChange}
+            />
+          </div>
+          <button type="submit" className="btn btn-primary">
+            Search
+          </button>
+          <p>results</p>
+          {results.length > 0 ? (
+        results.map((result) => {
+            return (
+              <div
+                className="card"
+                key={result._id}  // Use the appropriate key (e.g., result._id)
+                style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
+              >
+                <div className="card-body">
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Name: {result.Name}  {/* Update to result.Name */}
+                  </h3>
+                  <a href={`/doctor/searchPatientByName?name=${result.Name}`} rel="noopener noreferrer">
+                    <button className="btn btn-primary">View Details</button>
+                  </a>
+                </div>
+              </div>
+            );
+          })          
+        ) : (
+          <div>
+            <h2>No patients found</h2>
+          </div>
+        )}
+        </form>
+      </header>
+    </div>
+  );
+}
+
+export default SearchPatient;
