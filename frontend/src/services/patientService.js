@@ -10,6 +10,10 @@ class PatientService {
   viewPrescriptions(id) {
     return http.get(`/patient/viewPrescriptions/${id}`);
   }
+  search(name, spec){
+    console.log('search in service before get')
+    return http.get(`http://localhost:8000/patient/search?name=${name}&speciality=${spec}`)
+  }
 }
 
 

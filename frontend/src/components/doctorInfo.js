@@ -13,7 +13,6 @@ const DoctorInfo = (props) => {
     name: "",
   }
   const [doctor, setDoctor] = useState(temp);
-  
   useEffect(() => {
     viewInfo();
   }, []);
@@ -66,7 +65,6 @@ const DoctorInfo = (props) => {
   return (
     <div>
       <div className="App-header">
-        
           <div
             className="card"
             key={""}
