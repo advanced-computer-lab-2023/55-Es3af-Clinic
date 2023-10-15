@@ -13,15 +13,11 @@ function AdminPage() {
 
       <Route path="/" element={<AdminHome />} />
 
-      <Route path="/addAdmin" element={<AddAdmin />} />
+      <Route path="/addAdmin/*" element={<AddAdmin />} />
 
-      <Route path="/users" element={<UsersList />} />
-      <Route path="/deleteUser" element={<DeleteUser />} />
-
-
-
-
-
+      <Route path="/users/*" element={<UsersList />} />
+      <Route path="/deleteUser/*" element={<DeleteUser />} />
+      <Route path="/packages/*" element={<Packages />} />
 
 
     </Routes>
