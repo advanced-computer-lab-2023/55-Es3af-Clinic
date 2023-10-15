@@ -16,7 +16,7 @@ function PackagePage() {
   );
 }
 
-function AdminHome() {
+function PackageHome() {
   return (
     <div className="App">
       <header className="App-header">
