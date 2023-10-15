@@ -37,7 +37,24 @@ class PatientService {
     return http.get(`/patient/filterAppointmentsByDateAndStatus/${patientid}`, {
       params: queryParams,
     });
+    
   }
+  FilterDoctors(patientid, date, speciality) {
+    const queryParams = {};
+
+    if (date) {
+      queryParams.date = date;
+    }
+    if (speciality) {
+      queryParams.speciality = speciality;
+    }
+
+    return http.get(`/patient/filterAppointmentsByDateAndStatus/${patientid}`, {
+      params: queryParams,
+    });
+    
+  }
+  
 }
 
 
