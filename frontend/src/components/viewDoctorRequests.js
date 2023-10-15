@@ -11,7 +11,7 @@ const DoctorsList = (props) => {
   }, []);
 
   const retrieveMembers = () => {
-    AdminService.viewDoctorData("faraaaah3")
+    AdminService.viewDoctorData()
         .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data)) {
@@ -41,13 +41,13 @@ const DoctorsList = (props) => {
                 
                 <div className="card-body">
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Name: {user.name}
+                   hourlyRate: {user.hourlyRate}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                  Speciality:  {user.speciality}
+                  affiliation:  {user.affiliation}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                    Hourly Rate: {user.price}
+                    specialty: {user.speciality}
                   </h3>
                 </div>
               </div>
