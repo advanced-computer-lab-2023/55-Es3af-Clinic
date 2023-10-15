@@ -19,10 +19,10 @@ function CreatePackage() {
     setPack({ ...pack, [name]: value });
   };
 
-  async function creatPackage(e) {
+  async function createPackage(e) {
     e.preventDefault();
     // no need to console log response data, only for testing
-    PackageService.creatPackage(pack)
+    PackageService.createPackage(pack)
       .then((response) => {
         console.log(response.data);
         
@@ -35,7 +35,7 @@ function CreatePackage() {
   return (
     <div className="App">
       <header className="App-header">
-        <form className="App-header" onSubmit={creatPackage}>
+        <form className="App-header" onSubmit={createPackage}>
           <div className="form-group">
             <label htmlFor="InputType">Type</label>
             <input

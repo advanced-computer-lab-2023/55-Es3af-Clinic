@@ -10,8 +10,6 @@ class AdminService {
   }
 
   deleteUser(id) {
-    console.log("manga")
-    console.log(id)
     return http.delete(`/admin/deleteUser/${id}`);
   }
 
