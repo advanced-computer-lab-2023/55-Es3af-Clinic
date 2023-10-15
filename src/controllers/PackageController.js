@@ -65,7 +65,7 @@ const updatePackage = async (req, res) => {
 
 const deletePackage = async (req, res) => {
   try {
-    const deletedPackage = await Package.findByIdAndDelete(req.params.id);
+    const deletedPackage = await Package.findOne(req.params.id);
     if (!deletedPackage) {
       res.status(404).send({ error: 'Package not found' });
     } else {
@@ -76,4 +76,4 @@ const deletePackage = async (req, res) => {
   }
 };
 
-module.exports = { createPackage, deletePackage, updatePackage };
+module.exports = { createPackage, deletePackage, updatePackages };
