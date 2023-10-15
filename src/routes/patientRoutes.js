@@ -16,4 +16,5 @@ patientRoutes.get("/filterPrescriptions/:id", patientController.filterprescripti
 
 patientRoutes.get("/filterprescriptionsbydatestatusdoctor/:id", patientController.filterprescriptionsbydatestatusdoctor)
 patientRoutes.get("/filterAppointmentsByDateAndStatus/:id", patientController.filterAppointmentsByDateAndStatus)
+patientRoutes.get("/searchBySpecDate/:id", patientController.searchBySpecDate)
 module.exports = {patientRoutes}

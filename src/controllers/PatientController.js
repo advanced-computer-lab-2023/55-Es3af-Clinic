@@ -384,7 +384,7 @@ const searchByNameSpec = async(req, res) => {
 
 const searchBySpecDate = async(req, res) => {
     const { date, speciality } = req.query;
-    const patientID = req.body.patient
+    const patientID = req.params.id
 
     try {
         let filter = {patient: patientID};
