@@ -3,9 +3,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 import AddAdmin from "./addAdmin";
 import UsersList from "./listUsers";
-import AdminService from "../services/adminService";
+//import AdminService from "../services/adminService";
 import DeleteUser from "./deleteUser";
-import ViewDoctorRequests from "./viewDoctorRequests"
+//import ViewDoctorRequests from "./viewDoctorRequests"
 import Packages from "./packages";
 function AdminPage() {
   return (
