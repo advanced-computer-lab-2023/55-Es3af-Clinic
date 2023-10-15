@@ -44,12 +44,12 @@ const DoctorsList = (props) => {
                 <h3 className="card-title" style={{ color: "white" }}>
                    Name: {doctor.name}
                   </h3>
-                  {/* <h3 className="card-title" style={{ color: "white" }}>
+                   <h3 className="card-title" style={{ color: "white" }}>
                    email: {doctor.email}
-                  </h3> */}
-                  {/* <h3 className="card-title" style={{ color: "white" }}>
+                  </h3> 
+                   <h3 className="card-title" style={{ color: "white" }}>
                    dateOfBirth: {doctor.dateOfBirth}
-                  </h3> */}
+                  </h3> 
                   <h3 className="card-title" style={{ color: "white" }}>
                    Hourly Rate: {doctor.hourlyRate}
                   </h3>
