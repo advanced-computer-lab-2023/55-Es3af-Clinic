@@ -5,7 +5,8 @@ import AddMember from "./addFamilyMember";
 import MembersList from "./viewFamilyMembers"
 import DoctorsList from "./viewDoctors";
 import PrescriptionList from "./viewPrescriptions";
-import FilteredPrescriptionList from "./filterprescriptionsbydatestatusdoctor"
+import FilteredPrescriptionList from "./filterprescriptionsbydatestatusdoctor";
+import FilteredAppointmentsList from "./filterAppointmentsByDateAndStatuspatient";  
 
 function PatientPage() {
   return (
@@ -17,7 +18,7 @@ function PatientPage() {
       <Route path="/viewDoctors" element={<DoctorsList />} />
       <Route path="/viewPrescriptions" element={<PrescriptionList />} />
       <Route path="/filterprescriptionsbydatestatusdoctor" element={<FilteredPrescriptionList />} />
-
+      <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
     </Routes>
   );
 }
@@ -38,6 +39,9 @@ function PatientHome() {
           </a>
           <a href="/patient/viewPrescriptions/" rel="noopener noreferrer">
             <button className="btn btn-primary"> view Prescriptions </button>
+          </a>
+          <a href="/patient/filterAppointmentsByDateAndStatus/" rel="noopener noreferrer">
+            <button className="btn btn-primary"> filter Appointments </button>
           </a>
         </div>
       </header>
