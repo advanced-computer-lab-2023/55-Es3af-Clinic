@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import MyPatientList from "../components/viewAllMyPatients";
 import UpdateDoctor from "../components/updateDoctor";
 import SelectPatientList from "../components//selectPatient";
+import FilteredAppointments from "./filterAppointmentsByDateAndStatus.js";
 
 
 
@@ -14,6 +15,7 @@ function DoctorPage() {
       <Route path="/getAllMyPatients" element={< MyPatientList/>} />
       <Route path="/updateDoctor" element={< UpdateDoctor/>} />
       <Route path="/selectPatient" element={< SelectPatientList/>} />
+      <Route path="/filterAppointmentsByDateAndStatus" element= {< FilteredAppointments />} />
 
     </Routes>
   );

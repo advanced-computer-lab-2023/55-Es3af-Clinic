@@ -224,9 +224,10 @@ const searchPatientByName = async (req, res) => {
 
 const filterAppointmentsByDateAndStatus = async (req, res) => {
   const { date, status } = req.query;
+  const doctorid = req.params.id;
 
   try {
-    let filter = {};
+    let filter = {doctor: doctorid};
 
     // Check if date is provided
     if (date) {
@@ -238,14 +239,9 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
       filter.status = status;
     }
 
-    const appointments = await appointment.find(filter);
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        appointments
-      }
-    });
+    const appointments = await appointment.find(filter)
+       .populate('patient', 'name -_id -__t')
+        res.status(200).send(appointments)
   } catch (err) {
     res.status(400).json({
       message: err.message

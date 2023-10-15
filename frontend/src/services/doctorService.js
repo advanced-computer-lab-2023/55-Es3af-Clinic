@@ -10,6 +10,20 @@ class DoctorService {
     async selectPatient(doctorId, patientId) {
       return http.patch("/doctor/selectPatient", { doctorId, patientId });
     }
+    FilteredAppointments(doctorid, date, status) {
+      const queryParams = {};
+  
+      if (date) {
+        queryParams.date = date;
+      }
+      if (status) {
+        queryParams.status = status;
+      }
+  
+      return http.get(`/doctor/filterAppointmentsByDateAndStatus/${doctorid}`, {
+        params: queryParams,
+      });
+    }
 }  
 
 export default new DoctorService();
