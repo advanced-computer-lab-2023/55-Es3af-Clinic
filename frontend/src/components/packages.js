@@ -12,12 +12,6 @@ function PackagePage() {
 
       {/* <Route path="/listPackages" element={<ListPackages />} /> */}
 
-
-
-
-
-
-
     </Routes>
   );
 }
@@ -27,17 +21,17 @@ function PackageHome() {
     <div className="App">
       <header className="App-header">
         <div>
-          <a href="/package/createPackage" rel="noopener noreferrer">
-            <button className="btn btn-primary"> Create Package </button>
+          <a href="/admin/packages/createPackage" rel="noopener noreferrer">
+            <button className="btn btn-primary"> Add Package </button>
           </a>
         </div>
         <div>
-          <a href="/package/deletePackage" rel="noopener noreferrer">
+          <a href="/admin/packages/deletePackage" rel="noopener noreferrer">
             <button className="btn btn-primary"> Delete Package </button>
           </a>
         </div>
         <div>
-          <a href="/package/listPackages" rel="noopener noreferrer">
+          <a href="/admin/packages/listPackages" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Packages </button>
           </a>
         </div>
@@ -46,4 +40,4 @@ function PackageHome() {
   );
 }
 
-export default PackagePage; 
+export default PackagePage;
