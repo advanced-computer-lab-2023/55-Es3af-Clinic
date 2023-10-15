@@ -40,7 +40,7 @@ function DeleteAdmin() {
               id="id"
               name="id"
               value={user.id}
-              placeholder="Enter admin ID to delete"
+              placeholder="Enter ID to delete"
               onChange={handleInputChange}
             ></input>
           </div>
