@@ -8,8 +8,8 @@ class PackageService {
   //   return http.get("/packages/listPackages");
   // }
 
-   deletePackage(pack) {
-    return http.delete("/packages/deletePackage", pack);
+   deletePackage(id) {
+    return http.delete(`/packages/deletePackage/${id}`);
   }
 
 }

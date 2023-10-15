@@ -65,15 +65,22 @@ const updatePackage = async (req, res) => {
 
 const deletePackage = async (req, res) => {
   try {
-    const deletedPackage = await Package.findByIdAndDelete(req.params.id);
-    if (!deletedPackage) {
-      res.status(404).send({ error: 'Package not found' });
-    } else {
-      res.send(deletedPackage);
-    }
+    res.send(await Package.findByIdAndDelete(req.params.id));
   } catch (e) {
     res.status(400).send(e);
   }
+
+
+  // try {
+  //   const deletedPackage = await Package.findByIdAndDelete(req.params.id);
+  //   if (!deletedPackage) {
+  //     res.status(404).send({ error: 'Package not found' });
+  //   } else {
+  //     res.send(deletedPackage);
+  //   }
+  // } catch (e) {
+  //   res.status(400).send(e);
+  // }
 };
 
-module.exports = { createPackage, deletePackage, listPackages };
+module.exports = { createPackage, deletePackage };
