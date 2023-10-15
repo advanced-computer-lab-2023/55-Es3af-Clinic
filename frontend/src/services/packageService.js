@@ -4,7 +4,7 @@ class PackageService {
     createPackage(pack) {
         return http.post("/packages/createPackage", pack);
       }
-  // listPackages() {
+  // updatePackages() {
   //   return http.get("/packages/listPackages");
   // }
 
