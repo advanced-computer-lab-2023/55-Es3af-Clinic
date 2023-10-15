@@ -1,10 +1,9 @@
 import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
-import UserService from "../services/adminService";
-import adminService from "../services/adminService";
+import AdminService from "../services/adminService";
 
-const UsersList = (props) => {
+const DoctorsList = (props) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -12,7 +11,7 @@ const UsersList = (props) => {
   }, []);
 
   const retrieveMembers = () => {
-    adminService.listUsers("faraaaah3")
+    AdminService.viewDoctorData("faraaaah3")
         .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data)) {

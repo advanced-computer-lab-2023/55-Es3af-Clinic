@@ -5,21 +5,16 @@ import AddAdmin from "./addAdmin";
 import UsersList from "./listUsers";
 import AdminService from "../services/adminService";
 import DeleteUser from "./deleteUser";
+import viewDoctorRequests from "./viewDoctorRequests"
 function AdminPage() {
   return (
     <Routes>
+
       <Route path="/" element={<AdminHome />} />
-
       <Route path="/addAdmin" element={<AddAdmin />} />
-
       <Route path="/users" element={<UsersList />} />
       <Route path="/deleteUser" element={<DeleteUser />} />
-
-
-
-
-
-
+      <Route path="/viewDoctorRequests" element={<viewDoctorRequests />} />
 
     </Routes>
   );
