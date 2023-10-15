@@ -9,27 +9,24 @@ function UpdatePackage() {
   const initialUserState = {
     type: "",
     price: 0,
-    sessionDiscount: 60,
-    medicationDiscount: 40, 
-    familyMemberDiscount: 20
+    sessionDiscount: 0,
+    medicationDiscount: 0, 
+    familyMemberDiscount: 0
 
   };
 
-  const [, setPackage] = useState(initialUserState);
+  const [pack, setPack] = useState(initialUserState);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    if(name=== 'ActiveIngredients'){
-      const activeIngredientsList = value.split(',');
-      setMedicine({ ...medicine, [name]: activeIngredientsList});
-    }else{
-      setMedicine({...medicine, [name]:value});
-  }
+    {
+      setPack({ ...pack, [name]: value});
+    }
   }
   async function update(e) {
     e.preventDefault();
     // no need to console log response data, only for testing
-    MedsService.updateMedicine(medicine)
+    packageService.UpdatePackage(pack)
       .then((response) => {
         //console.log(response.data);
       })
@@ -43,44 +40,44 @@ function UpdatePackage() {
       <header className="App-header">
         <form className="App-header" onSubmit={update}>
           <div className="form-group">
-            <label htmlFor="InputUsername">medicine name</label>
+            <label htmlFor="InputUsername">package name</label>
             <input
               type="string"
               className="form-control"
-              id="Name"
-              name="Name"
-              value={medicine.Name}
+              id="type"
+              name="type"
+              value={pack.type}
               placeholder="Enter username"
               onChange={handleInputChange}
             ></input>
           </div>
 
           <div className="form-group">
-            <label htmlFor="InputPassword1">medicine price</label>
+            <label htmlFor="InputPassword1">package price</label>
             <input
               type="number"
               className="form-control"
-              id="Price"
-              name="Price"
-              value={medicine.Price}
+              id="price"
+              name="price"
+              value={pack.price}
               placeholder="Price"
               onChange={handleInputChange}
             ></input>
           </div>
           <div className="form-group">
-            <label htmlFor="InputPassword1">active ingredients</label>
+            <label htmlFor="InputPassword1"> sessionDiscount</label>
             <input
               type="string"
               className="form-control"
-              id="ActiveIngredients"
-              name="ActiveIngredients"
-              value={medicine.ActiveIngredients}
+              id="sessionDiscount"
+              name="sessionDiscount"
+              value={pack.sessionDiscount}
               placeholder="ingredients"
               onChange={handleInputChange}
             ></input>
           </div>
           <button type="submit" className="btn btn-primary">
-            update medicine
+            update package
           </button>
         </form>
       </header>
@@ -88,4 +85,4 @@ function UpdatePackage() {
   );
 }
 
-export default EditMedicine;
+export default UpdatePackage;
