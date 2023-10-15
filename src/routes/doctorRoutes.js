@@ -14,7 +14,7 @@ doctorRouter.route('/createAppointment').post(doctorController.createAppointment
 doctorRouter.route('/viewHealthRecords').get(doctorController.viewHealthRecords);
 doctorRouter.route('/searchPatientByName').get(doctorController.searchPatientByName);
 doctorRouter.route('/getAllMyPatients').get(doctorController.getAllMyPatients);
-doctorRouter.route('/filterAppointmentsByDateAndStatus').get(doctorController.filterAppointmentsByDateAndStatus);
+doctorRouter.route('/filterAppointmentsByDateAndStatus/:id').get(doctorController.filterAppointmentsByDateAndStatus);
 doctorRouter.route('/filterPatientsByUpcomingPendingAppointments').get(doctorController.filterPatientsByUpcomingPendingAppointments);
 doctorRouter.route('/selectPatient').patch(doctorController.selectPatient);
 

@@ -21,13 +21,10 @@ function SelectPatientList() {
     }
   };
 
-  const selectPatient = (event) => {
-    // Access the user's ID from the event's target dataset
-    const userId = event.currentTarget.dataset.userId;
-  
-    // Check if userId is available
-    if (userId) {
-      DoctorService.selectPatient("6525afac114367999aba79df", userId)
+  const selectPatient = (patientId) => {
+    // Check if patientId is available
+    if (patientId) {
+      DoctorService.selectPatient("6525afac114367999aba79df", patientId)
         .then((response) => {
           console.log(response.data);
           window.location.reload(false);
@@ -37,6 +34,7 @@ function SelectPatientList() {
         });
     }
   };
+  
   
     
 
@@ -71,13 +69,14 @@ function SelectPatientList() {
                   <h3 className="card-title" style={{ color: "white" }}>
                     Health Records: {user.healthRecords}
                   </h3>
-                  <button
+<button
   style={{ backgroundColor: "green" }}
   data-user-id={user._id} // Set the user's ID as a data attribute
-  onClick={selectPatient}
+  onClick={() => selectPatient(user.username)}
 >
   Select
 </button>
+
 
                 </div>
               </div>

@@ -24,6 +24,20 @@ class PatientService {
       params: queryParams,
     });
   }
+  FilteredAppointmentsList(patientid, date, status) {
+    const queryParams = {};
+
+    if (date) {
+      queryParams.date = date;
+    }
+    if (status) {
+      queryParams.status = status;
+    }
+
+    return http.get(`/patient/filterAppointmentsByDateAndStatus/${patientid}`, {
+      params: queryParams,
+    });
+  }
 }
 
 
