@@ -2,6 +2,7 @@ import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import PatientService from "../services/patientService";
+import DoctorInfo from "./doctorInfo";
 
 
 function SearchDoctor() {
@@ -24,7 +25,15 @@ function SearchDoctor() {
 
     const response = await PatientService.search(name, spec);
     console.log('after response')
-    setResults(response.data);
+    //setResults(response.data);
+    if (Array.isArray(response.data)) {
+        setResults(response.data);
+    }
+    else {
+        // Handle the case where response.data is not an array
+        console.log("Data is not an array:", response.data);
+      }
+    
     console.log(response.data)
   };
 
