@@ -167,6 +167,7 @@ const viewDoctors = async(req, res) => {
                 const docInfo = []
                 for(let i = 0; i < docArr.length; i++){
                     let info = {
+                        id: docArr[i]._id.valueOf(),
                         name: docArr[i].name,
                         speciality: docArr[i].speciality,
                         price: docPrice[i]
@@ -343,6 +344,7 @@ async function doctorPrice(patientUsername, doctorUsername){
 async function viewDoctorDetails (doctor, patientUsername){
     //const patient = patientModel.findOneAndDelete({username: patientUsername})
     var details = {
+        id: doctor._id.valueOf(),
         name: doctor.name,
         speciality: doctor.speciality,
         price : await doctorPrice(patientUsername, doctor.username)
@@ -353,8 +355,9 @@ async function viewDoctorDetails (doctor, patientUsername){
 
 //working and testing fine
 const searchByNameSpec = async(req, res) => {
-    const {name, spec} = req.query
-    const patientUsername = req.body.username
+    const name = req.query.name
+    const spec = req.query.speciality
+    const patientUsername = "farouhaTe3bet"
     console.log(`name ${name} spec ${spec}`)
     var search = {}
     if(name){search.name = name
@@ -377,19 +380,6 @@ const searchByNameSpec = async(req, res) => {
         }
     }
     catch(err){console.error(err)}
-    // var docSearch = {
-    //     name: req.query.name,
-    //     spec: req.query.speciality
-    // }
-    // doctorModel.find({$and: [{name: docSearch.name}, {speciality: docSearch.spec}]})
-    //     .exec()
-    //     .then((result) => {
-    //         if(Object.keys(result).length === 0){
-    //             res.status(200).send(`There is no results for ${docSpec}`)
-    //         }
-    //         else {res.status(200).send(result)}
-    //     })
-    //     .catch((err) => {console.error(err)})
 }
 
 const searchBySpecDate = async(req, res) => {
@@ -549,12 +539,12 @@ const searchBySpecDate = async(req, res) => {
 
 //working fine testing fine
 const viewDocInfo = async(req, res) => {
-    const docUsername = req.body.Dusername  //need to work on this
-    const patientUsername = req.body.Pusername
-    doctorModel.findOne({username: docUsername})
+    const doctorID = req.params.id  //need to work on this
+    const patient = "farouhaTe3bet"
+    doctorModel.findById(doctorID)
         .exec()
         .then(async (info) => {
-            var price = await doctorPrice(patientUsername, docUsername)
+            var price = await doctorPrice(patient, info.username)
 
             var docInfo = {
                 name: info.name,
