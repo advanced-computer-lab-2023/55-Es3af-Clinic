@@ -1,10 +1,10 @@
 const Router = require('express')
-const packageController = require('../controllers/PakcageController')
+const packageController = require('../controllers/PackageController')
 
 const packageRoutes = new Router();
 
 packageRoutes.post('/createPackage',packageController.createPackage)
-packageRoutes.put('/updatePackages',packageController.updatePackages)
+packageRoutes.put('/updatePackages',packageController.updatePackage)
 packageRoutes.delete('/deletePackage', packageController.deletePackage)
 
 
