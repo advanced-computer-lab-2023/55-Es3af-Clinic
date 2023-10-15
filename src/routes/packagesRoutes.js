@@ -1,5 +1,5 @@
 const Router = require('express')
-const packageController = require('../controllers/PakcageController')
+const packageController = require('../controllers/PackageController')
 
 const packageRoutes = new Router();
 
