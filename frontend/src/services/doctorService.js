@@ -17,7 +17,7 @@ class DoctorService {
     async getAllPatients() {
       return http.get("/doctor/getPatients");
     }
-    FilteredAppointments(doctorid, date, status) {
+    async FilteredAppointments(doctorid, date, status) {
       const queryParams = {};
   
       if (date) {
