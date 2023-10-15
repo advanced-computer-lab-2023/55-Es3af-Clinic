@@ -17,6 +17,10 @@ class DoctorService {
     async getAllPatients() {
       return http.get("/doctor/getPatients");
     }
+    async searchPatientByName(name) {
+      return http.get(`/doctor/searchPatientByName?name=${name}`);
+    }
+    
 }  
 
 export default new DoctorService();
