@@ -280,11 +280,12 @@ const filterPatientsByUpcomingPendingAppointments = async (req, res) => {
 // select a patient from the list of patients:
 const selectPatient = async (req, res) => {
   const { doctorId, patientId } = req.query;  
-  console.log("yes")
+  console.log("Patient ID:"+patientId)
   try {
     const patient = await patientModel.findById(patientId);
 
     if (!patient) {
+      console.log("fail")
       return res.status(404).json({
         status: 'fail',
         message: 'Patient not found'
@@ -293,7 +294,7 @@ const selectPatient = async (req, res) => {
 
         patient.assignedDoctor = doctorId;
     await patient.save();
-
+    console.log("yes2")
     res.status(200).json({
       status: 'success',
       data: {
