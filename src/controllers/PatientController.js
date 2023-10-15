@@ -572,14 +572,15 @@ const viewDocInfo = async(req, res) => {
 //working and testing fine
 const filterAppointmentsByDateAndStatus = async (req, res) => {
     const { date, status } = req.query;
-    const patientID = req.body.patient
+    const patientID = req.params.id;
 
     try {
       let filter = {patient: patientID};
       if (date) {filter.date = {$gte: date};}
       if (status) {filter.status = status;}
 
-      const appointments = await appointmentModel.find(filter);
+      const appointments = await appointmentModel.find(filter)
+      .populate('doctor', 'name -_id -__t');
       console.log(appointments)
 
       if(appointments){res.status(200).send(appointments);}

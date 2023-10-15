@@ -11,7 +11,7 @@ class DoctorService {
     }
     
     async selectPatient(doctorId, patientId) {
-      return http.patch('/doctor/selectPatient',{params:{doctorId,patientId}})
+      return http.patch('/doctor/selectPatient',{params:{doctorId,patientUser:patientId}})
     }
     
     async getAllPatients() {
@@ -31,6 +31,10 @@ class DoctorService {
         params: queryParams,
       });
     }
+    async searchPatientByName(name) {
+      return http.get(`/doctor/searchPatientByName?name=${name}`);
+    }
+    
 }  
 
 export default new DoctorService();

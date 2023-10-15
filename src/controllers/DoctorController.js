@@ -279,7 +279,9 @@ const filterPatientsByUpcomingPendingAppointments = async (req, res) => {
 
 // select a patient from the list of patients:
 const selectPatient = async (req, res) => {
-  const { doctorId, patientId } = req.query;  
+  const { doctorId, patientUser } = req.query;
+  console.log("Patient Username:"+patientUser)
+  const patientId= await user.findOne({username: patientUser})
   console.log("Patient ID:"+patientId)
   try {
     const patient = await patientModel.findById(patientId);
