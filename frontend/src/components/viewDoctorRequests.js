@@ -2,20 +2,21 @@ import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import AdminService from "../services/adminService";
+import RequestDoctor from "./RequestDoctor";
 
 const DoctorsList = (props) => {
-  const [users, setUsers] = useState([]);
+  const [doctor, setDoctor] = useState([]);
 
   useEffect(() => {
     retrieveMembers();
   }, []);
 
   const retrieveMembers = () => {
-    AdminService.viewDoctorData("faraaaah3")
+    AdminService.viewDoctorData()
         .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data)) {
-            setUsers(response.data);
+            setDoctor(response.data);
         }
         else {
             // Handle the case where response.data is not an array
@@ -29,25 +30,37 @@ const DoctorsList = (props) => {
   return (
     <div>
       <div className="App-header">
-        {users.length > 0 ? (
-          users.map((user) => {
+        {doctor.length > 0 ? (
+          doctor.map((doctor) => {
             return (
 
               <div
                 className="card"
-                key={user._id}
+                key={doctor._id}
                 style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
               >
                 
                 <div className="card-body">
+                {/* <h3 className="card-title" style={{ color: "white" }}>
+                   name: {doctor.name}
+                  </h3> */}
+                  {/* <h3 className="card-title" style={{ color: "white" }}>
+                   email: {doctor.email}
+                  </h3> */}
+                  {/* <h3 className="card-title" style={{ color: "white" }}>
+                   dateOfBirth: {doctor.dateOfBirth}
+                  </h3> */}
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Name: {user.name}
+                   hourlyRate: {doctor.hourlyRate}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                  Speciality:  {user.speciality}
+                  affiliation:  {doctor.affiliation}
                   </h3>
+                  {/* <h3 className="card-title" style={{ color: "white" }}>
+                   educationBackground: {doctor.educationBackground}
+                  </h3> */}
                   <h3 className="card-title" style={{ color: "white" }}>
-                    Hourly Rate: {user.price}
+                    specialty: {doctor.speciality}
                   </h3>
                 </div>
               </div>
