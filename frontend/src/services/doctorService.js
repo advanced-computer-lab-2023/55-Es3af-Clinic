@@ -17,7 +17,7 @@ class DoctorService {
     async getAllPatients() {
       return http.get("/doctor/getPatients");
     }
-    FilteredAppointments(doctorid, date, status) {
+    async FilteredAppointments(doctorid, date, status) {
       const queryParams = {};
   
       if (date) {
@@ -31,6 +31,10 @@ class DoctorService {
         params: queryParams,
       });
     }
+    async searchPatientByName(name) {
+      return http.get(`/doctor/searchPatientByName?name=${name}`);
+    }
+    
     filterPatient(doctorId,inputDate){
       return http.get('/doctor/filterPatientsByUpcomingPendingAppointments',{params:{doctorId,inputDate}})
     }

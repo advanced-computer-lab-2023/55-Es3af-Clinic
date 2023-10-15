@@ -2,10 +2,11 @@ import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 import MyPatientList from "../components/viewAllMyPatients";
-import UpdateDoctor from "../components/updateDoctor";
+// import UpdateDoctor from "../components/updateDoctor";
 import SelectPatientList from "../components/selectPatient";
 import EditDoctor from "../components/updateDoctor2";
 import FilteredAppointments from "./filterAppointmentsByDateAndStatus.js";
+import SearchPatientByName from "../components/searchForPatientByName";
 import FilteredPatientsByAppointments from "./filterPatientByAppointment";
 
 
@@ -18,6 +19,7 @@ function DoctorPage() {
       <Route path="/updateDoctor2" element={< EditDoctor/>} />
       <Route path="/getPatients" element={< SelectPatientList/>} />
       <Route path="/filterAppointmentsByDateAndStatus" element= {< FilteredAppointments />} />
+      <Route path="/searchPatientByName" element={< SearchPatientByName/>} />
       <Route path="/filterPatientsByUpcomingPendingAppointments" element= {< FilteredPatientsByAppointments />} />
 
     </Routes>

@@ -2,6 +2,7 @@ import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 import CreatePackage from "./createPackage";
+import DeletePackage from "./deletePackage";
 //import PackageServiceService from "../services/packageService";
 function PackagePage() {
   return (
@@ -10,7 +11,7 @@ function PackagePage() {
 
       <Route path="/createPackage" element={<CreatePackage />} />
 
-      {/* <Route path="/listPackages" element={<ListPackages />} /> */}
+      <Route path="/deletePackage" element={<DeletePackage />} />
 
     </Routes>
   );
