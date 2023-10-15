@@ -5,6 +5,7 @@ import MyPatientList from "../components/viewAllMyPatients";
 import UpdateDoctor from "../components/updateDoctor";
 import SelectPatientList from "../components/selectPatient";
 import EditDoctor from "../components/updateDoctor2";
+import FilteredAppointments from "./filterAppointmentsByDateAndStatus.js";
 
 
 
@@ -16,6 +17,7 @@ function DoctorPage() {
       {/* <Route path="/updateDoctor" element={< UpdateDoctor/>} /> */}
       <Route path="/updateDoctor2" element={< EditDoctor/>} />
       <Route path="/getPatients" element={< SelectPatientList/>} />
+      <Route path="/filterAppointmentsByDateAndStatus" element= {< FilteredAppointments />} />
 
     </Routes>
   );
