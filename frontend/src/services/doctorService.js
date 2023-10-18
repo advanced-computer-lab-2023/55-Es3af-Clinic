@@ -36,7 +36,7 @@ class DoctorService {
     }
     
     filterPatient(doctorId,inputDate){
-      return http.get('/doctor/filterPatientsByUpcomingPendingAppointments',{params:{doctorId,inputDate}})
+      return http.get(`/doctor/filterPatientsByUpcomingPendingAppointments?Id=${doctorId}&date=${inputDate}`)
     }
 }  
 
