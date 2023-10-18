@@ -63,7 +63,7 @@ class PatientService {
       queryParams.speciality = speciality;
     }
 
-    return http.get(`/patient/filterAppointmentsByDateAndStatus/${patientid}`, {
+    return http.get(`/patient/searchBySpecDate/${patientid}`, {
       params: queryParams,
     }); }
     
