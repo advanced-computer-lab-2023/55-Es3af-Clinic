@@ -24,7 +24,13 @@ const MyPatientList = (props) => {
         console.log(e);
       });
   };
-// Add a click event listener to the button
+  const formatDateOfBirth = (dateOfBirth) => {
+    const date = new Date(dateOfBirth);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Month is zero-indexed
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
   const viewDets =(patient) =>{
     const contentContainer = document.getElementById('contentContainer');
     contentContainer.innerHTML =`
@@ -43,7 +49,7 @@ const MyPatientList = (props) => {
                     Email: ${patient.email}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                    Date Of Birth: ${patient.dateOfBirth}
+                    Date Of Birth: ${formatDateOfBirth(patient.dateOfBirth)}
                   </h3> 
                   <h3 className="card-title" style={{ color: "white" }}>
                     Gender: ${patient.gender}

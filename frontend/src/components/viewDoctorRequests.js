@@ -27,6 +27,13 @@ const DoctorsList = (props) => {
         console.log(e);
       });
   };
+  const formatDateOfBirth = (dateOfBirth) => {
+    const date = new Date(dateOfBirth);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Month is zero-indexed
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
   return (
     <div>
       <div className="App-header">
@@ -48,7 +55,7 @@ const DoctorsList = (props) => {
                    email: {doctor.email}
                   </h3> 
                    <h3 className="card-title" style={{ color: "white" }}>
-                   dateOfBirth: {doctor.dateOfBirth}
+                   dateOfBirth: {formatDateOfBirth(doctor.dateOfBirth)}
                   </h3> 
                   <h3 className="card-title" style={{ color: "white" }}>
                    Hourly Rate: {doctor.hourlyRate}

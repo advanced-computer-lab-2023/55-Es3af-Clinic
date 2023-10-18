@@ -26,6 +26,13 @@ function FilteredPrescriptionList() {
     setResults(response.data);
     setSearchPerformed(true);
   };
+  const formatDateOfBirth = (dateOfBirth) => {
+    const date = new Date(dateOfBirth);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Month is zero-indexed
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   return (
     <div className="App">
@@ -79,7 +86,7 @@ function FilteredPrescriptionList() {
                    Status: {result.status}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Date: {result.date}
+                   Date: {formatDateOfBirth(result.date)}
                   </h3>
                   </div>
               </div>

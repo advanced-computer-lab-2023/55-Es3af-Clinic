@@ -26,6 +26,13 @@ const PrescriptionList = (props) => {
           console.log(e);
         });
     };
+    const formatDateOfBirth = (dateOfBirth) => {
+      const date = new Date(dateOfBirth);
+      const day = date.getDate();
+      const month = date.getMonth() + 1; // Month is zero-indexed
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
     return (
       <div>
         <div className="App-header">
@@ -50,7 +57,7 @@ const PrescriptionList = (props) => {
                       Status:  {user.status}
                     </h3>
                     <h3 className="card-title" style={{ color: "white" }}>
-                      Date: {user.date}
+                      Date: {formatDateOfBirth(user.date)}
                     </h3>
                     <button className="btn btn-primary">Select</button>
                   </div>

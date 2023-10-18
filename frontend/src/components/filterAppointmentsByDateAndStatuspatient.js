@@ -12,7 +12,7 @@ function FilteredAppointmentsList() {
 
     const date = event.target.date.value
     const status = event.target.status.value;
-    const patientid = "652b2da81a7433f37b218610";
+    const patientid = "652b2d531a7433f37b21860e";
     
 
     const response = await patientService.FilteredAppointmentsList(
@@ -23,6 +23,13 @@ function FilteredAppointmentsList() {
 
     setResults(response.data);
     setSearchPerformed(true);
+  };
+  const formatDateOfBirth = (dateOfBirth) => {
+    const date = new Date(dateOfBirth);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Month is zero-indexed
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   return (
@@ -69,7 +76,7 @@ function FilteredAppointmentsList() {
                    Status: {result.status}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Date: {result.date}
+                   Date: {formatDateOfBirth(result.date)}
                   </h3>
                   </div>
               </div>
