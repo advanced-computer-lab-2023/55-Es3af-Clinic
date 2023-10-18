@@ -2,6 +2,7 @@ import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import patientService from "../services/patientService";
+import { Link } from "react-router-dom";
 
 function FilterDoctors() {
   const [results, setResults] = useState([]);
@@ -68,7 +69,9 @@ function FilterDoctors() {
                   <h3 className="card-title" style={{ color: "white" }}>
                   Affiliation: {result.affiliation}
                   </h3>
-                  
+                  <button className = "btn btn-primary">
+                      <Link to={`/patient/doctorInfo/${result.id}`} style={{ color: 'white', textDecoration: 'underline' }}>View Details</Link>
+                    </button>
                   </div>
               </div>
             );

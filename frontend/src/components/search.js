@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import PatientService from "../services/patientService";
 import DoctorInfo from "./doctorInfo";
+import { Link } from "react-router-dom";
 
 
 function SearchDoctor() {
@@ -85,9 +86,9 @@ function SearchDoctor() {
                   <h3 className="card-title" style={{ color: "white" }}>
                    speciality: {result.speciality}
                   </h3>
-                  <a href= {`/patient/doctorInfo/${result.id}`} rel="noopener noreferrer">
-                    <button className = "btn btn-primary">View Details</button>
-                  </a>
+                    <button className = "btn btn-primary">
+                      <Link to={`/patient/doctorInfo/${result.id}`} style={{ color: 'white', textDecoration: 'underline' }}>View Details</Link>
+                    </button>
                   </div>
 
               </div>
