@@ -10,6 +10,7 @@ import SearchDoctor from './search'
 import FilteredPrescriptionList from "./filterprescriptionsbydatestatusdoctor";
 import FilteredAppointmentsList from "./filterAppointmentsByDateAndStatuspatient"; 
 import FilterDoctors from "./Filterdoctors";
+import PkgList from "./viewPackages";
 
 function PatientPage() {
   return (
@@ -21,7 +22,7 @@ function PatientPage() {
       <Route path="/viewDoctors" element={<DoctorsList />} />
       <Route path= '/doctorInfo/:id' element={<DoctorInfo />}/>
       <Route path= '/search' element = {<SearchDoctor />}/>
-
+      <Route path= '/viewHealthPackages' element={<PkgList/>}/>
       <Route path="/viewPrescriptions" element={<PrescriptionList />} />
       <Route path="/filterprescriptionsbydatestatusdoctor" element={<FilteredPrescriptionList />} />
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
@@ -52,10 +53,13 @@ function PatientHome() {
             <button className="btn btn-primary"> Search </button>
             </a>
           <a href="/patient/filterAppointmentsByDateAndStatus/" rel="noopener noreferrer">
-            <button className="btn btn-primary"> filter Appointments </button>
+            <button className="btn btn-primary"> Filter Appointments </button>
           </a>
           <a href="/patient/searchBySpecDate/" rel="noopener noreferrer">
-            <button className="btn btn-primary"> filter Doctors </button>
+            <button className="btn btn-primary"> Filter Doctors </button>
+          </a>
+          <a href="/patient/viewHealthPackages/" rel="noopener noreferrer">
+            <button className="btn btn-primary"> View Health Packages </button>
           </a>
         </div>
       </header>

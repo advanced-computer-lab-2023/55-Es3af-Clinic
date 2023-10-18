@@ -82,5 +82,13 @@ const deletePackage = async (req, res) => {
   //   res.status(400).send(e);
   // }
 };
+const viewPackages = async (req, res) =>{
+  try {
+    const pkgData = await Package.find({});
+    res.send(pkgData);
+  } catch (e) {
+    res.status(400).send(e);
+  }
 
-module.exports = { createPackage, deletePackage };
+}
+module.exports = { createPackage, deletePackage, viewPackages };

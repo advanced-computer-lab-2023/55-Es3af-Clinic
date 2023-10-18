@@ -5,11 +5,14 @@ class PackageService {
         return http.post("/packages/createPackage", pack);
       }
   updatePackages() {
-  return http.get("/packages/listPackages");
+  //return http.get("/packages/listPackages");
   }
 
    deletePackage(id) {
     return http.delete(`/packages/deletePackage/${id}`);
+  }
+  viewPackages(){
+    return http.get("/packages");
   }
 
 }
