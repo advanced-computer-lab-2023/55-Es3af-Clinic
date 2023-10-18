@@ -265,40 +265,6 @@ async function doctorPrice(patientUsername, doctorUsername) {
     sessionPrice = sessionPrice * (1 - package.sessionDiscount);
   }
   return sessionPrice;
-  //var hourlyRate = 0
-  // doctorModel.findOne({username: doctorUsername})
-  //     .exec()
-  //     .then((doctor) => {
-  //         sessionPrice = doctor.hourlyRate * 1.1
-  //         console.log(`initial price is ${sessionPrice} inside function`)
-  //     })
-  //     .catch((err) => {console.error(err)})
-
-  // patientModel.findOne({username: patientUsername})
-  //     .exec()
-  //     .then((patient) => {
-  //         console.log(`patient is ${patient} inside function`)
-  //         if(patient.package !== 'none'){
-  //             packageModel.findOne({type: patient.package})
-  //             .exec()
-  //             .then((package) => {
-  //                 console.log(`package is ${package} inside function`)
-  //                 discount = package.sessionDiscount
-  //                 sessionPrice = sessionPrice * (1 - discount)
-  //                 console.log(`price is ${sessionPrice} inside function inside if package`)
-  //                 //return sessionPrice
-  //             })
-  //             .catch((err) => {console.error(err)})
-  //         }
-  //         else{
-  //             sessionPrice = hourlyRate * 1.1
-  //             console.log(`price is ${sessionPrice} inside function inside else package`)
-  //         }
-
-  //     })
-  //     return sessionPrice
-  //})
-  //.catch((err) => {console.error(err)})
 }
 
 //working fine testing fine
@@ -402,13 +368,18 @@ const searchBySpecDate = async (req, res) => {
     var appointments = []; //ids doctors that are busy
     var doctors = [];
     var result = [];
-
+    
     if (speciality && !date) {
       //if there's no date, working fine
       console.log("speciality only");
       var doctor = await doctorModel.find({ speciality: speciality });
       if (doctor.length > 0) {
-        res.status(200).send(doctor);
+        for(var d of doctor){
+            var details = await viewDoctorDetails(d, 'farouhaTe3bet')
+            console.log(details)
+            doctors.push(details)
+        }
+        res.status(200).send(doctors);
       } else {
         res.status(200).send("no doctors with this speciality");
       }
@@ -436,12 +407,15 @@ const searchBySpecDate = async (req, res) => {
         for (var doc of allDoctors) {
           var id = doc._id.valueOf();
           if(appointments.length == 0){
-            console.log('deen om el appointments fadya')
-            doctors.push(doc)
+            
+            var details = await viewDoctorDetails(doc, 'farouhaTe3bet')
+            console.log(`deen om el appointments fadya ${details}`)
+            doctors.push(details)
           }
           else if (!appointments.includes(id)) {
-            console.log(`om el appointments ${appointments}`);
-            doctors.push(doc);
+            var details = await viewDoctorDetails(doc, 'farouhaTe3bet')
+            console.log(`om el appointments ${appointments} wel details ${details}`);
+            doctors.push(details);
           }
         }
       }
@@ -453,7 +427,9 @@ const searchBySpecDate = async (req, res) => {
     if (date && speciality) {
       for (doc of doctors) {
         if (doc.speciality == speciality) {
-          result.push(doc);
+            var details = await viewDoctorDetails(doc,'farouhaTe3bet')
+            console.log(details)
+          result.push(details);
         }
       }
       res.status(200).send(result);

@@ -23,6 +23,7 @@ function FilterDoctors() {
     );
 
     setResults(response.data);
+    console.log(response)
     setSearchPerformed(true);
   };
 
@@ -40,11 +41,12 @@ function FilterDoctors() {
             placeholder="enter speciality" />
 
             <input
-            type="string"
-            className="form-control"
-            id="date"
-            name="date"
-            placeholder="enter date" />
+              type="datetime"
+              className="form-control"
+              id="date"
+              name="date"
+              placeholder="enter date"
+            />
 
           </div>
           <button type="submit" className="btn btn-primary">
@@ -64,10 +66,10 @@ function FilterDoctors() {
                    Doctor: {result.name}
                 </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Hourly Rate: {result.hourlyRate}
+                   Hourly Rate: {result.price}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                  Affiliation: {result.affiliation}
+                  Speciality: {result.speciality}
                   </h3>
                   <button className = "btn btn-primary">
                       <Link to={`/patient/doctorInfo/${result.id}`} style={{ color: 'white', textDecoration: 'underline' }}>View Details</Link>
