@@ -1,7 +1,7 @@
 import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
-import doctorService from "../services/doctorService";
+import DoctorService from "../services/doctorService";
 
 function FilteredPatientsByAppointments() {
     const [results, setResults] = useState([]);
@@ -15,7 +15,7 @@ function FilteredPatientsByAppointments() {
   
       // Call the filterPatient function and pass doctorId and date as parameters
       try {
-        const response = await doctorService.filterPatient(doctorId, date);
+        const response = await DoctorService.filterPatient(doctorId, date);
         setResults(response.data.data.patients);
         setSearchPerformed(true);
       } catch (error) {
@@ -52,17 +52,17 @@ function FilteredPatientsByAppointments() {
                 >
                   <div className="card-body">
                     <h3 className="card-title" style={{ color: "white" }}>
-                      Patient: {result.patient.name}
+                      Patient Name: {result.name}
+                    </h3>
+                     <h3 className="card-title" style={{ color: "white" }}>
+                      Gender: {result.gender}
                     </h3>
                     <h3 className="card-title" style={{ color: "white" }}>
-                      Duration: {result.duration}
+                      Mobile Number: {result.mobile}
                     </h3>
                     <h3 className="card-title" style={{ color: "white" }}>
-                      Status: {result.status}
-                    </h3>
-                    <h3 className="card-title" style={{ color: "white" }}>
-                      Date: {result.date}
-                    </h3>
+                      Health Records: {result.healthRecords}
+                    </h3> 
                   </div>
                 </div>
               );

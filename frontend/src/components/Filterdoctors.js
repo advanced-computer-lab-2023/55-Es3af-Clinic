@@ -12,14 +12,14 @@ function FilterDoctors() {
     event.preventDefault();
 
     const date = event.target.date.value
-    const status = event.target.status.value;
+    const speciality = event.target.speciality.value;
     const patientid = "652b2da81a7433f37b218610";
     
 
     const response = await patientService.FilterDoctors(
       patientid,
       date,
-      status
+      speciality
     );
 
     setResults(response.data);
@@ -61,16 +61,13 @@ function FilterDoctors() {
               >
                 <div className="card-body">
                 <h3 className="card-title" style={{ color: "white" }}>
-                   Doctor: {result.doctor.name}
+                   Doctor: {result.name}
                 </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Duration: {result.duration}
+                   Hourly Rate: {result.hourlyRate}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Status: {result.status}
-                  </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                   Date: {result.date}
+                  Affiliation: {result.affiliation}
                   </h3>
                   <button className = "btn btn-primary">
                       <Link to={`/patient/doctorInfo/${result.id}`} style={{ color: 'white', textDecoration: 'underline' }}>View Details</Link>
