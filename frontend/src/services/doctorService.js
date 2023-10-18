@@ -10,9 +10,9 @@ class DoctorService {
       });
     }
     
-    selectPatient(doctorId, patientId) {
-      return http.patch('/doctor/selectPatient',{params:{doctorId,patientUser:patientId}})
-    }
+    // selectPatient(doctorId, patientId) {
+    //   return http.patch('/doctor/selectPatient',{params:{doctorId,patientUser:patientId}})
+    // }
     
     async getAllPatients() {
       return http.get("/doctor/getPatients");

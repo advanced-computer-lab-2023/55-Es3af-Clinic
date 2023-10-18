@@ -24,10 +24,56 @@ const MyPatientList = (props) => {
         console.log(e);
       });
   };
+// Add a click event listener to the button
+  const viewDets =(patient) =>{
+    const updateButton = document.getElementById('updateButton');
+    const contentContainer = document.getElementById('contentContainer');
+    contentContainer.innerHTML =`
+    <div>
+      <div className="App-header">
+        <div
+                className="card"
+                key={patient._id}
+                style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
+              >
+                <div className="card-body">
+                <h3 className="card-title" style={{ color: "white" }}>
+                    Name: ${patient.name}
+                  </h3>
+                   <h3 className="card-title" style={{ color: "white" }}>
+                    Email: ${patient.email}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Date Of Birth: ${patient.dateOfBirth}
+                  </h3> 
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Gender: ${patient.gender}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Mobile: ${patient.mobile}
+                  </h3>
+                  ${patient.emergencyContact ? `
+                  <h3 className="card-title" style="color: white;">
+                      Emergency Contact: ${patient.emergencyContactName} - ${patient.emergencyContactMobile}
+                  </h3>
+              ` : ''}
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Package: ${patient.package}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Health Records: ${patient.healthRecords}
+                  </h3> 
+                </div>
+                </div>
+      </div>
+    </div>`;
+
+  
+  };
 
   return (
     <div>
-      <div className="App-header">
+      <div className="App-header" id="contentContainer">
         {patients.length > 0 ? (
           patients.map((patient) => {
             return (
@@ -37,14 +83,13 @@ const MyPatientList = (props) => {
                 style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
               >
                 <div className="card-body">
+                <button
+                  style={{backgroundColor:"#2a5923"}}
+                  id="updateButton"
+                  onClick={()=> viewDets(patient)}
+                  >
                   <h3 className="card-title" style={{ color: "white" }}>
                     Name: {patient.name}
-                  </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                    Email: {patient.email}
-                  </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                    Date Of Birth: {patient.dateOfBirth}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
                     Gender: {patient.gender}
@@ -52,17 +97,7 @@ const MyPatientList = (props) => {
                   <h3 className="card-title" style={{ color: "white" }}>
                     Mobile: {patient.mobile}
                   </h3>
-                  {patient.emergencyContact && (
-                    <h3 className="card-title" style={{ color: "white" }}>
-                      Emergency Contact: {patient.emergencyContactName} - {patient.emergencyContactMobile}
-                    </h3>
-                  )}
-                  <h3 className="card-title" style={{ color: "white" }}>
-                    Package: {patient.package}
-                  </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                    Health Records: {patient.healthRecords}
-                  </h3>
+                  </button>
                 </div>
               </div>
             );
