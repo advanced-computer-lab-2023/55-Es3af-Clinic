@@ -52,6 +52,7 @@ const PrescriptionList = (props) => {
                     <h3 className="card-title" style={{ color: "white" }}>
                       Date: {user.date}
                     </h3>
+                    <button className="btn btn-primary">Select</button>
                   </div>
                 </div><div>
                     <a href="/patient/filterprescriptionsbydatestatusdoctor" rel="noopener noreferrer">
