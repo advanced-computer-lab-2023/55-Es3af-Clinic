@@ -1,23 +1,25 @@
-import "../App.css";
+import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
-import doctorService from "../services/doctorService";
+import PatientService from "../../services/patientService";
 
-function FilteredAppointments() {
+function FilteredPrescriptionList() {
   const [results, setResults] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
 
   const search = async (event) => {
     event.preventDefault();
 
-    const date = event.target.date.value
+    const date = event.target.date.value;
+    const doctor = event.target.doctor.value;
     const status = event.target.status.value;
-    const doctorid = "6525afac114367999aba79df";
+    const patientid = "652b2d531a7433f37b21860e";
     
 
-    const response = await doctorService.FilteredAppointments(
-      doctorid,
+    const response = await PatientService.FilteredPrescriptionList(
+      patientid,
       date,
+      doctor,
       status
     );
 
@@ -37,7 +39,15 @@ function FilteredAppointments() {
       <header className="App-header">
         <form className="App-header" onSubmit={search}>
           <div className="form-group">
-            <label htmlFor="InputUsername">Appointments</label>
+            <label htmlFor="InputUsername">Prescriptions</label>
+            <input
+              type="string"
+              className="form-control"
+              id="doctor"
+              name="doctor"
+              placeholder="enter doctor name"
+              
+            />
             <input
             type="string"
             className="form-control"
@@ -67,10 +77,10 @@ function FilteredAppointments() {
               >
                 <div className="card-body">
                 <h3 className="card-title" style={{ color: "white" }}>
-                      Patient: {result.patient.name}
+                      Medicine: {result.medicine}
                     </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Duration: {result.duration}
+                   Doctor: {result.doctor.name}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
                    Status: {result.status}
@@ -84,7 +94,7 @@ function FilteredAppointments() {
           })
         ) : (
           <div>
-            <h2>No Appointments found</h2>
+            <h2>No Prescriptions found</h2>
           </div>
         )}
           
@@ -93,4 +103,5 @@ function FilteredAppointments() {
     </div>
   );
 }
-export default FilteredAppointments;
+
+export default FilteredPrescriptionList;

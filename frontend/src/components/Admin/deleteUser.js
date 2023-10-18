@@ -1,52 +1,53 @@
-import "../App.css";
+import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
-import PackageService from "../services/packageService";
+import AdminService from "../../services/adminService";
 
-function DeletePackage() {
+function DeleteAdmin() {
   const initialUserState = {
-    _id: "",
+    id: "",
   };
 
-  const [pack, setPack] = useState(initialUserState);
+  const [user, setUser] = useState(initialUserState);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setPack({ ...pack, [name]: value });
+    setUser({ ...user, [name]: value });
   };
 
-  const deletePackage = (event) => {
-    const { name } = event.target;
-    PackageService.deletePackage(name)
+  async function deleteUser(e) {
+    const {value} = e.target
+    e.preventDefault();
+    console.log(value)
+    AdminService.deleteUser(value)
       .then((response) => {
         console.log(response.data);
-        window.location.reload(false);
       })
       .catch((e) => {
         console.log(e);
       });
-  };
+  }
 
   return (
     <div className="App">
       <header className="App-header">
         <form className="App-header" >
           <div className="form-group">
-            <label htmlFor="InputId">Package ID</label>
+            <label htmlFor="InputId">Admin ID</label>
             <input
               type="text"
               className="form-control"
               id="id"
               name="id"
-              value={pack._id}
-              placeholder="Enter Package ID to delete"
+              value={user.id}
+              placeholder="Enter ID to delete"
               onChange={handleInputChange}
             ></input>
           </div>
 
-          <button className="btn btn-danger" onClick={(pack) => deletePackage(pack)}
-value={pack.id}>
-            Delete Package
+          <button className="btn btn-danger" onClick={(user) => deleteUser(user)}
+value={user.id}>
+            Delete User
           </button>
         </form>
       </header>
@@ -54,4 +55,4 @@ value={pack.id}>
   );
 }
 
-export default DeletePackage;
+export default DeleteAdmin;

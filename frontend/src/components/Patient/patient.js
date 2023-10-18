@@ -1,4 +1,4 @@
-import "../App.css";
+import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 import AddMember from "./addFamilyMember";
@@ -10,7 +10,7 @@ import SearchDoctor from './search'
 import FilteredPrescriptionList from "./filterprescriptionsbydatestatusdoctor";
 import FilteredAppointmentsList from "./filterAppointmentsByDateAndStatuspatient"; 
 import FilterDoctors from "./Filterdoctors";
-import PkgList from "./viewPackages";
+import PkgList from "../viewPackages";
 
 function PatientPage() {
   return (

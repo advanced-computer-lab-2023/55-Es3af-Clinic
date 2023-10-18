@@ -1,9 +1,9 @@
-import "../App.css";
+import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
-import MemberService from "../services/familyMemberService";
+import PatientService from "../../services/patientService";
 
-const MembersList = (props) => {
+const DoctorsList = (props) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -11,7 +11,7 @@ const MembersList = (props) => {
   }, []);
 
   const retrieveMembers = () => {
-    MemberService.getAll("farouhaTe3bet")
+    PatientService.viewDoctors("farouhaTe3bet")
         .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data)) {
@@ -31,37 +31,35 @@ const MembersList = (props) => {
       <div className="App-header">
         {users.length > 0 ? (
           users.map((user) => {
+            // const doctorID = user._id.valueOf()
+            // console.log(doctorID)
             return (
 
               <div
                 className="card"
-                key={user._id}
+                key={user.id}
                 style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
               >
-                
                 <div className="card-body">
                   <h3 className="card-title" style={{ color: "white" }}>
                    Name: {user.name}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                  National ID:  {user.nationalID}
+                  Speciality:  {user.speciality}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                    Age: {user.age}
+                    Hourly Rate: {user.price}
                   </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                    Gender: {user.gender}
-                  </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                    Relation To Patient: {user.relationToPatient}
-                  </h3> 
+                  <a href= {`/patient/doctorInfo/${user.id}`} rel="noopener noreferrer">
+                    <button className = "btn btn-primary">View Details</button>
+                  </a>
                 </div>
               </div>
             );
           })
         ) : (
           <div>
-            <h2>No Family Members</h2>
+            <h2>No Doctors</h2>
           </div>
         )}
       </div>
@@ -69,4 +67,4 @@ const MembersList = (props) => {
   );
 
 }
-export default MembersList;
+export default DoctorsList;

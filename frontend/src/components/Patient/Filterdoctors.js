@@ -1,9 +1,10 @@
-import "../App.css";
+import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
-import patientService from "../services/patientService";
+import patientService from "../../services/patientService";
+import { Link } from "react-router-dom";
 
-function FilteredAppointmentsList() {
+function FilterDoctors() {
   const [results, setResults] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
 
@@ -11,25 +12,19 @@ function FilteredAppointmentsList() {
     event.preventDefault();
 
     const date = event.target.date.value
-    const status = event.target.status.value;
-    const patientid = "652b2d531a7433f37b21860e";
+    const speciality = event.target.speciality.value;
+    const patientid = "652b2da81a7433f37b218610";
     
 
-    const response = await patientService.FilteredAppointmentsList(
+    const response = await patientService.FilterDoctors(
       patientid,
       date,
-      status
+      speciality
     );
 
     setResults(response.data);
+    console.log(response)
     setSearchPerformed(true);
-  };
-  const formatDateOfBirth = (dateOfBirth) => {
-    const date = new Date(dateOfBirth);
-    const day = date.getDate();
-    const month = date.getMonth() + 1; // Month is zero-indexed
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
   };
 
   return (
@@ -37,20 +32,21 @@ function FilteredAppointmentsList() {
       <header className="App-header">
         <form className="App-header" onSubmit={search}>
           <div className="form-group">
-            <label htmlFor="InputUsername">Appointments</label>
+            <label htmlFor="InputUsername">Doctors</label>
             <input
             type="string"
             className="form-control"
-            id="status"
-            name="status"
-            placeholder="enter status" />
+            id="speciality"
+            name="speciality"
+            placeholder="enter speciality" />
 
             <input
-            type="string"
-            className="form-control"
-            id="date"
-            name="date"
-            placeholder="enter date" />
+              type="datetime"
+              className="form-control"
+              id="date"
+              name="date"
+              placeholder="enter date"
+            />
 
           </div>
           <button type="submit" className="btn btn-primary">
@@ -67,24 +63,24 @@ function FilteredAppointmentsList() {
               >
                 <div className="card-body">
                 <h3 className="card-title" style={{ color: "white" }}>
-                   Doctor: {result.doctor.name}
+                   Doctor: {result.name}
                 </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Duration: {result.duration}
+                   Hourly Rate: {result.price}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Status: {result.status}
+                  Speciality: {result.speciality}
                   </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                   Date: {formatDateOfBirth(result.date)}
-                  </h3>
+                  <button className = "btn btn-primary">
+                      <Link to={`/patient/doctorInfo/${result.id}`} style={{ color: 'white', textDecoration: 'underline' }}>View Details</Link>
+                    </button>
                   </div>
               </div>
             );
           })
         ) : (
           <div>
-            <h2>No Appointments found</h2>
+            <h2>No Doctors found</h2>
           </div>
         )}
           
@@ -93,4 +89,4 @@ function FilteredAppointmentsList() {
     </div>
   );
 }
-export default FilteredAppointmentsList;
+export default FilterDoctors;

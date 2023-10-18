@@ -1,8 +1,8 @@
-import "../App.css";
+import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
-import AdminService from "../services/adminService";
-import RequestDoctor from "./RequestDoctor";
+import AdminService from "../../services/adminService";
+import RequestDoctor from "../RequestDoctor";
 
 const DoctorsList = (props) => {
   const [doctor, setDoctor] = useState([]);

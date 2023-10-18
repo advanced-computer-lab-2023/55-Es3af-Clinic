@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './index.css';
 import App from './App';
-import PatientPage from './components/patient'
+import PatientPage from './components/Patient/patient'
 import RegisterPatient from './components/RegisterPatient'
 import RequestDoctor from "./components/RequestDoctor"
-import DoctorPage from './components/doctor';
-import AdminPage from './components/admin';
+import DoctorPage from './components/Doctor/doctor';
+import AdminPage from './components/Admin/admin';
 //import page that i want to test
 
 

@@ -1,9 +1,9 @@
-import "../App.css";
+import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
-import PatientService from "../services/patientService";
+import MemberService from "../../services/familyMemberService";
 
-const DoctorsList = (props) => {
+const MembersList = (props) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -11,7 +11,7 @@ const DoctorsList = (props) => {
   }, []);
 
   const retrieveMembers = () => {
-    PatientService.viewDoctors("farouhaTe3bet")
+    MemberService.getAll("farouhaTe3bet")
         .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data)) {
@@ -31,35 +31,37 @@ const DoctorsList = (props) => {
       <div className="App-header">
         {users.length > 0 ? (
           users.map((user) => {
-            // const doctorID = user._id.valueOf()
-            // console.log(doctorID)
             return (
 
               <div
                 className="card"
-                key={user.id}
+                key={user._id}
                 style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
               >
+                
                 <div className="card-body">
                   <h3 className="card-title" style={{ color: "white" }}>
                    Name: {user.name}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                  Speciality:  {user.speciality}
+                  National ID:  {user.nationalID}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                    Hourly Rate: {user.price}
+                    Age: {user.age}
                   </h3>
-                  <a href= {`/patient/doctorInfo/${user.id}`} rel="noopener noreferrer">
-                    <button className = "btn btn-primary">View Details</button>
-                  </a>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Gender: {user.gender}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Relation To Patient: {user.relationToPatient}
+                  </h3> 
                 </div>
               </div>
             );
           })
         ) : (
           <div>
-            <h2>No Doctors</h2>
+            <h2>No Family Members</h2>
           </div>
         )}
       </div>
@@ -67,4 +69,4 @@ const DoctorsList = (props) => {
   );
 
 }
-export default DoctorsList;
+export default MembersList;
