@@ -5,7 +5,7 @@ import PackageService from "../services/packageService";
 
 function DeletePackage() {
   const initialUserState = {
-    id: "",
+    _id: "",
   };
 
   const [pack, setPack] = useState(initialUserState);
@@ -15,18 +15,17 @@ function DeletePackage() {
     setPack({ ...pack, [name]: value });
   };
 
-  async function deletePackage(e) {
-    const {value} = e.target
-    e.preventDefault();
-    console.log(value)
-    PackageService.deletePackage(value)
+  const deletePackage = (event) => {
+    const { name } = event.target;
+    PackageService.deletePackage(name)
       .then((response) => {
         console.log(response.data);
+        window.location.reload(false);
       })
       .catch((e) => {
         console.log(e);
       });
-  }
+  };
 
   return (
     <div className="App">
@@ -39,7 +38,7 @@ function DeletePackage() {
               className="form-control"
               id="id"
               name="id"
-              value={pack.id}
+              value={pack._id}
               placeholder="Enter Package ID to delete"
               onChange={handleInputChange}
             ></input>
