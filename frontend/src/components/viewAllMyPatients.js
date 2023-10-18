@@ -59,9 +59,6 @@ const MyPatientList = (props) => {
               ` : ''}
                   <h3 className="card-title" style={{ color: "white" }}>
                     Package: ${patient.package}
-                  </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                    Health Records: ${patient.healthRecords}
                   </h3> 
                 </div>
                 </div>
