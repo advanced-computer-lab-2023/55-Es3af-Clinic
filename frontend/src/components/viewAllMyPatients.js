@@ -26,7 +26,6 @@ const MyPatientList = (props) => {
   };
 // Add a click event listener to the button
   const viewDets =(patient) =>{
-    const updateButton = document.getElementById('updateButton');
     const contentContainer = document.getElementById('contentContainer');
     contentContainer.innerHTML =`
     <div>
