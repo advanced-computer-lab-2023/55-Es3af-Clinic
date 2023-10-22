@@ -5,6 +5,7 @@ class PackageService {
         return http.post("/packages/createPackage", pack);
       }
   updatePackages() {
+<<<<<<< HEAD
   //return http.get("/packages/listPackages");
   }
 
@@ -13,6 +14,13 @@ class PackageService {
   }
   viewPackages(){
     return http.get("/packages");
+=======
+  return http.get("/packages/listPackages");
+  }
+
+  deletePackage(pack) {
+  return http.delete(`/packages/deletePackage`, pack);
+>>>>>>> c763c4f (old changes from sprint #1)
   }
 
 }

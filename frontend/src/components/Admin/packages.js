@@ -2,15 +2,20 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 import CreatePackage from "./createPackage";
+<<<<<<< HEAD:frontend/src/components/Admin/packages.js
 import DeletePackage from "./deletePackage";
 import PkgList from "../viewPackages"
 // import PackageServiceService from "../services/packageService";
+=======
+import packageService from "../services/packageService";
+>>>>>>> c763c4f (old changes from sprint #1):frontend/src/components/packages.js
 function PackagePage() {
   return (
     <Routes>
       <Route path="/" element={<PackageHome />} />
 
       <Route path="/createPackage" element={<CreatePackage />} />
+      <Route path="/updatePackage" element={<UpdatePackage />} />
 
       <Route path="/deletePackage" element={<DeletePackage />} />
       
@@ -35,8 +40,8 @@ function PackageHome() {
           </a>
         </div>
         <div>
-          <a href="/admin/packages/listPackages" rel="noopener noreferrer">
-            <button className="btn btn-primary"> View Packages </button>
+          <a href="/admin/packages/updatePackages" rel="noopener noreferrer">
+            <button className="btn btn-primary"> Update Packages </button>
           </a>
         </div>
       </header>

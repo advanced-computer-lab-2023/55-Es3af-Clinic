@@ -65,11 +65,21 @@ const updatePackage = async (req, res) => {
 
 const deletePackage = async (req, res) => {
   try {
+<<<<<<< HEAD
     res.send(await Package.findByIdAndDelete(req.params.id));
+=======
+    const deletedPackage = await Package.findOne(req.params.id);
+    if (!deletedPackage) {
+      res.status(404).send({ error: 'Package not found' });
+    } else {
+      res.send(deletedPackage);
+    }
+>>>>>>> c763c4f (old changes from sprint #1)
   } catch (e) {
     res.status(400).send(e);
   }
 
+<<<<<<< HEAD
 
   // try {
   //   const deletedPackage = await Package.findByIdAndDelete(req.params.id);
@@ -92,3 +102,6 @@ const viewPackages = async (req, res) =>{
 
 }
 module.exports = { createPackage, deletePackage, viewPackages };
+=======
+module.exports = { createPackage, deletePackage, updatePackages };
+>>>>>>> c763c4f (old changes from sprint #1)
