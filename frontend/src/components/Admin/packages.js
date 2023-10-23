@@ -37,7 +37,7 @@ function PackageHome() {
           </a>
         </div>
         <div>
-          <a href="/admin/packages/updatePackages" rel="noopener noreferrer">
+          <a href="/admin/packages/updatePackage" rel="noopener noreferrer">
             <button className="btn btn-primary"> Update Packages </button>
           </a>
         </div>
