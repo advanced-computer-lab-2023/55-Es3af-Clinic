@@ -2,13 +2,10 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
 import CreatePackage from "./createPackage";
-<<<<<<< HEAD:frontend/src/components/Admin/packages.js
 import DeletePackage from "./deletePackage";
 import PkgList from "../viewPackages"
 // import PackageServiceService from "../services/packageService";
-=======
-import packageService from "../services/packageService";
->>>>>>> c763c4f (old changes from sprint #1):frontend/src/components/packages.js
+import UpdatePackage from "../updatePackage";
 function PackagePage() {
   return (
     <Routes>
@@ -40,7 +37,7 @@ function PackageHome() {
           </a>
         </div>
         <div>
-          <a href="/admin/packages/updatePackages" rel="noopener noreferrer">
+          <a href="/admin/packages/updatePackage" rel="noopener noreferrer">
             <button className="btn btn-primary"> Update Packages </button>
           </a>
         </div>

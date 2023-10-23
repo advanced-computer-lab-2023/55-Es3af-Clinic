@@ -10,7 +10,10 @@ class PackageService {
 
   deletePackage(pack) {
   return http.delete(`/packages/deletePackage`, pack);
-  }
+}
+viewPackages(){
+  return http.get("/packages");
+}
 
 }
 
