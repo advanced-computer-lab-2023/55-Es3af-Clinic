@@ -8,12 +8,14 @@ import EditDoctor from "./updateDoctor2";
 import FilteredAppointments from "./filterAppointmentsByDateAndStatus.js";
 import SearchPatient from "./searchForPatientByName";
 import FilteredPatientsByAppointments from "./filterPatientByAppointment";
+import UpdatePassword from '../Doctor/updatePassword';
 
 
 function DoctorPage() {
   return (
     <Routes>
       <Route path="/" element={<DoctorHome />} />
+      <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
       <Route path="/getAllMyPatients" element={< MyPatientList/>} />
       {/* <Route path="/updateDoctor" element={< UpdateDoctor/>} /> */}
       <Route path="/updateDoctor2" element={< EditDoctor/>} />
@@ -21,12 +23,14 @@ function DoctorPage() {
       <Route path="/filterAppointmentsByDateAndStatus" element= {< FilteredAppointments />} />
       <Route path="/searchPatientByName" element={< SearchPatient/>} />
       <Route path="/filterPatientsByUpcomingPendingAppointments" element= {< FilteredPatientsByAppointments />} />
+      
 
     </Routes>
   );
 }
 
 function DoctorHome() {
+  const id = '6525afac114367999aba79df'
   return (
     <div className="App">
       <header className="App-header">
@@ -48,6 +52,9 @@ function DoctorHome() {
           </a>
           <a href="/doctor/filterPatientsByUpcomingPendingAppointments" rel="noopener noreferrer">
             <button className="btn btn-primary"> Filter Patients by Upcoming Appointments </button>
+          </a>
+          <a href={`/doctor/${id}/updatePassword/`} rel="noopener noreferrer">
+            <button className="btn btn-primary"> Update my Password </button>
           </a>
         </div>
       </header>

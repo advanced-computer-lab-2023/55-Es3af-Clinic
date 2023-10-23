@@ -6,33 +6,20 @@ import UsersList from "./listUsers";
 //import AdminService from "../services/adminService";
 import DeleteUser from "./deleteUser";
 import ViewDoctorRequests from "./viewDoctorRequests";
-<<<<<<< HEAD:frontend/src/components/Admin/admin.js
-import Packages from "./packages";
-import packageService from "../../services/packageService";
-=======
-import packageService from "../services/packageService";
-import UpdatePackage from "./updatePackage";
->>>>>>> c763c4f (old changes from sprint #1):frontend/src/components/admin.js
+// import packageService from "../services/packageService";
+// import UpdatePackage from "./updatePackage";
+import UpdatePassword from '../Admin/updatePassword';
 function AdminPage() {
   return (
     <Routes>
 
       <Route path="/" element={<AdminHome />} />
-<<<<<<< HEAD:frontend/src/components/Admin/admin.js
-      <Route path="/addAdmin/*" element={<AddAdmin />} />
-      <Route path="/users/*" element={<UsersList />} />
-      <Route path="/deleteUser/*" element={<DeleteUser />} />
-      <Route path="/viewDoctorData/*" element={<ViewDoctorRequests />} />
-      <Route path="/view/*" element={<ViewDoctorRequests />} />
-      <Route path="/packages/*" element={<Packages />} />
-=======
       <Route path="/addAdmin" element={<AddAdmin />} />
       <Route path="/users" element={<UsersList />} />
       <Route path="/deleteUser" element={<DeleteUser />} />
       <Route path="/viewDoctorData" element={<ViewDoctorRequests />} />
       <Route path="/view" element={<ViewDoctorRequests />} />
-      
->>>>>>> c763c4f (old changes from sprint #1):frontend/src/components/admin.js
+      <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
 
 
     </Routes>
@@ -40,6 +27,7 @@ function AdminPage() {
 }
 
 function AdminHome() {
+  const id = '652b5385daaac6a3807ee5c7'
   return (
     <div className="App">
       <header className="App-header">
@@ -61,6 +49,9 @@ function AdminHome() {
         <div>
           <a href="/admin/packages" rel="noopener noreferrer">
             <button className="btn btn-primary"> Packages </button>
+          </a>
+          <a href={`/admin/${id}/updatePassword/`} rel="noopener noreferrer">
+            <button className="btn btn-primary"> Update my Password </button>
           </a>
         </div>
       </header>

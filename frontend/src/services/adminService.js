@@ -1,9 +1,9 @@
 import http from "./http-common";
 
 class AdminService {
-    addAdmin(user) {
-        return http.post("/admin/addAdmin", user);
-      }
+  addAdmin(user) {
+    return http.post("/admin/addAdmin", user);
+  }
 
   listUsers() {
     return http.get("/admin/listUsers");
@@ -15,6 +15,15 @@ class AdminService {
 
   viewDoctorData() {
     return http.get("/admin/viewDoctorData");
+  }
+
+  updatePassword(id, password){
+    console.log('put is called')
+    return http.put(`/admin/${id}/updatePassword`, {password: password})
+  }
+
+  getPassword(id){
+    return http.get(`/admin/${id}/updatePassword`)
   }
 }
 

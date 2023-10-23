@@ -1,17 +1,18 @@
 import http from "./http-common";
 
 class PatientService {
-
-  search(name, spec){
-      console.log('search in service before get')
-      return http.get(`http://localhost:8000/patient/search?name=${name}&speciality=${spec}`)
-    }
+  search(name, spec) {
+    console.log("search in service before get");
+    return http.get(
+      `http://localhost:8000/patient/search?name=${name}&speciality=${spec}`
+    );
+  }
 
   viewDoctors(patient) {
-      return http.get("/patient/viewDoctors",{params:{patient}});
+    return http.get("/patient/viewDoctors", { params: { patient } });
   }
-  viewDocInfo(id){
-    return http.get(`/patient/doctorInfo/${id}`)
+  viewDocInfo(id) {
+    return http.get(`/patient/doctorInfo/${id}`);
   }
   viewPrescriptions(id) {
     return http.get(`/patient/viewPrescriptions/${id}`);
@@ -30,13 +31,13 @@ class PatientService {
       queryParams.status = status;
     }
 
-    return http.get(`/patient/filterprescriptionsbydatestatusdoctor/${patientid}`, {
-      params: queryParams,
-    });
+    return http.get(
+      `/patient/filterprescriptionsbydatestatusdoctor/${patientid}`,
+      {
+        params: queryParams,
+      }
+    );
   }
-
-  
-
 
   FilteredAppointmentsList(patientid, date, status) {
     const queryParams = {};
@@ -51,7 +52,6 @@ class PatientService {
     return http.get(`/patient/filterAppointmentsByDateAndStatus/${patientid}`, {
       params: queryParams,
     });
-    
   }
   FilterDoctors(patientid, date, speciality) {
     const queryParams = {};
@@ -65,9 +65,17 @@ class PatientService {
 
     return http.get(`/patient/searchBySpecDate/${patientid}`, {
       params: queryParams,
-    }); }
-    
+    });
   }
 
+  updatePassword(id, password){
+    console.log('put is called')
+    return http.put(`/patient/${id}/updatePassword`, {password: password})
+  }
+
+  getPassword(id){
+    return http.get(`/patient/${id}/updatePassword`)
+  }
+}
 
 export default new PatientService();

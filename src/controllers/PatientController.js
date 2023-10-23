@@ -72,7 +72,7 @@ const addFamilyMember = async (req, res) => {
     age: req.body.age,
     gender: req.body.gender,
     relationToPatient: req.body.relationToPatient,
-    patient: patientID._id, //id zy ma heya
+    patient: patientID._id.valueOf(), //id zy ma heya
   });
 
   console.log(`family member is ${member}`);
@@ -368,16 +368,16 @@ const searchBySpecDate = async (req, res) => {
     var appointments = []; //ids doctors that are busy
     var doctors = [];
     var result = [];
-    
+
     if (speciality && !date) {
       //if there's no date, working fine
       console.log("speciality only");
       var doctor = await doctorModel.find({ speciality: speciality });
       if (doctor.length > 0) {
-        for(var d of doctor){
-            var details = await viewDoctorDetails(d, 'farouhaTe3bet')
-            console.log(details)
-            doctors.push(details)
+        for (var d of doctor) {
+          var details = await viewDoctorDetails(d, "farouhaTe3bet");
+          console.log(details);
+          doctors.push(details);
         }
         res.status(200).send(doctors);
       } else {
@@ -385,7 +385,7 @@ const searchBySpecDate = async (req, res) => {
       }
     } else if (date) {
       const appoint = await appointmentModel.find({
-           $or: [{ status: "pending" }, { status: "currently working" }] ,
+        $or: [{ status: "pending" }, { status: "currently working" }],
       }); //get all appointments of date greater than or equal
       console.log(`result of find is ${appoint}`);
       if (appoint.length < 1) {
@@ -393,28 +393,30 @@ const searchBySpecDate = async (req, res) => {
       } else {
         for (var app of appoint) {
           var newDate = new Date(app.date);
-          newDate.setMinutes(newDate.getMinutes() + app.duration)
+          newDate.setMinutes(newDate.getMinutes() + app.duration);
 
           console.log(app.date);
           console.log(`^^ start date,   vv end date`);
           console.log(newDate);
           if (newDate > date2 && date2 > app.date) {
             appointments.push(app.doctor._id.valueOf());
-            console.log(`deen om el id beta3 el doctor${app.doctor._id.valueOf()}`)
+            console.log(
+              `deen om el id beta3 el doctor${app.doctor._id.valueOf()}`
+            );
           }
         }
         const allDoctors = await doctorModel.find({});
         for (var doc of allDoctors) {
           var id = doc._id.valueOf();
-          if(appointments.length == 0){
-            
-            var details = await viewDoctorDetails(doc, 'farouhaTe3bet')
-            console.log(`deen om el appointments fadya ${details}`)
-            doctors.push(details)
-          }
-          else if (!appointments.includes(id)) {
-            var details = await viewDoctorDetails(doc, 'farouhaTe3bet')
-            console.log(`om el appointments ${appointments} wel details ${details}`);
+          if (appointments.length == 0) {
+            var details = await viewDoctorDetails(doc, "farouhaTe3bet");
+            console.log(`deen om el appointments fadya ${details}`);
+            doctors.push(details);
+          } else if (!appointments.includes(id)) {
+            var details = await viewDoctorDetails(doc, "farouhaTe3bet");
+            console.log(
+              `om el appointments ${appointments} wel details ${details}`
+            );
             doctors.push(details);
           }
         }
@@ -427,8 +429,8 @@ const searchBySpecDate = async (req, res) => {
     if (date && speciality) {
       for (doc of doctors) {
         if (doc.speciality == speciality) {
-            var details = await viewDoctorDetails(doc,'farouhaTe3bet')
-            console.log(details)
+          var details = await viewDoctorDetails(doc, "farouhaTe3bet");
+          console.log(details);
           result.push(details);
         }
       }
@@ -550,7 +552,21 @@ const getPatients = async (req, res) => {
   res.status(200).send(patients);
 };
 
-//module.exports = {addFamilyMember, viewFamilyMembers, viewDoctors, searchDoctors, test, getPatients}
+const getPassword = async(req, res) => {
+  const userID = req.params.id
+  var user = await patientModel.findById(userID);
+  res.status(200).send(user.password)
+}
+const changePassword = async(req, res) => {
+  const userID = req.params.id
+  var newPassword = req.body.password
+  try{
+      await patientModel.findByIdAndUpdate(userID, {password: newPassword})
+      res.status(200).send('Password updated successfully')
+    }
+  catch(err){console.error(err)}
+
+}
 
 module.exports = {
   addFamilyMember,
@@ -565,4 +581,6 @@ module.exports = {
   searchBySpecDate,
   getPatient,
   filterprescriptionsbydatestatusdoctor,
+  changePassword,
+  getPassword
 };

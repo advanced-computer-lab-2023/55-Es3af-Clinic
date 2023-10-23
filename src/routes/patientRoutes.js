@@ -4,6 +4,8 @@ const patientController = require('../controllers/PatientController')
 
 const patientRoutes = new Router();
 
+patientRoutes.put('/:id/updatePassword', patientController.changePassword)
+patientRoutes.get('/:id/updatePassword', patientController.getPassword)
 patientRoutes.get('/search', patientController.searchByNameSpec)
 patientRoutes.get('/familyMembers', patientController.viewFamilyMembers)
 patientRoutes.get('/viewDoctors',patientController.viewDoctors)
@@ -16,4 +18,5 @@ patientRoutes.get("/filterPrescriptions/:id", patientController.filterprescripti
 patientRoutes.get("/filterprescriptionsbydatestatusdoctor/:id", patientController.filterprescriptionsbydatestatusdoctor)
 patientRoutes.get("/filterAppointmentsByDateAndStatus/:id", patientController.filterAppointmentsByDateAndStatus)
 patientRoutes.get("/searchBySpecDate/:id", patientController.searchBySpecDate)
+
 module.exports = {patientRoutes}

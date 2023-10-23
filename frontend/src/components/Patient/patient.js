@@ -11,6 +11,7 @@ import FilteredPrescriptionList from "./filterprescriptionsbydatestatusdoctor";
 import FilteredAppointmentsList from "./filterAppointmentsByDateAndStatuspatient"; 
 import FilterDoctors from "./Filterdoctors";
 import PkgList from "../viewPackages";
+import UpdatePassword from './updatePassword';
 
 function PatientPage() {
   return (
@@ -27,12 +28,14 @@ function PatientPage() {
       <Route path="/filterprescriptionsbydatestatusdoctor" element={<FilteredPrescriptionList />} />
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
       <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
+      <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
 
     </Routes>
   );
 }
 
 function PatientHome() {
+  var id = '652b2d531a7433f37b21860e'
   return (
     <div className="App">
       <header className="App-header">
@@ -60,6 +63,9 @@ function PatientHome() {
           </a>
           <a href="/patient/viewHealthPackages/" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Health Packages </button>
+          </a>
+          <a href={`/patient/${id}/updatePassword/`} rel="noopener noreferrer">
+            <button className="btn btn-primary"> Update my Password </button>
           </a>
         </div>
       </header>

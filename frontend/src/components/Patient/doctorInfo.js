@@ -21,16 +21,6 @@ const DoctorInfo = (props) => {
     console.log('view info called')
     PatientService.viewDocInfo(id)
       .then((response) => {
-        // const { name, affiliation, educationBackground, speciality, price } =
-        //   response.data;
-
-        // const docInfo = {
-        //   name,
-        //   affiliation,
-        //   educationBackground,
-        //   speciality,
-        //   price,
-        // };
         console.log(response);
         setDoctor(response.data);
       })
@@ -38,29 +28,6 @@ const DoctorInfo = (props) => {
         console.log(e);
       });
   };
-
-    // const doctor = {
-    //     "hourlyRate": 8,
-    //     "affiliation": "no where",
-    //     "educationBackground": "uni",
-    //     "speciality": "heart",
-    //     "username": "doc62",
-    //     "name": "doc2",
-    //     "email": "doc@gmail.com",
-    //     "password": "doc1",
-    //     "dateOfBirth": {
-    //       "$date": "2002-11-11T00:00:00.000Z"
-    //     },
-    //     "type": "doctor",
-    //     "__t": "doctor",
-    //     "createdAt": {
-    //       "$date": "2023-10-10T20:10:20.180Z"
-    //     },
-    //     "updatedAt": {
-    //       "$date": "2023-10-11T10:38:12.040Z"
-    //     },
-    //     "__v": 0
-    //   }
 
   return (
     <div>
