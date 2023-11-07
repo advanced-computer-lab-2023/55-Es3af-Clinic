@@ -15,7 +15,8 @@ const MembersList = (props) => {
         .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data)) {
-            setUsers(response.data);
+          const flattenedUsers = response.data.flat();
+          setUsers(flattenedUsers);
         }
         else {
             // Handle the case where response.data is not an array
@@ -26,6 +27,14 @@ const MembersList = (props) => {
         console.log(e);
       });
   };
+  const formatDateOfBirth = (dateOfBirth) => {
+    const date = new Date(dateOfBirth);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Month is zero-indexed
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   return (
     <div>
       <div className="App-header">
@@ -43,18 +52,26 @@ const MembersList = (props) => {
                   <h3 className="card-title" style={{ color: "white" }}>
                    Name: {user.name}
                   </h3>
+                  {user.nationalID?(
                   <h3 className="card-title" style={{ color: "white" }}>
                   National ID:  {user.nationalID}
-                  </h3>
+                  </h3>): <h3 className="card-title" style={{ color: "white" }}>
+                  Date Of Birth:  {formatDateOfBirth(user.dateOfBirth)}
+                  </h3> }
+                  {user.age&&(
                   <h3 className="card-title" style={{ color: "white" }}>
                     Age: {user.age}
-                  </h3>
+                  </h3>)}
                   <h3 className="card-title" style={{ color: "white" }}>
                     Gender: {user.gender}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
                     Relation To Patient: {user.relationToPatient}
                   </h3> 
+                  {user.package&&(
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Package: {user.package}
+                  </h3>)}
                 </div>
               </div>
             );

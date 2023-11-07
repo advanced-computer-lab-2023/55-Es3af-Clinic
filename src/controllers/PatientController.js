@@ -5,6 +5,7 @@ const userModel = require("../Models/user.js");
 const packageModel = require("../Models/Packages.js");
 const appointmentModel = require("../Models/Appointments.js");
 const PrescriptionsModel = require("../Models/Prescriptions.js");
+const familyMembersAcc= require("../Models/familyMembersAccount.js");
 const { error } = require("console");
 const { default: mongoose } = require("mongoose");
 const { disconnect } = require("process");
@@ -59,6 +60,43 @@ const getPatient = async (req, res) => {
     res.status(400).send(e);
   }
 };
+const addFamilyMemberByUsername = async (req, res) => {
+  const patient = req.params.username;
+  const patientID = await userModel.findOne({ username: patient });
+
+  if (patientID === null) {
+    console.log(patient);
+    res.status(404).send("Patient not found");
+    return;
+  }
+
+  const username = req.body.username;
+  try {
+    const familyMemberUserID = await userModel.findOne({ username: username }).exec();
+
+    if (familyMemberUserID == null) {
+      res.status(404).send("There's no account with the corresponding username");
+      return;
+    } else {
+      if (await familyMembersAcc.findOne({ Id: familyMemberUserID._id }) !== null ||
+      await familyMembersAcc.findOne({ patient: familyMemberUserID._id }) !== null) {
+        res.status(200).send("Family member already exists");
+        return;
+      } else {
+        const member = new familyMembersAcc({
+          Id: familyMemberUserID._id.valueOf(),
+          relationToPatient: req.body.relationToPatient,
+          patient: patientID._id.valueOf(), //id zy ma heya
+        });
+        res.status(200).send("Family Member Added Successfully");
+        member.save().catch((err) => console.log(err));
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+}
 
 //working fine and testing fine
 const addFamilyMember = async (req, res) => {
@@ -126,14 +164,49 @@ const viewFamilyMembers = async (req, res) => {
 
     console.log("Patient ID:", neededPatientID._id);
 
+    const familyMemberAcc = await familyMembersAcc.find({ patient: neededPatientID._id });
+    const familyMemberAccRev = await familyMembersAcc.find({ Id: neededPatientID._id });
+
     familyMemberModel
       .find({ patient: neededPatientID._id })
       .exec()
-      .then((result) => {
-        if (Object.keys(result).length === 0) {
+      .then(async (result) => {
+        if (Object.keys(result).length === 0 && familyMemberAcc.length<=0 && familyMemberAccRev.length<=0) {
           res.status(200).send("You don't have any family members added");
         } else {
-          res.status(200).send(result);
+          const familyMemberData = [];
+
+          if (familyMemberAcc.length> 0) {
+            // Collect data from result2 and select specific fields including "relationToPatient"
+            const result2Ids = familyMemberAcc.map(acc => acc.Id);
+            const result2 = await userModel.find({ _id: { $in: result2Ids } }).select('name dateOfBirth gender package');
+            const result2WithRelation = result2.map((user, index) => ({
+              ...user.toObject(),
+              relationToPatient: familyMemberAcc[index].relationToPatient,
+            }));
+            familyMemberData.push(result2WithRelation);
+          }
+
+          if (familyMemberAccRev.length>0) {
+            // Collect data from result3 and select specific fields including "relationToPatient"
+            const result3Ids = familyMemberAccRev.map(acc => acc.patient._id);
+            const result3 = await userModel.find({ _id: { $in: result3Ids } }).select('name dateOfBirth gender package');
+            const result3WithRelation = result3.map((user, index) => {
+              let relationToPatient = familyMemberAccRev[index].relationToPatient;
+              if (relationToPatient === "Husband") {
+                relationToPatient = "Wife";
+              } else if (relationToPatient === "Wife") {
+                relationToPatient = "Husband";
+              }
+              return { ...user.toObject(), relationToPatient };
+            });
+            familyMemberData.push(result3WithRelation);
+          }
+
+          // Collect data from result (existing family members)
+          familyMemberData.push(result);
+
+          res.status(200).json(familyMemberData);
         }
       })
       .catch((err) => {
@@ -145,6 +218,9 @@ const viewFamilyMembers = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
+
+
 
 //working fine testing fine
 const viewDoctors = async (req, res) => {
@@ -582,5 +658,6 @@ module.exports = {
   getPatient,
   filterprescriptionsbydatestatusdoctor,
   changePassword,
-  getPassword
+  getPassword,
+  addFamilyMemberByUsername
 };

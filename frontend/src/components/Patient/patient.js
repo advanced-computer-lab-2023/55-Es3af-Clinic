@@ -12,6 +12,7 @@ import FilteredAppointmentsList from "./filterAppointmentsByDateAndStatuspatient
 import FilterDoctors from "./Filterdoctors";
 import PkgList from "../viewPackages";
 import UpdatePassword from './updatePassword';
+import AddMemberAcc from "./addMemberByAcc";
 
 function PatientPage() {
   return (
@@ -29,6 +30,7 @@ function PatientPage() {
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
       <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
       <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
+      <Route path='/:username/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
 
     </Routes>
   );

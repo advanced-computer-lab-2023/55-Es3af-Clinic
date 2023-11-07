@@ -31,10 +31,15 @@ function AddMember() {
             console.log(e);
           });
     }
-
+    
     return (
         <div className="App">
           <header className="App-header">
+          <div className="top-right-button">
+            <a href= "/patient/farouhaTe3bet/addFamilyMemberByAcc">
+          <button className="btn btn-primary" >Add by Username</button>
+          </a>
+        </div>
             <form className="App-header" onSubmit={addMember2}>
               <div className="form-group">
                 <label htmlFor="Name">Name</label>
