@@ -1,7 +1,7 @@
 const userModel = require("../Models/user.js");
 const Doctor = require("../Models/Doctor.js");
 const { default: mongoose } = require("mongoose");
-const DoctorRequest = require("../Models/RequestDoctor")
+const DoctorRequest = require("../Models/RequestDoctor");
 
 const addAdmin = async (req, res) => {
   try {
