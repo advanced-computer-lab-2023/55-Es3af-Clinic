@@ -42,6 +42,7 @@ function PatientHome() {
     <div className="App">
       <header className="App-header">
         <div>
+          <h5 className="top-right-button">Amount In Wallet:</h5>
           <a href="/patient/familyMembers" rel="noopener noreferrer">
             <button className="btn btn-primary"> view Family Members </button>
             </a>

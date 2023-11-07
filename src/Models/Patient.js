@@ -48,6 +48,10 @@ const patientSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'doctor', 
     default: null
+  },
+  amountInWallet:{
+    type:Number,
+    default:0,
   }
   
   // healthRecords: [{ type: Schema.Types.ObjectId, ref: 'HealthRecord' }]
