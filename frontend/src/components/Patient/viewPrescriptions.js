@@ -1,7 +1,7 @@
-import "../App.css";
+import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
-import PatientService from "../services/patientService";
+import PatientService from "../../services/patientService";
 
 const PrescriptionList = (props) => {
     const [users, setUsers] = useState([]);
@@ -25,6 +25,13 @@ const PrescriptionList = (props) => {
         .catch((e) => {
           console.log(e);
         });
+    };
+    const formatDateOfBirth = (dateOfBirth) => {
+      const date = new Date(dateOfBirth);
+      const day = date.getDate();
+      const month = date.getMonth() + 1; // Month is zero-indexed
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
     };
     return (
       <div>
@@ -50,8 +57,9 @@ const PrescriptionList = (props) => {
                       Status:  {user.status}
                     </h3>
                     <h3 className="card-title" style={{ color: "white" }}>
-                      Date: {user.date}
+                      Date: {formatDateOfBirth(user.date)}
                     </h3>
+                    <button className="btn btn-primary">Select</button>
                   </div>
                 </div><div>
                     <a href="/patient/filterprescriptionsbydatestatusdoctor" rel="noopener noreferrer">

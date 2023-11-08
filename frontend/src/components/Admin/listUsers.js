@@ -1,7 +1,7 @@
-import "../App.css";
+import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
-import AdminService from "../services/adminService";
+import AdminService from "../../services/adminService";
 
 const UsersList = (props) => {
   const [users, setUsers] = useState([]);

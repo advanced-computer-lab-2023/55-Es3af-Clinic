@@ -34,7 +34,13 @@ function SelectPatientList() {
         });
     }
   };
-  
+  const formatDateOfBirth = (dateOfBirth) => {
+    const date = new Date(dateOfBirth);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Month is zero-indexed
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
   
     
 
@@ -55,7 +61,7 @@ function SelectPatientList() {
                     Name:{user.name}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                    Date Of Birth: {user.dateOfBirth}
+                    Date Of Birth: {formatDateOfBirth(user.dateOfBirth)}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
                     Gender: {user.gender}

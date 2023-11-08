@@ -1,28 +1,37 @@
-import "../App.css";
+import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
-import patientService from "../services/patientService";
+import PatientService from "../../services/patientService";
 
-function FilterDoctors() {
+function FilteredPrescriptionList() {
   const [results, setResults] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
 
   const search = async (event) => {
     event.preventDefault();
 
-    const date = event.target.date.value
-    const speciality = event.target.speciality.value;
-    const patientid = "652b2da81a7433f37b218610";
+    const date = event.target.date.value;
+    const doctor = event.target.doctor.value;
+    const status = event.target.status.value;
+    const patientid = "652b2d531a7433f37b21860e";
     
 
-    const response = await patientService.FilterDoctors(
+    const response = await PatientService.FilteredPrescriptionList(
       patientid,
       date,
-      speciality
+      doctor,
+      status
     );
 
     setResults(response.data);
     setSearchPerformed(true);
+  };
+  const formatDateOfBirth = (dateOfBirth) => {
+    const date = new Date(dateOfBirth);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Month is zero-indexed
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   return (
@@ -30,13 +39,21 @@ function FilterDoctors() {
       <header className="App-header">
         <form className="App-header" onSubmit={search}>
           <div className="form-group">
-            <label htmlFor="InputUsername">Doctors</label>
+            <label htmlFor="InputUsername">Prescriptions</label>
+            <input
+              type="string"
+              className="form-control"
+              id="doctor"
+              name="doctor"
+              placeholder="enter doctor name"
+              
+            />
             <input
             type="string"
             className="form-control"
-            id="speciality"
-            name="speciality"
-            placeholder="enter speciality" />
+            id="status"
+            name="status"
+            placeholder="enter status" />
 
             <input
             type="string"
@@ -60,22 +77,24 @@ function FilterDoctors() {
               >
                 <div className="card-body">
                 <h3 className="card-title" style={{ color: "white" }}>
-                   Doctor: {result.name}
-                </h3>
+                      Medicine: {result.medicine}
+                    </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Hourly Rate: {result.hourlyRate}
+                   Doctor: {result.doctor.name}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                  Affiliation: {result.affiliation}
+                   Status: {result.status}
                   </h3>
-                  
+                  <h3 className="card-title" style={{ color: "white" }}>
+                   Date: {formatDateOfBirth(result.date)}
+                  </h3>
                   </div>
               </div>
             );
           })
         ) : (
           <div>
-            <h2>No Doctors found</h2>
+            <h2>No Prescriptions found</h2>
           </div>
         )}
           
@@ -84,4 +103,5 @@ function FilterDoctors() {
     </div>
   );
 }
-export default FilterDoctors;
+
+export default FilteredPrescriptionList;

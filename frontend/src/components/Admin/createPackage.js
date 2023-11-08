@@ -1,7 +1,7 @@
-import "../App.css";
+import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
-import PackageService from "../services/packageService";
+import PackageService from "../../services/packageService";
 
 function CreatePackage() {
   const initialUserState = {

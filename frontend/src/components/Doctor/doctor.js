@@ -1,32 +1,36 @@
-import "../App.css";
+import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
-import MyPatientList from "../components/viewAllMyPatients";
+import MyPatientList from "./viewAllMyPatients";
 // import UpdateDoctor from "../components/updateDoctor";
-import SelectPatientList from "../components/selectPatient";
-import EditDoctor from "../components/updateDoctor2";
+//import SelectPatientList from "../components/selectPatient";
+import EditDoctor from "./updateDoctor2";
 import FilteredAppointments from "./filterAppointmentsByDateAndStatus.js";
-import SearchPatient from "../components/searchForPatientByName";
+import SearchPatient from "./searchForPatientByName";
 import FilteredPatientsByAppointments from "./filterPatientByAppointment";
+import UpdatePassword from '../Doctor/updatePassword';
 
 
 function DoctorPage() {
   return (
     <Routes>
       <Route path="/" element={<DoctorHome />} />
+      <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
       <Route path="/getAllMyPatients" element={< MyPatientList/>} />
       {/* <Route path="/updateDoctor" element={< UpdateDoctor/>} /> */}
       <Route path="/updateDoctor2" element={< EditDoctor/>} />
-      <Route path="/getPatients" element={< SelectPatientList/>} />
+      {/* <Route path="/getPatients" element={< SelectPatientList/>} /> */}
       <Route path="/filterAppointmentsByDateAndStatus" element= {< FilteredAppointments />} />
       <Route path="/searchPatientByName" element={< SearchPatient/>} />
       <Route path="/filterPatientsByUpcomingPendingAppointments" element= {< FilteredPatientsByAppointments />} />
+      
 
     </Routes>
   );
 }
 
 function DoctorHome() {
+  const id = '6525afac114367999aba79df'
   return (
     <div className="App">
       <header className="App-header">
@@ -34,9 +38,9 @@ function DoctorHome() {
           <a href="/doctor/getAllMyPatients" rel="noopener noreferrer">
             <button className="btn btn-primary"> View All My Patients </button>
             </a>
-            <a href="/doctor/getPatients" rel="noopener noreferrer">
+            {/* <a href="/doctor/getPatients" rel="noopener noreferrer">
             <button className="btn btn-primary"> Select a Patient </button>
-            </a>
+            </a> */}
             <a href={"/doctor/updateDoctor2"} rel="noopener noreferrer">
             <button className="btn btn-primary">Edit My Information</button>
             </a>
@@ -48,6 +52,9 @@ function DoctorHome() {
           </a>
           <a href="/doctor/filterPatientsByUpcomingPendingAppointments" rel="noopener noreferrer">
             <button className="btn btn-primary"> Filter Patients by Upcoming Appointments </button>
+          </a>
+          <a href={`/doctor/${id}/updatePassword/`} rel="noopener noreferrer">
+            <button className="btn btn-primary"> Update my Password </button>
           </a>
         </div>
       </header>

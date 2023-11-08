@@ -1,9 +1,9 @@
-import "../App.css";
+import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
-import patientService from "../services/patientService";
+import doctorService from "../../services/doctorService";
 
-function FilteredAppointmentsList() {
+function FilteredAppointments() {
   const [results, setResults] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
 
@@ -12,17 +12,24 @@ function FilteredAppointmentsList() {
 
     const date = event.target.date.value
     const status = event.target.status.value;
-    const patientid = "652b2da81a7433f37b218610";
+    const doctorid = "6525afac114367999aba79df";
     
 
-    const response = await patientService.FilteredAppointmentsList(
-      patientid,
+    const response = await doctorService.FilteredAppointments(
+      doctorid,
       date,
       status
     );
 
     setResults(response.data);
     setSearchPerformed(true);
+  };
+  const formatDateOfBirth = (dateOfBirth) => {
+    const date = new Date(dateOfBirth);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Month is zero-indexed
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   };
 
   return (
@@ -60,8 +67,8 @@ function FilteredAppointmentsList() {
               >
                 <div className="card-body">
                 <h3 className="card-title" style={{ color: "white" }}>
-                   Doctor: {result.doctor.name}
-                </h3>
+                      Patient: {result.patient.name}
+                    </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
                    Duration: {result.duration}
                   </h3>
@@ -69,7 +76,7 @@ function FilteredAppointmentsList() {
                    Status: {result.status}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Date: {result.date}
+                   Date: {formatDateOfBirth(result.date)}
                   </h3>
                   </div>
               </div>
@@ -86,4 +93,4 @@ function FilteredAppointmentsList() {
     </div>
   );
 }
-export default FilteredAppointmentsList;
+export default FilteredAppointments;

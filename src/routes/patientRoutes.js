@@ -1,8 +1,12 @@
 const Router = require('express')
 const patientController = require('../controllers/PatientController')
 
+
 const patientRoutes = new Router();
 
+patientRoutes.put('/:id/updatePassword', patientController.changePassword)
+patientRoutes.post('/:username/addFamilyMemberByAcc',patientController.addFamilyMemberByUsername)
+patientRoutes.get('/:id/updatePassword', patientController.getPassword)
 patientRoutes.get('/search', patientController.searchByNameSpec)
 patientRoutes.get('/familyMembers', patientController.viewFamilyMembers)
 patientRoutes.get('/viewDoctors',patientController.viewDoctors)
@@ -12,9 +16,8 @@ patientRoutes.get('/doctorInfo/:id',patientController.viewDocInfo);
 patientRoutes.get("/viewPrescriptions/:id",patientController.viewPrescriptions)
 patientRoutes.get("/filterPrescriptions/:id", patientController.filterprescriptionsbydatestatusdoctor)
 
-
-
 patientRoutes.get("/filterprescriptionsbydatestatusdoctor/:id", patientController.filterprescriptionsbydatestatusdoctor)
 patientRoutes.get("/filterAppointmentsByDateAndStatus/:id", patientController.filterAppointmentsByDateAndStatus)
 patientRoutes.get("/searchBySpecDate/:id", patientController.searchBySpecDate)
+
 module.exports = {patientRoutes}
