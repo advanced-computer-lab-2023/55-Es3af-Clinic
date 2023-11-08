@@ -2,11 +2,12 @@ import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import PatientService from "../services/patientService";
+import Dropdown from "../Dropdown"
 
 function FilteredPrescriptionList() {
   const [results, setResults] = useState([]);
-  const [searchPerformed, setSearchPerformed] = useState(false);
-
+  //const [searchPerformed, setSearchPerformed] = useState(false);
+  
   const search = async (event) => {
     event.preventDefault();
 
@@ -24,7 +25,6 @@ function FilteredPrescriptionList() {
     );
 
     setResults(response.data);
-    setSearchPerformed(true);
   };
 
   return (
@@ -60,7 +60,7 @@ function FilteredPrescriptionList() {
             Search
           </button>
           <p>results</p>
-          {results.length > 0 || !searchPerformed ? (
+          {results.length > 0 ? (
           results.map((result) => {
             return (
               <div
