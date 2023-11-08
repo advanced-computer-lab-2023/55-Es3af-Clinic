@@ -70,10 +70,14 @@ const addFamilyMemberByUsername = async (req, res) => {
     return;
   }
 
-  const username = req.body.username;
+  const email = req.body.email;
+  const mobile =req.body.mobile;
+  var familyMemberUserID = null;
   try {
-    const familyMemberUserID = await patientModel.findOne({ username: username }).exec();
-
+    if(email!="")
+      familyMemberUserID = await patientModel.findOne({ email: email }).exec();
+    else if(mobile!="") 
+      familyMemberUserID = await patientModel.findOne({ mobile: mobile }).exec();
     if (familyMemberUserID == null || familyMemberUserID.__t!="patient") {
       res.status(404).send("There's no account with the corresponding username");
       return;
