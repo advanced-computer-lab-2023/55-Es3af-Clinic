@@ -30,6 +30,7 @@ doctorRouter
   .get(doctorController.filterPatientsByUpcomingPendingAppointments);
 doctorRouter.route("/selectPatient").patch(doctorController.selectPatient);
 doctorRouter.route("/:id/updatePassword").put(doctorController.changePassword);
+doctorRouter.route("/:username/getAmountInWallet").get(doctorController.getAmountInWallet);
 
 // router.route('/getDoctors').get(doctorController.getAllDoctors);
 // router.route('/getDoctor/:id').patch(doctorController.updateEmail);

@@ -72,9 +72,9 @@ const addFamilyMemberByUsername = async (req, res) => {
 
   const username = req.body.username;
   try {
-    const familyMemberUserID = await userModel.findOne({ username: username }).exec();
+    const familyMemberUserID = await patientModel.findOne({ username: username }).exec();
 
-    if (familyMemberUserID == null) {
+    if (familyMemberUserID == null || familyMemberUserID.__t!="patient") {
       res.status(404).send("There's no account with the corresponding username");
       return;
     } else {
@@ -643,6 +643,11 @@ const changePassword = async(req, res) => {
   catch(err){console.error(err)}
 
 }
+const getAmountInWallet = async(req,res)=>{
+  const username=req.params.username
+  const patient =await patientModel.findOne({username:username});
+  res.status(200).send((patient.amountInWallet).toString()+" EGP");
+}
 
 module.exports = {
   addFamilyMember,
@@ -659,5 +664,6 @@ module.exports = {
   filterprescriptionsbydatestatusdoctor,
   changePassword,
   getPassword,
-  addFamilyMemberByUsername
+  addFamilyMemberByUsername,
+  getAmountInWallet
 };

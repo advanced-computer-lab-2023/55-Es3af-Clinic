@@ -44,6 +44,15 @@ const patientSchema = new Schema({
     ref: 'package',
     default: 'none'
   },
+  packageStatus:{
+    type:String,
+    enum:["Subscribed With Renewal Date", "Unsubscribed","Cancelled With End Date"],
+    default:"Unsubscribed"
+  },
+  packageRenewalDate:{
+    type: Date,
+    default: null
+  },
   assignedDoctor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'doctor', 
