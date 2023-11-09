@@ -17,11 +17,26 @@ function RegisterPatient() {
   };
 
   const [patient, setPatient] = useState (initialUserState);
+  const [message, setMessage] = useState('')
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    if(name == 'password'){
+      if (value.length < 6) {
+        setMessage('Password is too short');
+      } else if (!/\d/.test(value)) {
+        setMessage('Password should contain at least one digit');
+      } else if(!/[A-Z]/.test(value)){
+        setMessage('Password should contain at least one capital letters');
+      }
+      else {
+        setMessage('Password strength is good');
+      }
+    }
     setPatient({ ...patient, [name]: value });
   };
+
+
 
   async function registerPatient(e) {
     e.preventDefault();
@@ -64,8 +79,7 @@ function RegisterPatient() {
               onChange={handleInputChange}
             ></input>
           </div>
-          
-          
+
           <div className="form-group">
             <label htmlFor="InputUsername">Username</label>
             <input
@@ -90,6 +104,7 @@ function RegisterPatient() {
               placeholder="Enter Password"
               onChange={handleInputChange}
             ></input>
+            <p style={{ color: 'red' }}>{message}</p>
           </div>
 
           <div className="form-group">
