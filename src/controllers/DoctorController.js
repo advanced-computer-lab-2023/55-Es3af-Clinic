@@ -332,6 +332,11 @@ const changePassword = async(req, res) => {
   catch(err){console.error(err)}
 
 }
+const getAmountInWallet = async(req,res)=>{
+  const username=req.params.username
+  const doctor =await doctorModel.findOne({username:username});
+  res.status(200).send((doctor.amountInWallet).toString()+" EGP");
+}
 
 module.exports = {
   getAllPatients,
@@ -346,5 +351,6 @@ module.exports = {
   filterPatientsByUpcomingPendingAppointments,
   selectPatient,
   changePassword,
-  getPassword
+  getPassword,
+  getAmountInWallet
 };

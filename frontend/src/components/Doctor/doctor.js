@@ -1,6 +1,7 @@
 import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import MyPatientList from "./viewAllMyPatients";
 // import UpdateDoctor from "../components/updateDoctor";
 //import SelectPatientList from "../components/selectPatient";
@@ -9,6 +10,7 @@ import FilteredAppointments from "./filterAppointmentsByDateAndStatus.js";
 import SearchPatient from "./searchForPatientByName";
 import FilteredPatientsByAppointments from "./filterPatientByAppointment";
 import UpdatePassword from '../Doctor/updatePassword';
+import doctorService from "../../services/doctorService.js";
 
 
 function DoctorPage() {
@@ -30,11 +32,27 @@ function DoctorPage() {
 }
 
 function DoctorHome() {
-  const id = '6525afac114367999aba79df'
+  var id = '6525afac114367999aba79df'
+  var username="doc1"
+  const [result, setResult] = useState("");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await doctorService.getAmountInWallet(username);
+        const amountInWalletResult = response.data; 
+        setResult(amountInWalletResult);
+      } catch (error) {
+        console.error(error);
+        setResult("Error"); 
+      }
+    };
+    fetchData(); 
+  });
   return (
     <div className="App">
       <header className="App-header">
         <div>
+        <h5 className="top-right-button">Amount In Wallet: {result} </h5>
           <a href="/doctor/getAllMyPatients" rel="noopener noreferrer">
             <button className="btn btn-primary"> View All My Patients </button>
             </a>

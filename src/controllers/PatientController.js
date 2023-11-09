@@ -70,11 +70,15 @@ const addFamilyMemberByUsername = async (req, res) => {
     return;
   }
 
-  const username = req.body.username;
+  const email = req.body.email;
+  const mobile =req.body.mobile;
+  var familyMemberUserID = null;
   try {
-    const familyMemberUserID = await userModel.findOne({ username: username }).exec();
-
-    if (familyMemberUserID == null) {
+    if(email!="")
+      familyMemberUserID = await patientModel.findOne({ email: email }).exec();
+    else if(mobile!="") 
+      familyMemberUserID = await patientModel.findOne({ mobile: mobile }).exec();
+    if (familyMemberUserID == null || familyMemberUserID.__t!="patient") {
       res.status(404).send("There's no account with the corresponding username");
       return;
     } else {
@@ -643,6 +647,33 @@ const changePassword = async(req, res) => {
   catch(err){console.error(err)}
 
 }
+const getAmountInWallet = async(req,res)=>{
+  const username=req.params.username
+  const patient =await patientModel.findOne({username:username});
+  res.status(200).send((patient.amountInWallet).toString()+" EGP");
+}
+const subscribeToAHealthPackage= async(req,res)=>{
+  const packageID =req.body.packageID;
+  const patients = req.body.patients;
+  const renewalDate = new Date();
+  renewalDate.setMonth(renewalDate.getMonth()+1);
+  try {
+    for (const patientID of patients) {
+      const patient = await patientModel.findOne({ _id: patientID });
+      if (patient) {
+        patient.package = packageID;
+        patient.packageRenewalDate = renewalDate;
+        patient.packageStatus="Subscribed With Renewal Date";
+        await patient.save();
+      }
+    }
+
+    res.status(200).send('Subscribed to package successfully');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while updating patient packages');
+  }
+} 
 
 module.exports = {
   addFamilyMember,
@@ -659,5 +690,7 @@ module.exports = {
   filterprescriptionsbydatestatusdoctor,
   changePassword,
   getPassword,
-  addFamilyMemberByUsername
+  addFamilyMemberByUsername,
+  getAmountInWallet,
+  subscribeToAHealthPackage
 };

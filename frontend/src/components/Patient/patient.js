@@ -1,6 +1,7 @@
 import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import AddMember from "./addFamilyMember";
 import MembersList from "./viewFamilyMembers"
 import DoctorsList from "./viewDoctors";
@@ -10,9 +11,10 @@ import SearchDoctor from './search'
 import FilteredPrescriptionList from "./filterprescriptionsbydatestatusdoctor";
 import FilteredAppointmentsList from "./filterAppointmentsByDateAndStatuspatient"; 
 import FilterDoctors from "./Filterdoctors";
-import PkgList from "../viewPackages";
+import PkgListP from "./viewPackages";
 import UpdatePassword from './updatePassword';
 import AddMemberAcc from "./addMemberByAcc";
+import patientService from "../../services/patientService";
 
 function PatientPage() {
   return (
@@ -24,7 +26,7 @@ function PatientPage() {
       <Route path="/viewDoctors" element={<DoctorsList />} />
       <Route path= '/doctorInfo/:id' element={<DoctorInfo />}/>
       <Route path= '/search' element = {<SearchDoctor />}/>
-      <Route path= '/viewHealthPackages' element={<PkgList/>}/>
+      <Route path= '/viewHealthPackages' element={<PkgListP/>}/>
       <Route path="/viewPrescriptions" element={<PrescriptionList />} />
       <Route path="/filterprescriptionsbydatestatusdoctor" element={<FilteredPrescriptionList />} />
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
@@ -37,12 +39,27 @@ function PatientPage() {
 }
 
 function PatientHome() {
-  var id = '652b2d531a7433f37b21860e'
+  var id = '654bed1dbe07a9603f5b4030'
+  var username = "farouhaTe3bet"
+  const [result, setResult] = useState("");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await patientService.getAmountInWallet(username);
+        const amountInWalletResult = response.data; 
+        setResult(amountInWalletResult);
+      } catch (error) {
+        console.error(error);
+        setResult("Error"); 
+      }
+    };
+    fetchData(); 
+  });
   return (
     <div className="App">
       <header className="App-header">
         <div>
-          <h5 className="top-right-button">Amount In Wallet:</h5>
+          <h5 className="top-right-button">Amount In Wallet: {result} </h5>
           <a href="/patient/familyMembers" rel="noopener noreferrer">
             <button className="btn btn-primary"> view Family Members </button>
             </a>

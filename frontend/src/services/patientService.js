@@ -7,7 +7,9 @@ class PatientService {
       `http://localhost:8000/patient/search?name=${name}&speciality=${spec}`
     );
   }
-
+  async getAmountInWallet(username){
+    return http.get(`/patient/${username}/getAmountInWallet`)
+  }
   viewDoctors(patient) {
     return http.get("/patient/viewDoctors", { params: { patient } });
   }

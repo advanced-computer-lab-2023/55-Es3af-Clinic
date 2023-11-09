@@ -17,9 +17,22 @@ function RequestDoctor() {
   };
 
   const [doc, setDoctor] = useState (initialUserState);
+  const [message, setMessage] = useState('')
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    if(name == 'password'){
+      if (value.length < 6) {
+        setMessage('Password is too short');
+      } else if (!/\d/.test(value)) {
+        setMessage('Password should contain at least one digit');
+      } else if(!/[A-Z]/.test(value)){
+        setMessage('Password should contain at least one capital letters');
+      }
+      else {
+        setMessage('Password strength is good');
+      }
+    }
     setDoctor({ ...doc, [name]: value });
   };
 
@@ -64,8 +77,7 @@ function RequestDoctor() {
               onChange={handleInputChange}
             ></input>
           </div>
-          
-          
+
           <div className="form-group">
             <label htmlFor="InputUsername">Username</label>
             <input
@@ -90,6 +102,7 @@ function RequestDoctor() {
               placeholder="Enter Password"
               onChange={handleInputChange}
             ></input>
+            <p style={{ color: 'red' }}>{message}</p>
           </div>
 
           <div className="form-group">

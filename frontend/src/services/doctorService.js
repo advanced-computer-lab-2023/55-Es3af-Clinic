@@ -9,6 +9,9 @@ class DoctorService {
       data: updatedDoctorData,
     });
   }
+  async getAmountInWallet(username){
+    return http.get(`/doctor/${username}/getAmountInWallet`)
+  }
 
   // selectPatient(doctorId, patientId) {
   //   return http.patch('/doctor/selectPatient',{params:{doctorId,patientUser:patientId}})
