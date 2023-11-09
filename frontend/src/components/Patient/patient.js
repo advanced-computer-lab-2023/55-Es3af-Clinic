@@ -11,7 +11,7 @@ import SearchDoctor from './search'
 import FilteredPrescriptionList from "./filterprescriptionsbydatestatusdoctor";
 import FilteredAppointmentsList from "./filterAppointmentsByDateAndStatuspatient"; 
 import FilterDoctors from "./Filterdoctors";
-import PkgList from "../viewPackages";
+import PkgListP from "./viewPackages";
 import UpdatePassword from './updatePassword';
 import AddMemberAcc from "./addMemberByAcc";
 import patientService from "../../services/patientService";
@@ -26,7 +26,7 @@ function PatientPage() {
       <Route path="/viewDoctors" element={<DoctorsList />} />
       <Route path= '/doctorInfo/:id' element={<DoctorInfo />}/>
       <Route path= '/search' element = {<SearchDoctor />}/>
-      <Route path= '/viewHealthPackages' element={<PkgList/>}/>
+      <Route path= '/viewHealthPackages' element={<PkgListP/>}/>
       <Route path="/viewPrescriptions" element={<PrescriptionList />} />
       <Route path="/filterprescriptionsbydatestatusdoctor" element={<FilteredPrescriptionList />} />
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />

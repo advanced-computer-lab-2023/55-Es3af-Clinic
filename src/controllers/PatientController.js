@@ -652,6 +652,28 @@ const getAmountInWallet = async(req,res)=>{
   const patient =await patientModel.findOne({username:username});
   res.status(200).send((patient.amountInWallet).toString()+" EGP");
 }
+const subscribeToAHealthPackage= async(req,res)=>{
+  const packageID =req.body.packageID;
+  const patients = req.body.patients;
+  const renewalDate = new Date();
+  renewalDate.setMonth(renewalDate.getMonth()+1);
+  try {
+    for (const patientID of patients) {
+      const patient = await patientModel.findOne({ _id: patientID });
+      if (patient) {
+        patient.package = packageID;
+        patient.packageRenewalDate = renewalDate;
+        patient.packageStatus="Subscribed With Renewal Date";
+        await patient.save();
+      }
+    }
+
+    res.status(200).send('Subscribed to package successfully');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while updating patient packages');
+  }
+} 
 
 module.exports = {
   addFamilyMember,
@@ -669,5 +691,6 @@ module.exports = {
   changePassword,
   getPassword,
   addFamilyMemberByUsername,
-  getAmountInWallet
+  getAmountInWallet,
+  subscribeToAHealthPackage
 };
