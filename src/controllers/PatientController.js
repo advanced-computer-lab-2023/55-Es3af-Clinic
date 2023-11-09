@@ -223,9 +223,6 @@ const viewFamilyMembers = async (req, res) => {
   }
 };
 
-
-
-
 //working fine testing fine
 const viewDoctors = async (req, res) => {
   var patient = req.query.patient; //username
@@ -657,18 +654,24 @@ const subscribeToAHealthPackage= async(req,res)=>{
   const patients = req.body.patients;
   const renewalDate = new Date();
   renewalDate.setMonth(renewalDate.getMonth()+1);
+  var response="";
   try {
     for (const patientID of patients) {
       const patient = await patientModel.findOne({ _id: patientID });
       if (patient) {
+        if(patient.package==packageID && patient.packageStatus=="Subscribed With Renewal Date"){
+          response+=patient.name +" is already subscribed to this package \n";
+        }
+        else{
         patient.package = packageID;
         patient.packageRenewalDate = renewalDate;
         patient.packageStatus="Subscribed With Renewal Date";
         await patient.save();
+        response+=patient.name+' is subscribed to package successfully \n';
+      }
       }
     }
-
-    res.status(200).send('Subscribed to package successfully');
+    res.status(200).send(response);
   } catch (error) {
     console.error(error);
     res.status(500).send('An error occurred while updating patient packages');
