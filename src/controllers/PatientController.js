@@ -674,6 +674,21 @@ const subscribeToAHealthPackage= async(req,res)=>{
     res.status(500).send('An error occurred while updating patient packages');
   }
 } 
+const BookAnAppointment = async(req,res)=>{
+  const patientid = req.params.id;
+
+  try {
+    const patient = await patientModel.findById(patientid);
+
+    //await viewFamilyMembers(req, res);
+
+    res.status(200).send('Appointment was booked successfully');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while booking the appointment');
+  }
+
+}
 
 module.exports = {
   addFamilyMember,
@@ -692,5 +707,6 @@ module.exports = {
   getPassword,
   addFamilyMemberByUsername,
   getAmountInWallet,
-  subscribeToAHealthPackage
+  subscribeToAHealthPackage,
+  BookAnAppointment
 };

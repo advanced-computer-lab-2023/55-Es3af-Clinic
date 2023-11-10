@@ -14,6 +14,7 @@ import FilterDoctors from "./Filterdoctors";
 import PkgListP from "./viewPackages";
 import UpdatePassword from './updatePassword';
 import AddMemberAcc from "./addMemberByAcc";
+import BookAnAppointment  from "./BookAnAppointment";
 import patientService from "../../services/patientService";
 
 function PatientPage() {
@@ -33,6 +34,7 @@ function PatientPage() {
       <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
       <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
       <Route path='/:username/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
+      <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />
 
     </Routes>
   );
@@ -86,6 +88,9 @@ function PatientHome() {
           </a>
           <a href={`/patient/${id}/updatePassword/`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Update my Password </button>
+          </a>
+          <a href={`/patient/${id}/BookAnAppointment/`} rel="noopener noreferrer">
+            <button className="btn btn-primary"> Book An Appointment </button>
           </a>
         </div>
       </header>

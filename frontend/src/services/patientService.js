@@ -78,6 +78,12 @@ class PatientService {
   getPassword(id){
     return http.get(`/patient/${id}/updatePassword`)
   }
+  BookAnAppointment(id){
+
+    return http.post(`/patient/BookAnAppointment/${id}`)
+
+
+  }
 }
 
 export default new PatientService();

@@ -20,5 +20,5 @@ patientRoutes.put('/subscribeToAHealthPackage', patientController.subscribeToAHe
 patientRoutes.get("/filterprescriptionsbydatestatusdoctor/:id", patientController.filterprescriptionsbydatestatusdoctor)
 patientRoutes.get("/filterAppointmentsByDateAndStatus/:id", patientController.filterAppointmentsByDateAndStatus)
 patientRoutes.get("/searchBySpecDate/:id", patientController.searchBySpecDate)
-
+patientRoutes.post("/BookAnAppointment/:id", patientController.BookAnAppointment)
 module.exports = {patientRoutes}
