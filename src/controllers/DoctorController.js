@@ -93,7 +93,6 @@ const updateDoctor = async (req, res) => {
       { email: email, hourlyRate: hourlyRate, affiliation: affiliation },
       { new: true }
     );
-    console.log("dakhalna 2");
     res.status(200).json({
       status: "success",
       data: {
@@ -200,10 +199,9 @@ const getAllMyPatients = async (req, res) => {
 
 const searchPatientByName = async (req, res) => {
   const { name } = req.query;
-  const doctorId = req.body.Id;
+  const doctorId = req.query.doctorId; 
 
   try {
-    // const patients = await patientModel.find({name});
     const appointments = await appointment.find({ doctor: doctorId });
     const patientIds = appointments.map((appointment) => appointment.patient);
     const patients = await patientModel.find({
@@ -222,6 +220,7 @@ const searchPatientByName = async (req, res) => {
     });
   }
 };
+
 
 //filter appointments by date/status:
 
@@ -332,6 +331,11 @@ const changePassword = async(req, res) => {
   catch(err){console.error(err)}
 
 }
+const getAmountInWallet = async(req,res)=>{
+  const username=req.params.username
+  const doctor =await doctorModel.findOne({username:username});
+  res.status(200).send((doctor.amountInWallet).toString()+" EGP");
+}
 
 module.exports = {
   getAllPatients,
@@ -346,5 +350,6 @@ module.exports = {
   filterPatientsByUpcomingPendingAppointments,
   selectPatient,
   changePassword,
-  getPassword
+  getPassword,
+  getAmountInWallet
 };

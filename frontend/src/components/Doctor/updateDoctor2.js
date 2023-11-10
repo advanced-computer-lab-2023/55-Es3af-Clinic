@@ -21,6 +21,7 @@ function EditDoctor() {
       async function update(e) {
         e.preventDefault();
         try {
+          console.log("Updating doctor with data:", doctor);
           const doctorId = "6525afac114367999aba79df";
           await DoctorService.updateDoctor(doctorId, doctor);  
           setIsUpdated(true);

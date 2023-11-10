@@ -35,6 +35,10 @@ const doctorSchema = new Schema({
   speciality: {
     type: String,
     default:"General",
+  },
+  amountInWallet:{
+    type:Number,
+    default:0,
   }
 });
 
