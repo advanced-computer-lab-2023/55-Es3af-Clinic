@@ -119,7 +119,7 @@ const PkgListP = (props) => {
                   <h4 className="card-title" style={{ color: "white" }}>
                     Price: {user.price} EGP
                   </h4> 
-                  <button className = "btn btn-primary" onClick={() => handleSubscribeClick(user._id)}>Subscribe</button>
+                  <button className = "btn btn-primary" onClick={() => handleSubscribeClick(user.type)}>Subscribe</button>
                 </div>
               </div>
             );

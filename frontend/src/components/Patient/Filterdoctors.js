@@ -13,7 +13,7 @@ function FilterDoctors() {
 
     const date = event.target.date.value
     const speciality = event.target.speciality.value;
-    const patientid = "652b2da81a7433f37b218610";
+    const patientid = "654bed1dbe07a9603f5b4030";
     
 
     const response = await patientService.FilterDoctors(

@@ -677,7 +677,18 @@ const subscribeToAHealthPackage= async(req,res)=>{
     res.status(500).send('An error occurred while updating patient packages');
   }
 } 
+const withdrawFromWallet=async(req,res)=>{
+  const patientID=req.body.patientID;
+  const amountToWithdraw=req.body.amount;
+  const patient= await patientModel.findById(patientID).exec();
+  if(patient.amountInWallet<amountToWithdraw){
+    return res.status(200).send("Not suffecient funds in wallet");
+  }
+  else{
+    patient.amountInWallet-=amountToWithdraw;
 
+  }
+}
 module.exports = {
   addFamilyMember,
   viewFamilyMembers,
