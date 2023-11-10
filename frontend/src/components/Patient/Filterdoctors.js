@@ -53,7 +53,7 @@ function FilterDoctors() {
             Search
           </button>
           <p>results</p>
-          {results.length > 0 || !searchPerformed ? (
+          {Array.isArray(results) && results.length > 0 || !searchPerformed ? (
           results.map((result) => {
             return (
               <div

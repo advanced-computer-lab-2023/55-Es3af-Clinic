@@ -680,14 +680,21 @@ const subscribeToAHealthPackage= async(req,res)=>{
 const withdrawFromWallet=async(req,res)=>{
   const patientID=req.body.patientID;
   const amountToWithdraw=req.body.amount;
+  try{
   const patient= await patientModel.findById(patientID).exec();
   if(patient.amountInWallet<amountToWithdraw){
     return res.status(200).send("Not suffecient funds in wallet");
   }
   else{
     patient.amountInWallet-=amountToWithdraw;
-
+    await patient.save();
+    return res.status(200).send("Amount deducted successfully");
   }
+}
+catch (error) {
+  console.error(error);
+  res.status(500).send('An error occurred while withdrawing');
+}
 }
 module.exports = {
   addFamilyMember,
