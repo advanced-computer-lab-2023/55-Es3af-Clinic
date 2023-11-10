@@ -68,10 +68,6 @@ const MembersList = (props) => {
                   <h3 className="card-title" style={{ color: "white" }}>
                     Relation To Patient: {user.relationToPatient}
                   </h3> 
-                  {user.package&&(
-                  <h3 className="card-title" style={{ color: "white" }}>
-                    Package: {user.package}
-                  </h3>)}
                 </div>
               </div>
             );

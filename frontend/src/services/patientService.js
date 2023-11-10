@@ -10,6 +10,9 @@ class PatientService {
   async getAmountInWallet(username){
     return http.get(`/patient/${username}/getAmountInWallet`)
   }
+  async subscribeToAHealthPackage(info){
+    return http.put("/patient/subscribeToAHealthPackage",info)
+  }
   viewDoctors(patient) {
     return http.get("/patient/viewDoctors", { params: { patient } });
   }

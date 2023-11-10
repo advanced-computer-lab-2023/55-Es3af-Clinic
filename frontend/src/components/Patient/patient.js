@@ -60,19 +60,19 @@ function PatientHome() {
   return (
     <div className="App">
       <header className="App-header">
-        <div>
+        <div className="payment-buttons">
           <h5 className="top-right-button">Amount In Wallet: {result} </h5>
           <a href="/patient/familyMembers" rel="noopener noreferrer">
-            <button className="btn btn-primary"> view Family Members </button>
+            <button className="btn btn-primary"> View Family Members </button>
             </a>
             <a href="/patient/addFamilyMember" rel="noopener noreferrer">
             <button className="btn btn-primary"> Add Family Members </button>
             </a>
             <a href="/patient/viewDoctors" rel="noopener noreferrer">
-            <button className="btn btn-primary"> view Doctors </button>
+            <button className="btn btn-primary"> View Doctors </button>
           </a>
           <a href="/patient/viewPrescriptions/" rel="noopener noreferrer">
-            <button className="btn btn-primary"> view Prescriptions </button>
+            <button className="btn btn-primary"> View Prescriptions </button>
           </a>
           <a href="/patient/search/" rel="noopener noreferrer">
             <button className="btn btn-primary"> Search </button>

@@ -3,11 +3,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import PackageService from "../../services/packageService";
 import MemberService from "../../services/familyMemberService";
-
+import patientService from "../../services/patientService";
 
 const PkgListP = (props) => {
+  const intialBody = {
+    packageID:"",
+    patients:["654bed1dbe07a9603f5b4030"]
+  };
     const [users, setUsers] = useState([]);
     const [members, setMembers] = useState([]);
+    const [body,setBody]= useState(intialBody);
     const [showBanner, setShowBanner] = useState(false);
   
     useEffect(() => {
@@ -50,10 +55,40 @@ const PkgListP = (props) => {
         console.log(e);
       });
   };
-  const handleSubscribeClick = () => {
-    setShowBanner(true); // Set showBanner to true when Subscribe is clicked
+  const handleSubscribeClick = (userId) => {
+    setBody((prevBody) => ({
+      ...prevBody,
+      packageID: userId,
+    }));
+    setShowBanner(true); 
   };
   const membersWithPackage = members.filter((member) => member.package);
+  const handleCheckboxChange = (memberId) => {
+    const isChecked = body.patients.includes(memberId);
+  
+    if (isChecked) {
+      setBody({
+        ...body,
+        patients: body.patients.filter((id) => id !== memberId),
+      });
+    } else {
+      setBody({
+        ...body,
+        patients: [...body.patients, memberId],
+      });
+    }
+  };
+  async function subscribe(e){
+    e.preventDefault();
+    patientService.subscribeToAHealthPackage(body).then((response) => {
+      console.log(response.data);
+      console.log(body.patients);
+      alert(response.data);
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+  }
   return (
     <div>
       <div className="App-header">
@@ -84,7 +119,7 @@ const PkgListP = (props) => {
                   <h4 className="card-title" style={{ color: "white" }}>
                     Price: {user.price} EGP
                   </h4> 
-                  <button className = "btn btn-primary" onClick={handleSubscribeClick}>Subscribe</button>
+                  <button className = "btn btn-primary" onClick={() => handleSubscribeClick(user.type)}>Subscribe</button>
                 </div>
               </div>
             );
@@ -105,12 +140,13 @@ const PkgListP = (props) => {
             <div>
           {membersWithPackage.map((member) => (
             <label key={member.id} style={{ display: "block" }}>
-              <input type="checkbox" value={member.name} /> {member.name}
+              <input type="checkbox" value={member.name} checked={body.patients.includes(member._id)}
+                onChange={() => handleCheckboxChange(member._id)}/> {member.name}
             </label>
           ))}
           </div>
           <div className="payment-buttons">
-            <button className="btn btn-primary">Pay Using Wallet</button>
+            <button className="btn btn-primary" onClick={subscribe}>Pay Using Wallet</button>
             <button className="btn btn-primary">Pay Using Credit Card</button>
           </div>
         </div>

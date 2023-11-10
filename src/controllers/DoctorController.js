@@ -93,7 +93,6 @@ const updateDoctor = async (req, res) => {
       { email: email, hourlyRate: hourlyRate, affiliation: affiliation },
       { new: true }
     );
-    console.log("dakhalna 2");
     res.status(200).json({
       status: "success",
       data: {
@@ -200,10 +199,9 @@ const getAllMyPatients = async (req, res) => {
 
 const searchPatientByName = async (req, res) => {
   const { name } = req.query;
-  const doctorId = req.body.Id;
+  const doctorId = req.query.doctorId; 
 
   try {
-    // const patients = await patientModel.find({name});
     const appointments = await appointment.find({ doctor: doctorId });
     const patientIds = appointments.map((appointment) => appointment.patient);
     const patients = await patientModel.find({
@@ -222,6 +220,7 @@ const searchPatientByName = async (req, res) => {
     });
   }
 };
+
 
 //filter appointments by date/status:
 
