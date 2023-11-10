@@ -5,7 +5,7 @@ const userModel = require("../Models/user.js");
 const packageModel = require("../Models/Packages.js");
 const appointmentModel = require("../Models/Appointments.js");
 const PrescriptionsModel = require("../Models/Prescriptions.js");
-const familyMembersAcc= require("../Models/familyMembersAccount.js");
+const familyMembersAcc = require("../Models/familyMembersAccount.js");
 const { error } = require("console");
 const { default: mongoose } = require("mongoose");
 const { disconnect } = require("process");
@@ -71,19 +71,28 @@ const addFamilyMemberByUsername = async (req, res) => {
   }
 
   const email = req.body.email;
-  const mobile =req.body.mobile;
+  const mobile = req.body.mobile;
   var familyMemberUserID = null;
   try {
-    if(email!="")
+    if (email != "")
       familyMemberUserID = await patientModel.findOne({ email: email }).exec();
-    else if(mobile!="") 
-      familyMemberUserID = await patientModel.findOne({ mobile: mobile }).exec();
-    if (familyMemberUserID == null || familyMemberUserID.__t!="patient") {
-      res.status(404).send("There's no account with the corresponding username");
+    else if (mobile != "")
+      familyMemberUserID = await patientModel
+        .findOne({ mobile: mobile })
+        .exec();
+    if (familyMemberUserID == null || familyMemberUserID.__t != "patient") {
+      res
+        .status(404)
+        .send("There's no account with the corresponding username");
       return;
     } else {
-      if (await familyMembersAcc.findOne({ Id: familyMemberUserID._id }) !== null ||
-      await familyMembersAcc.findOne({ patient: familyMemberUserID._id }) !== null) {
+      if (
+        (await familyMembersAcc.findOne({ Id: familyMemberUserID._id })) !==
+          null ||
+        (await familyMembersAcc.findOne({
+          patient: familyMemberUserID._id,
+        })) !== null
+      ) {
         res.status(200).send("Family member already exists");
         return;
       } else {
@@ -100,7 +109,7 @@ const addFamilyMemberByUsername = async (req, res) => {
     console.error(error);
     res.status(500).send("Internal Server Error");
   }
-}
+};
 
 //working fine and testing fine
 const addFamilyMember = async (req, res) => {
@@ -168,22 +177,32 @@ const viewFamilyMembers = async (req, res) => {
 
     console.log("Patient ID:", neededPatientID._id);
 
-    const familyMemberAcc = await familyMembersAcc.find({ patient: neededPatientID._id });
-    const familyMemberAccRev = await familyMembersAcc.find({ Id: neededPatientID._id });
+    const familyMemberAcc = await familyMembersAcc.find({
+      patient: neededPatientID._id,
+    });
+    const familyMemberAccRev = await familyMembersAcc.find({
+      Id: neededPatientID._id,
+    });
 
     familyMemberModel
       .find({ patient: neededPatientID._id })
       .exec()
       .then(async (result) => {
-        if (Object.keys(result).length === 0 && familyMemberAcc.length<=0 && familyMemberAccRev.length<=0) {
+        if (
+          Object.keys(result).length === 0 &&
+          familyMemberAcc.length <= 0 &&
+          familyMemberAccRev.length <= 0
+        ) {
           res.status(200).send("You don't have any family members added");
         } else {
           const familyMemberData = [];
 
-          if (familyMemberAcc.length> 0) {
+          if (familyMemberAcc.length > 0) {
             // Collect data from result2 and select specific fields including "relationToPatient"
-            const result2Ids = familyMemberAcc.map(acc => acc.Id);
-            const result2 = await userModel.find({ _id: { $in: result2Ids } }).select('name dateOfBirth gender package');
+            const result2Ids = familyMemberAcc.map((acc) => acc.Id);
+            const result2 = await userModel
+              .find({ _id: { $in: result2Ids } })
+              .select("name dateOfBirth gender package");
             const result2WithRelation = result2.map((user, index) => ({
               ...user.toObject(),
               relationToPatient: familyMemberAcc[index].relationToPatient,
@@ -191,12 +210,15 @@ const viewFamilyMembers = async (req, res) => {
             familyMemberData.push(result2WithRelation);
           }
 
-          if (familyMemberAccRev.length>0) {
+          if (familyMemberAccRev.length > 0) {
             // Collect data from result3 and select specific fields including "relationToPatient"
-            const result3Ids = familyMemberAccRev.map(acc => acc.patient._id);
-            const result3 = await userModel.find({ _id: { $in: result3Ids } }).select('name dateOfBirth gender package');
+            const result3Ids = familyMemberAccRev.map((acc) => acc.patient._id);
+            const result3 = await userModel
+              .find({ _id: { $in: result3Ids } })
+              .select("name dateOfBirth gender package");
             const result3WithRelation = result3.map((user, index) => {
-              let relationToPatient = familyMemberAccRev[index].relationToPatient;
+              let relationToPatient =
+                familyMemberAccRev[index].relationToPatient;
               if (relationToPatient === "Husband") {
                 relationToPatient = "Wife";
               } else if (relationToPatient === "Wife") {
@@ -222,9 +244,6 @@ const viewFamilyMembers = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
-
-
-
 
 //working fine testing fine
 const viewDoctors = async (req, res) => {
@@ -553,19 +572,24 @@ const viewDocInfo = async (req, res) => {
 const filterAppointmentsByDateAndStatus = async (req, res) => {
   const { date, status } = req.query;
   const patientID = req.params.id;
+  let currentDate = new Date
+
 
   try {
-    let filter = { patient: patientID };
+    let filter = { patient: patientID, date: {$gte: currentDate} };
     if (date) {
-      filter.date = { $gte: date };
+      let dateDate = new Date(date)
+      console.log(dateDate)
+      let nextDay = dateDate.getUTCDay()
+      console.log(nextDay)
+      filter.date =  {$and: [{$gte: date}, {$lt: nextDay}]} ;
     }
     if (status) {
       filter.status = status;
     }
 
-    const appointments = await appointmentModel
-      .find(filter)
-      .populate("doctor", "name -_id -__t");
+    const appointments = await appointmentModel.find(filter)
+      //.populate("doctor", "name -_id -__t");
     console.log(appointments);
 
     if (appointments) {
@@ -632,48 +656,54 @@ const getPatients = async (req, res) => {
   res.status(200).send(patients);
 };
 
-const getPassword = async(req, res) => {
-  const userID = req.params.id
+const getPassword = async (req, res) => {
+  const userID = req.params.id;
   var user = await patientModel.findById(userID);
-  res.status(200).send(user.password)
-}
-const changePassword = async(req, res) => {
-  const userID = req.params.id
-  var newPassword = req.body.password
-  try{
-      await patientModel.findByIdAndUpdate(userID, {password: newPassword})
-      res.status(200).send('Password updated successfully')
-    }
-  catch(err){console.error(err)}
-
-}
-const getAmountInWallet = async(req,res)=>{
-  const username=req.params.username
-  const patient =await patientModel.findOne({username:username});
-  res.status(200).send((patient.amountInWallet).toString()+" EGP");
-}
-const subscribeToAHealthPackage= async(req,res)=>{
-  const packageID =req.body.packageID;
+  res.status(200).send(user.password);
+};
+const changePassword = async (req, res) => {
+  const userID = req.params.id;
+  var newPassword = req.body.password;
+  try {
+    await patientModel.findByIdAndUpdate(userID, { password: newPassword });
+    res.status(200).send("Password updated successfully");
+  } catch (err) {
+    console.error(err);
+  }
+};
+const getAmountInWallet = async (req, res) => {
+  const username = req.params.username;
+  const patient = await patientModel.findOne({ username: username });
+  res.status(200).send(patient.amountInWallet.toString() + " EGP");
+};
+const subscribeToAHealthPackage = async (req, res) => {
+  const packageID = req.body.packageID;
   const patients = req.body.patients;
   const renewalDate = new Date();
-  renewalDate.setMonth(renewalDate.getMonth()+1);
+  renewalDate.setMonth(renewalDate.getMonth() + 1);
   try {
     for (const patientID of patients) {
       const patient = await patientModel.findOne({ _id: patientID });
       if (patient) {
         patient.package = packageID;
         patient.packageRenewalDate = renewalDate;
-        patient.packageStatus="Subscribed With Renewal Date";
+        patient.packageStatus = "Subscribed With Renewal Date";
         await patient.save();
       }
     }
 
-    res.status(200).send('Subscribed to package successfully');
+    res.status(200).send("Subscribed to package successfully");
   } catch (error) {
     console.error(error);
-    res.status(500).send('An error occurred while updating patient packages');
+    res.status(500).send("An error occurred while updating patient packages");
   }
-} 
+};
+
+const appointmentsForDoc = async (req, res) => {
+  const doctorID = req.query.doctor //doctor id
+  const doctor = await doctorModel.findById(doctorID)
+  const appointments = await appointmentModel.find({doctor: doctor})
+}
 
 module.exports = {
   addFamilyMember,
@@ -692,5 +722,6 @@ module.exports = {
   getPassword,
   addFamilyMemberByUsername,
   getAmountInWallet,
-  subscribeToAHealthPackage
+  subscribeToAHealthPackage,
+  appointmentsForDoc,
 };
