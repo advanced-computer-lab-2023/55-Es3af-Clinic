@@ -12,6 +12,7 @@ import FilteredAppointmentsList from "./filterAppointmentsByDateAndStatuspatient
 import FilterDoctors from "./Filterdoctors";
 import PkgList from "../viewPackages";
 import UpdatePassword from './updatePassword';
+import UploadMedicalHistory from './UploadMedicalHistory';
 
 function PatientPage() {
   return (
@@ -29,6 +30,7 @@ function PatientPage() {
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
       <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
       <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
+      <Route path='/UploadMedicalHistory' element = {<UploadMedicalHistory/>} />
 
     </Routes>
   );
@@ -66,6 +68,9 @@ function PatientHome() {
           </a>
           <a href={`/patient/${id}/updatePassword/`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Update my Password </button>
+          </a>
+          <a href={`/patient/UploadMedicalHistory/`} rel="noopener noreferrer">
+            <button className="btn btn-primary"> Upload Medical History </button>
           </a>
         </div>
       </header>

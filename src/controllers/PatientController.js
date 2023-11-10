@@ -5,9 +5,14 @@ const userModel = require("../Models/user.js");
 const packageModel = require("../Models/Packages.js");
 const appointmentModel = require("../Models/Appointments.js");
 const PrescriptionsModel = require("../Models/Prescriptions.js");
+const multer = require('multer');
+const fs = require('fs');
 const { error } = require("console");
 const { default: mongoose } = require("mongoose");
 const { disconnect } = require("process");
+
+
+const upload = multer({ dest: 'uploads/' });
 
 const test = async (req, res) => {
   // const newDoc = new doctorModel({
@@ -568,6 +573,37 @@ const changePassword = async(req, res) => {
 
 }
 
+
+const uploadMedicalHistory = async (req, res) => {
+  upload.array('medicalHistory', 5)(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      return res.status(500).json(err);
+    } else if (err) {
+      return res.status(500).json(err);
+    }
+
+    const username = req.body.username;
+    const newMedicalHistory = req.files.map(file => {
+      return {
+        data: fs.readFileSync(file.path),
+        contentType: file.mimetype,
+      };
+    });
+
+    patientModel.findOneAndUpdate(
+      { username: username },
+      { $push: { medicalHistory: { $each: newMedicalHistory } } },
+      { new: true }
+    )
+      .then(doc => {
+        return res.status(200).send(`Medical history file uploaded for ${username}`);
+      })
+      .catch(err => {
+        return res.status(500).json(err);
+      });
+  });
+};
+
 module.exports = {
   addFamilyMember,
   viewFamilyMembers,
@@ -582,5 +618,6 @@ module.exports = {
   getPatient,
   filterprescriptionsbydatestatusdoctor,
   changePassword,
-  getPassword
+  getPassword,
+  uploadMedicalHistory,
 };

@@ -48,7 +48,11 @@ const patientSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'doctor', 
     default: null
-  }
+  },
+  medicalHistory: [{
+    data: Buffer,
+    contentType: String
+  }]
   
   // healthRecords: [{ type: Schema.Types.ObjectId, ref: 'HealthRecord' }]
 });

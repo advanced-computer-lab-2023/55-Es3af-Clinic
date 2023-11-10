@@ -18,5 +18,6 @@ patientRoutes.get("/filterPrescriptions/:id", patientController.filterprescripti
 patientRoutes.get("/filterprescriptionsbydatestatusdoctor/:id", patientController.filterprescriptionsbydatestatusdoctor)
 patientRoutes.get("/filterAppointmentsByDateAndStatus/:id", patientController.filterAppointmentsByDateAndStatus)
 patientRoutes.get("/searchBySpecDate/:id", patientController.searchBySpecDate)
+patientRoutes.post('/uploadMedicalHistory', patientController.uploadMedicalHistory);
 
 module.exports = {patientRoutes}
