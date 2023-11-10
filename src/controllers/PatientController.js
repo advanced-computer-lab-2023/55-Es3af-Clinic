@@ -736,5 +736,5 @@ module.exports = {
   getAmountInWallet,
   subscribeToAHealthPackage,
   BookAnAppointment,
-  uploadMedicalHistory,
+  //uploadMedicalHistory,
 };
