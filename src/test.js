@@ -8,6 +8,9 @@ const{router}=require("../src/routes/main")
 const MongoURI = "mongodb+srv://55Es3af:SVH8v8XKZSxU1J6p@cluster0.zqasadb.mongodb.net/Clinic?retryWrites=true&w=majority" ;
 
 const app = express();
+
+app.use(express.json());
+
 const port = process.env.PORT || "8000";
 // const patient = require('./Models/Patient');
 // const familyMember = require('./Models/FamilyMembers');

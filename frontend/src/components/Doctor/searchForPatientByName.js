@@ -3,75 +3,72 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import DoctorService from "../../services/doctorService";
 
-
 function SearchPatient() {
-    console.log('7aga')
   const [results, setResults] = useState([]);
-  const [name, setName] = useState('')
-  const [spec, setSpec] = useState('')
+  const [name, setName] = useState('');
+  const doctorId = "6525afac114367999aba79df";
+
   const handleNameChange = (event) => {
-        setName(event.target.value);
-      };
-      const handleSpecChange = (event) => {
-        setSpec(event.target.value);
-      };
-      console.log(name)
+    setName(event.target.value);
+  };
+
   const search = async (event) => {
     event.preventDefault();
-    console.log('before response')
-
-    //const speciality = event.target.speciality.value
-
-    const response = await DoctorService.SearchPatientByName(name);
-    console.log('after response')
-    setResults(response.data);
-    console.log(response.data)
+    try {
+      const response = await DoctorService.SearchPatientByName(name, doctorId);
+      setResults(response.data.data.patients);
+    } catch (error) {
+      console.error("Error searching for patients:", error.message);
+      // Add logic to handle and display the error
+    }
   };
 
   return (
     <div className="App">
       <header className="App-header">
-        <form className="App-header" onSubmit= {search}>
+        <form className="App-header" onSubmit={(e) => search(e)}>
           <div className="form-group">
             <label htmlFor="InputName">Patient name</label>
             <input
-              type="string"
+              type="text"
               className="form-control"
               id="Name"
               name="Name"
-              placeholder="enter patient name"
-              value = {name}
+              placeholder="Enter patient name"
+              value={name}
               onChange={handleNameChange}
             />
           </div>
           <button type="submit" className="btn btn-primary">
             Search
           </button>
-          <p>results</p>
+          <p>Results</p>
           {results.length > 0 ? (
-        results.map((result) => {
-            return (
-              <div
+            results.map((result) => (
+             <div
                 className="card"
-                key={result._id}  // Use the appropriate key (e.g., result._id)
+                key={result._id}
                 style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
-              >
+            >
                 <div className="card-body">
                   <h3 className="card-title" style={{ color: "white" }}>
-                    Name: {result.Name}  {/* Update to result.Name */}
+                    Name: {result.name}
                   </h3>
-                  <a href={`/doctor/searchPatientByName?name=${result.Name}`} rel="noopener noreferrer">
+                  <a
+                    href={`/doctor/searchPatientByName?name=${result.name}`}
+                    rel="noopener noreferrer"
+                  >
                     <button className="btn btn-primary">View Details</button>
                   </a>
                 </div>
               </div>
-            );
-          })          
-        ) : (
-          <div>
-            <h2>No patients found</h2>
-          </div>
-        )}
+        ))
+          ) : (
+            <div>
+              <h2>No patients found</h2>
+            </div>
+          )}
+
         </form>
       </header>
     </div>
