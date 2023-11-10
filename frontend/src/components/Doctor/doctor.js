@@ -7,7 +7,7 @@ import MyPatientList from "./viewAllMyPatients";
 //import SelectPatientList from "../components/selectPatient";
 import EditDoctor from "./updateDoctor2";
 import FilteredAppointments from "./filterAppointmentsByDateAndStatus.js";
-import SearchPatient from "./searchForPatientByName";
+import SearchPatient from "./searchForPatientByName.js";
 import FilteredPatientsByAppointments from "./filterPatientByAppointment";
 import UpdatePassword from '../Doctor/updatePassword';
 import doctorService from "../../services/doctorService.js";
