@@ -17,7 +17,6 @@ function SearchPatient() {
     try {
       const response = await DoctorService.SearchPatientByName(name, doctorId);
       setResults(response.data.data.patients);
-      console.log("Updated results:", results);
     } catch (error) {
       console.error("Error searching for patients:", error.message);
       // Add logic to handle and display the error
