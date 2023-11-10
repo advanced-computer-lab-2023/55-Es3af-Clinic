@@ -4,6 +4,8 @@ const doctorController = require("../controllers/DoctorController");
 
 const doctorRouter = express.Router();
 
+doctorRouter.use(express.json());
+
 doctorRouter.put('/:id/updatePassword', doctorController.changePassword)
 doctorRouter.get('/:id/updatePassword', doctorController.getPassword)
 doctorRouter.route("/updateDoctor").put(doctorController.updateDoctor);

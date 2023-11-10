@@ -61,7 +61,11 @@ const patientSchema = new Schema({
   amountInWallet:{
     type:Number,
     default:0,
-  }
+  },
+  medicalHistory: [{
+    data: Buffer,
+    contentType: String
+  }]
   
   // healthRecords: [{ type: Schema.Types.ObjectId, ref: 'HealthRecord' }]
 });

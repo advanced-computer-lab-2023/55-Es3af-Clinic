@@ -5,10 +5,15 @@ const userModel = require("../Models/user.js");
 const packageModel = require("../Models/Packages.js");
 const appointmentModel = require("../Models/Appointments.js");
 const PrescriptionsModel = require("../Models/Prescriptions.js");
-const familyMembersAcc = require("../Models/familyMembersAccount.js");
+const multer = require('multer');
+const fs = require('fs');
+const familyMembersAcc= require("../Models/familyMembersAccount.js");
 const { error } = require("console");
 const { default: mongoose } = require("mongoose");
 const { disconnect } = require("process");
+
+
+const upload = multer({ dest: 'uploads/' });
 
 const test = async (req, res) => {
   // const newDoc = new doctorModel({
@@ -680,19 +685,25 @@ const subscribeToAHealthPackage = async (req, res) => {
   const packageID = req.body.packageID;
   const patients = req.body.patients;
   const renewalDate = new Date();
-  renewalDate.setMonth(renewalDate.getMonth() + 1);
+  renewalDate.setMonth(renewalDate.getMonth()+1);
+  var response="";
   try {
     for (const patientID of patients) {
       const patient = await patientModel.findOne({ _id: patientID });
       if (patient) {
+        if(patient.package==packageID && patient.packageStatus=="Subscribed With Renewal Date"){
+          response+=patient.name +" is already subscribed to this package \n";
+        }
+        else{
         patient.package = packageID;
         patient.packageRenewalDate = renewalDate;
         patient.packageStatus = "Subscribed With Renewal Date";
         await patient.save();
+        response+=patient.name+' is subscribed to package successfully \n';
+      }
       }
     }
-
-    res.status(200).send("Subscribed to package successfully");
+    res.status(200).send(response);
   } catch (error) {
     console.error(error);
     res.status(500).send("An error occurred while updating patient packages");
@@ -703,6 +714,40 @@ const appointmentsForDoc = async (req, res) => {
   const doctorID = req.query.doctor //doctor id
   const doctor = await doctorModel.findById(doctorID)
   const appointments = await appointmentModel.find({doctor: doctor})
+} 
+const withdrawFromWallet=async(req,res)=>{
+  const patientID=req.body.patientID;
+  const amountToWithdraw=req.body.amount;
+  try{
+  const patient= await patientModel.findById(patientID).exec();
+  if(patient.amountInWallet<amountToWithdraw){
+    return res.status(200).send("Not suffecient funds in wallet");
+  }
+  else{
+    patient.amountInWallet-=amountToWithdraw;
+    await patient.save();
+    return res.status(200).send("Amount deducted successfully");
+  }
+}
+catch (error) {
+  console.error(error);
+  res.status(500).send('An error occurred while withdrawing');
+}
+}
+const BookAnAppointment = async(req,res)=>{
+  const patientid = req.params.id;
+
+  try {
+    const patient = await patientModel.findById(patientid);
+
+    //await viewFamilyMembers(req, res);
+
+    res.status(200).send('Appointment was booked successfully');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while booking the appointment');
+  }
+
 }
 
 module.exports = {
@@ -724,4 +769,6 @@ module.exports = {
   getAmountInWallet,
   subscribeToAHealthPackage,
   appointmentsForDoc,
+  BookAnAppointment,
+  //uploadMedicalHistory,
 };

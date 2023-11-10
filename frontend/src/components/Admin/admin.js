@@ -10,6 +10,9 @@ import UpdatePassword from '../Admin/updatePassword';
 import Packages from "./packages";
 import packageService from "../../services/packageService";
 import UpdatePackage from "../updatePackage";
+import { Link } from "react-router-dom";
+
+
 function AdminPage() {
   return (
     <Routes>
@@ -39,6 +42,11 @@ function AdminHome() {
           </a>
         </div>
         <div>
+          <Link to="/admin/users" style={{ textDecoration: 'none' }}>
+            <button className="btn btn-primary"> View Users </button>
+          </Link>
+        </div>
+        <div>
           <a href="/admin/deleteUser" rel="noopener noreferrer">
             <button className="btn btn-primary"> Delete user </button>
           </a>
@@ -52,9 +60,9 @@ function AdminHome() {
           <a href="/admin/packages" rel="noopener noreferrer">
             <button className="btn btn-primary"> Packages </button>
           </a>
-          <a href={`/admin/${id}/updatePassword/`} rel="noopener noreferrer">
+          <Link to={`/admin/${id}/updatePassword/`} style={{ textDecoration: 'none' }}>
             <button className="btn btn-primary"> Update my Password </button>
-          </a>
+          </Link>
         </div>
       </header>
     </div>

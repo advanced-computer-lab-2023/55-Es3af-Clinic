@@ -14,11 +14,18 @@ const addAdmin = async (req, res) => {
 
 const listUsers = async (req, res) => {
   try {
-    res.send(await userModel.find());
+    const users = await userModel.find().lean(); // Use lean() to get plain JavaScript objects instead of Mongoose Documents
+    const cleanedUsers = users.map(user => ({
+      ...user,
+      _id: user._id.toString().trim(), // Convert ObjectId to string and remove whitespace
+    }));
+
+    res.send(cleanedUsers);
   } catch (e) {
     res.status(400).send(e);
   }
 };
+
 
 const deleteUser = async (req, res) => {
   try {
@@ -54,6 +61,49 @@ const changePassword = async (req, res) => {
   }
 };
 
+const acceptDoctorRequest = async (req, res) => {
+  try {
+    const doctorRequestId = req.params.id;
+    const doctorRequest = await DoctorRequest.findById(doctorRequestId);
+
+    if (!doctorRequest) {
+      return res.status(404).json({ message: 'Doctor request not found' });
+    }
+
+    const newDoctor = new Doctor({
+      username: doctorRequest.username,
+      password: doctorRequest.password,
+      name: doctorRequest.name,
+      email: doctorRequest.email,
+      dateOfBirth: doctorRequest.dateOfBirth,
+      hourlyRate: doctorRequest.hourlyRate,
+      affiliation: doctorRequest.affiliation,
+      educationBackground: doctorRequest.educationBackground,
+      speciality: doctorRequest.speciality,
+    });
+
+    await newDoctor.save();
+    await DoctorRequest.findByIdAndDelete(doctorRequestId);
+
+    res.status(200).json({ status: 'success', message: 'Doctor request accepted' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 'error', message: 'Internal server error' });
+  }
+};
+const rejectDoctorRequest = async (req, res) => {
+  try {
+    const doctorRequestId = req.params.id;
+    await DoctorRequest.findByIdAndDelete(doctorRequestId);
+
+    res.status(200).json({ status: 'success', message: 'Doctor request rejected' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 'error', message: 'Internal server error' });
+  }
+};
+
+
 module.exports = {
   addAdmin,
   deleteUser,
@@ -61,4 +111,6 @@ module.exports = {
   viewDoctorData,
   changePassword,
   getPassword,
+  acceptDoctorRequest,
+  rejectDoctorRequest,
 };

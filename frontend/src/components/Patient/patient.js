@@ -13,8 +13,11 @@ import FilteredAppointmentsList from "./filterAppointmentsByDateAndStatuspatient
 import FilterDoctors from "./Filterdoctors";
 import PkgListP from "./viewPackages";
 import UpdatePassword from './updatePassword';
+import UploadMedicalHistory from './UploadMedicalHistory';
 import AddMemberAcc from "./addMemberByAcc";
+import BookAnAppointment  from "./BookAnAppointment";
 import patientService from "../../services/patientService";
+import useDoctorSearch from "./searchDoctors";
 
 function PatientPage() {
   return (
@@ -30,9 +33,11 @@ function PatientPage() {
       <Route path="/viewPrescriptions" element={<PrescriptionList />} />
       <Route path="/filterprescriptionsbydatestatusdoctor" element={<FilteredPrescriptionList />} />
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
-      <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
+      <Route path="/searchBySpecDate" element= {<useDoctorSearch />} />
       <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
+      <Route path='/UploadMedicalHistory' element = {<UploadMedicalHistory/>} />
       <Route path='/:username/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
+      <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />
 
     </Routes>
   );
@@ -58,19 +63,19 @@ function PatientHome() {
   return (
     <div className="App">
       <header className="App-header">
-        <div>
+        <div className="payment-buttons">
           <h5 className="top-right-button">Amount In Wallet: {result} </h5>
           <a href="/patient/familyMembers" rel="noopener noreferrer">
-            <button className="btn btn-primary"> view Family Members </button>
+            <button className="btn btn-primary"> View Family Members </button>
             </a>
             <a href="/patient/addFamilyMember" rel="noopener noreferrer">
             <button className="btn btn-primary"> Add Family Members </button>
             </a>
             <a href="/patient/viewDoctors" rel="noopener noreferrer">
-            <button className="btn btn-primary"> view Doctors </button>
+            <button className="btn btn-primary"> View Doctors </button>
           </a>
           <a href="/patient/viewPrescriptions/" rel="noopener noreferrer">
-            <button className="btn btn-primary"> view Prescriptions </button>
+            <button className="btn btn-primary"> View Prescriptions </button>
           </a>
           <a href="/patient/search/" rel="noopener noreferrer">
             <button className="btn btn-primary"> Search </button>
@@ -86,6 +91,12 @@ function PatientHome() {
           </a>
           <a href={`/patient/${id}/updatePassword/`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Update my Password </button>
+          </a>
+          <a href={`/patient/UploadMedicalHistory/`} rel="noopener noreferrer">
+            <button className="btn btn-primary"> Upload Medical History </button>
+          </a>
+          <a href={`/patient/${id}/BookAnAppointment/`} rel="noopener noreferrer">
+            <button className="btn btn-primary"> Book An Appointment </button>
           </a>
         </div>
       </header>

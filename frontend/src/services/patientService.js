@@ -10,6 +10,9 @@ class PatientService {
   async getAmountInWallet(username){
     return http.get(`/patient/${username}/getAmountInWallet`)
   }
+  async subscribeToAHealthPackage(info){
+    return http.put("/patient/subscribeToAHealthPackage",info)
+  }
   viewDoctors(patient) {
     return http.get("/patient/viewDoctors", { params: { patient } });
   }
@@ -55,7 +58,7 @@ class PatientService {
       params: queryParams,
     });
   }
-  FilterDoctors(patientid, date, speciality) {
+  useDoctorSearch(patientid, date, speciality) {
     const queryParams = {};
 
     if (date) {
@@ -77,6 +80,12 @@ class PatientService {
 
   getPassword(id){
     return http.get(`/patient/${id}/updatePassword`)
+  }
+  BookAnAppointment(id){
+
+    return http.post(`/patient/BookAnAppointment/${id}`)
+
+
   }
 }
 
