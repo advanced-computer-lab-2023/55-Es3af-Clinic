@@ -688,7 +688,8 @@ const withdrawFromWallet=async(req,res)=>{
     patient.amountInWallet-=amountToWithdraw;
 
   }
-}const BookAnAppointment = async(req,res)=>{
+}
+const BookAnAppointment = async(req,res)=>{
   const patientid = req.params.id;
 
   try {

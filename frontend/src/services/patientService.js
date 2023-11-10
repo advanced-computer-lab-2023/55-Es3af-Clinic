@@ -58,7 +58,7 @@ class PatientService {
       params: queryParams,
     });
   }
-  FilterDoctors(patientid, date, speciality) {
+  useDoctorSearch(patientid, date, speciality) {
     const queryParams = {};
 
     if (date) {

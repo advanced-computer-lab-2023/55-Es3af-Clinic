@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import patientService from "../../services/patientService";
 import React from 'react';
-import useDoctorSearch from './useDoctorSearch';
+import useDoctorSearch from './searchDoctors';
 
 function BookAnAppointment() {
   const { results, searchPerformed, searchDoctors } = useDoctorSearch();
@@ -18,7 +18,6 @@ function BookAnAppointment() {
     // Call the searchDoctors function from the custom hook
     await searchDoctors(patientid, date, speciality);
   };
-
     return (
         <div className="App">
           <header className="App-header">

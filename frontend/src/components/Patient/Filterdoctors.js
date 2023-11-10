@@ -3,28 +3,21 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import patientService from "../../services/patientService";
 import { Link } from "react-router-dom";
+import React from 'react';
+import useDoctorSearch from './searchDoctors';
 
 function FilterDoctors() {
-  const [results, setResults] = useState([]);
-  const [searchPerformed, setSearchPerformed] = useState(false);
+  const { results, searchPerformed, searchDoctors } = useDoctorSearch();
 
   const search = async (event) => {
     event.preventDefault();
 
-    const date = event.target.date.value
+    const date = event.target.date.value;
     const speciality = event.target.speciality.value;
-    const patientid = "654bed1dbe07a9603f5b4030";
-    
+    const patientid = '652b2da81a7433f37b218610';
 
-    const response = await patientService.FilterDoctors(
-      patientid,
-      date,
-      speciality
-    );
-
-    setResults(response.data);
-    console.log(response)
-    setSearchPerformed(true);
+    // Call the searchDoctors function from the custom hook
+    await searchDoctors(patientid, date, speciality);
   };
 
   return (
