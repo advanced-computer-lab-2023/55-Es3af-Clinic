@@ -1,4 +1,6 @@
+const express = require('express');
 const Package = require("../Models/Packages.js");
+
 
 const silverPackage = {
   type: "Silver",
@@ -50,32 +52,26 @@ const createPackage = async (req, res) => {
 };
 
 const updatePackage = async (req, res) => {
-  const {
-    type,
-    price,
-    sessionDiscount,
-    medicationDiscount,
-    familyMemberDiscount,
-  } = req.body;
-
-  // var Name = req.body.Name;
-  //var Price = req.body.Price;
-  //var ActiveIngredients = req.body.ActiveIngredients;
-  packageModel
+  const {type, price, sessionDiscount,medicationDiscount,familyMemberDiscount }= req.body;
+  const updatedPackage = await Package
     .findOneAndUpdate(
       { type: type },
-      { price: price },
-      { sessionDiscount: sessionDiscount },
-      { medicationDiscount: medicationDiscount },
-      { familyMemberDiscount: familyMemberDiscount }
+      { price: price},
+      { sessionDiscount: sessionDiscount}, 
+      { medicationDiscount: medicationDiscount},
+      { familyMemberDiscount:familyMemberDiscount}
     )
     .catch((err) => console.log(err));
-  res.status(200).send("Package is updated successfully");
+    console.log(updatePackage);
+  res
+    .status(200)
+    .send("Package with name " + Name + " is updated successfully");
 };
+
 
 const deletePackage = async (req, res) => {
   try {
-    const deletedPackage = await Package.findOne(req.params.id);
+    const deletedPackage = await Package.findOne(req.params.type);
     if (!deletedPackage) {
       res.status(404).send({ error: "Package not found" });
     } else {
