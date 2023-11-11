@@ -1,6 +1,8 @@
 const fs = require("fs");
 const express = require("express");
 const doctorController = require("../controllers/DoctorController");
+// const authMiddleware = require('../middlewares/authMiddleware');
+
 
 const doctorRouter = express.Router();
 
@@ -33,6 +35,8 @@ doctorRouter
 doctorRouter.route("/selectPatient").patch(doctorController.selectPatient);
 doctorRouter.route("/:id/updatePassword").put(doctorController.changePassword);
 doctorRouter.route("/:username/getAmountInWallet").get(doctorController.getAmountInWallet);
+doctorRouter.route("/getTimeSlots/:id").get(doctorController.getTimeSlots);
+doctorRouter.route("/addTimeSlots/:id").post(doctorController.addTimeSlots);
 
 // router.route('/getDoctors').get(doctorController.getAllDoctors);
 // router.route('/getDoctor/:id').patch(doctorController.updateEmail);

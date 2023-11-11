@@ -59,6 +59,27 @@ class DoctorService {
   getPassword(id){
     return http.get(`/doctor/${id}/updatePassword`)
   }
+  async getTimeSlots(doctorId) {
+    try {
+      const response = await http.get(`/doctor/getTimeSlots/${doctorId}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  async addTimeSlots(id, timeSlotsData) {
+    try {
+      const response = await http.post(`/doctor/addTimeSlots/${id}`, timeSlotsData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default new DoctorService();

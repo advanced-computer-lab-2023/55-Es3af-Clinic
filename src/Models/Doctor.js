@@ -39,7 +39,14 @@ const doctorSchema = new Schema({
   amountInWallet:{
     type:Number,
     default:0,
-  }
+  },
+  availableTimeSlots: [
+    {
+      day: { type: String, required: true },
+      startTime: { type: String, required: true },
+      endTime: { type: String, required: true }
+    }
+  ]
 });
 
 //const doctor = mongoose.model("doctor", doctorSchema);
