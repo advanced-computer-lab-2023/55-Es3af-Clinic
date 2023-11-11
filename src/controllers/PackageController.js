@@ -52,46 +52,69 @@ const createPackage = async (req, res) => {
 };
 
 const updatePackage = async (req, res) => {
-  const {type, price, sessionDiscount,medicationDiscount,familyMemberDiscount }= req.body;
-  const updatedPackage = await Package
-    .findOneAndUpdate(
+  try {
+    const { type, price, sessionDiscount, medicationDiscount, familyMemberDiscount } = req.body;
+
+
+    const updatedPackage = await Package.findOneAndUpdate(
       { type: type },
-      { price: price},
-      { sessionDiscount: sessionDiscount}, 
-      { medicationDiscount: medicationDiscount},
-      { familyMemberDiscount:familyMemberDiscount}
-    )
-    .catch((err) => console.log(err));
-    console.log(updatePackage);
-  res
-    .status(200)
-    .send("Package with name " + Name + " is updated successfully");
+      {
+        $set: {
+          price: price,
+          sessionDiscount: sessionDiscount,
+          medicationDiscount: medicationDiscount,
+          familyMemberDiscount: familyMemberDiscount,
+        },
+      },
+      { new: true }
+    );
+
+    if (updatedPackage) {
+      console.log(updatedPackage);
+      res.status(200).send("Package with type " + type + " is updated successfully");
+    } else {
+      res.status(404).send("Package not found");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
 };
+
 
 
 const deletePackage = async (req, res) => {
   try {
-    const deletedPackage = await Package.findOne(req.params.type);
-    if (!deletedPackage) {
-      res.status(404).send({ error: "Package not found" });
-    } else {
-      res.send(deletedPackage);
-    }
-  } catch (e) {
-    res.status(400).send(e);
-  }
+    const packageId = req.params.id;
 
-  // try {
-  //   const deletedPackage = await Package.findByIdAndDelete(req.params.id);
-  //   if (!deletedPackage) {
-  //     res.status(404).send({ error: 'Package not found' });
-  //   } else {
-  //     res.send(deletedPackage);
-  //   }
-  // } catch (e) {
-  //   res.status(400).send(e);
-  // }
+    console.log("ID to delete:", packageId);
+
+    // Attempt to find the package before deletion
+    const packageToDelete = await Package.findOne({ _id: packageId });
+    
+    if (!packageToDelete) {
+      return res.status(404).send({ error: "Package not found" });
+    }
+
+    // Perform the deletion
+    const deletedPackage = await Package.findOneAndDelete({ _id: packageId });
+
+    console.log("Deleted Package:", deletedPackage);
+
+    if (!deletedPackage) {
+      return res.status(404).send({ error: "Package not found during deletion" });
+    }
+
+    res.status(200).send("Package deleted successfully");
+  } catch (e) {
+    console.error("Error:", e);
+    return res.status(500).send(e);
+  }
 };
+
+
+
+
 const viewPackages = async (req, res) => {
   try {
     const pkgData = await Package.find({});
