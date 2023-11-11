@@ -457,13 +457,16 @@ const searchByNameSpec = async (req, res) => {
   }
 };
 
-async function getAllSpecialities(){
-  const specialities = await doctorModel.find({}, { projection: { speciality: 1 } })
+const getAllSpecialities = async(req, res) => {
+  const specialities = await doctorModel.find({},{speciality: 1, _id: 0, __t: 0}).distinct('speciality')
   console.log(specialities)
+  res.status(200).send(specialities)
 }
+
 const searchBySpecDate = async (req, res) => {
   const { date, speciality } = req.query;
   //const patientID = req.params.id
+  console.log(speciality)
   if (date) {
     var date2 = new Date(date);
     date2.setHours(date2.getHours() + 2);

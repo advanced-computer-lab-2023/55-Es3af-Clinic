@@ -19,6 +19,7 @@ import BookAnAppointment  from "./BookAnAppointment";
 import patientService from "../../services/patientService";
 import useDoctorSearch from "./searchDoctors";
 
+
 function PatientPage() {
   return (
     <Routes>
@@ -33,7 +34,7 @@ function PatientPage() {
       <Route path="/viewPrescriptions" element={<PrescriptionList />} />
       <Route path="/filterprescriptionsbydatestatusdoctor" element={<FilteredPrescriptionList />} />
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
-      <Route path="/searchBySpecDate" element= {<useDoctorSearch />} />
+      <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
       <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
       <Route path='/UploadMedicalHistory' element = {<UploadMedicalHistory/>} />
       <Route path='/:username/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />

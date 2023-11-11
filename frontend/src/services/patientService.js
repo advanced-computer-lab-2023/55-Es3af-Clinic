@@ -58,7 +58,7 @@ class PatientService {
       params: queryParams,
     });
   }
-  useDoctorSearch(patientid, date, speciality) {
+  useDoctorSearch(date, speciality) {
     const queryParams = {};
 
     if (date) {
@@ -68,10 +68,14 @@ class PatientService {
       queryParams.speciality = speciality;
     }
 
-    return http.get(`/patient/searchBySpecDate/${patientid}`, {
+    return http.get(`/patient/searchBySpecDate`, {
       params: queryParams,
     });
   }
+
+  // getAllSpecialities(){
+  //   return http.get('/patient')
+  // }
 
   updatePassword(id, password){
     console.log('put is called')

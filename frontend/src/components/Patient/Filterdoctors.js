@@ -6,18 +6,21 @@ import { Link } from "react-router-dom";
 import React from 'react';
 import useDoctorSearch from './searchDoctors';
 
+
 function FilterDoctors() {
   const { results, searchPerformed, searchDoctors } = useDoctorSearch();
+
+  //console.log(specs)
 
   const search = async (event) => {
     event.preventDefault();
 
     const date = event.target.date.value;
     const speciality = event.target.speciality.value;
-    const patientid = '652b2da81a7433f37b218610';
+    //const patientid = '652b2da81a7433f37b218610';
 
     // Call the searchDoctors function from the custom hook
-    await searchDoctors(patientid, date, speciality);
+    await searchDoctors( date, speciality);
   };
 
   return (
@@ -34,7 +37,7 @@ function FilterDoctors() {
             placeholder="enter speciality" />
 
             <input
-              type="datetime"
+              type="date"
               className="form-control"
               id="date"
               name="date"
@@ -59,10 +62,10 @@ function FilterDoctors() {
                    Doctor: {result.name}
                 </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Hourly Rate: {result.hourlyRate}
+                   Hourly Rate: {result.price}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                  Affiliation: {result.affiliation}
+                  Speciality: {result.speciality}
                   </h3>
                   <button className = "btn btn-primary">
                       <Link to={`/patient/doctorInfo/${result.id}`} style={{ color: 'white', textDecoration: 'underline' }}>View Details</Link>
