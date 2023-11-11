@@ -55,7 +55,7 @@ const updatePackage = async (req, res) => {
   try {
     const { type, price, sessionDiscount, medicationDiscount, familyMemberDiscount } = req.body;
 
-    // Find the package by type
+
     const updatedPackage = await Package.findOneAndUpdate(
       { type: type },
       {
@@ -66,7 +66,7 @@ const updatePackage = async (req, res) => {
           familyMemberDiscount: familyMemberDiscount,
         },
       },
-      { new: true } // Return the modified document
+      { new: true }
     );
 
     if (updatedPackage) {
@@ -85,28 +85,35 @@ const updatePackage = async (req, res) => {
 
 const deletePackage = async (req, res) => {
   try {
+    const packageId = req.params.id;
 
-    console.log("ID to delete:", req.params.id);
+    console.log("ID to delete:", packageId);
 
+    // Attempt to find the package before deletion
+    const packageToDelete = await Package.findOne({ _id: packageId });
+    
+    if (!packageToDelete) {
+      return res.status(404).send({ error: "Package not found" });
+    }
 
-    const deletedPackage = await Package.findOne({pID: id});
-    deletedPackage.deleteOne();
-    res.status(200).send("Order cancelled succesfully");
-
+    // Perform the deletion
+    const deletedPackage = await Package.findOneAndDelete({ _id: packageId });
 
     console.log("Deleted Package:", deletedPackage);
 
     if (!deletedPackage) {
-      return res.status(404).send({ error: "Package not found" });
+      return res.status(404).send({ error: "Package not found during deletion" });
     }
 
-    return res.send(deletedPackage);
+    res.status(200).send("Package deleted successfully");
   } catch (e) {
-    // Log any errors that occur during the process
     console.error("Error:", e);
     return res.status(500).send(e);
   }
 };
+
+
+
 
 const viewPackages = async (req, res) => {
   try {
