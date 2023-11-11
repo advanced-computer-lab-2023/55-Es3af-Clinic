@@ -8,6 +8,8 @@ function UpdatePackage() {
     type: "",
     price: 0,
     sessionDiscount: 0,
+    medicationDiscount: 0, // Added field
+    familyMemberDiscount: 0, // Added field
   };
 
   const [pack, setPack] = useState(initialPackageState);
@@ -22,15 +24,17 @@ function UpdatePackage() {
 
     try {
       // Send only the relevant data for package update
-      const { type, price, sessionDiscount } = pack;
+      const { type, price, sessionDiscount, medicationDiscount, familyMemberDiscount } = pack;
 
       // Update the request payload to match the backend expectations
       const response = await packageService.updatePackage({
         type,
         price,
         sessionDiscount,
+        medicationDiscount,
+        familyMemberDiscount,
       });
-      
+
       console.log(response.data);
 
       // Optionally, you can reset the form or perform any other actions
@@ -79,6 +83,32 @@ function UpdatePackage() {
               name="sessionDiscount"
               value={pack.sessionDiscount}
               placeholder="Session Discount"
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="medicationDiscount">Medication Discount</label>
+            <input
+              type="number"
+              className="form-control"
+              id="medicationDiscount"
+              name="medicationDiscount"
+              value={pack.medicationDiscount}
+              placeholder="Medication Discount"
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="familyMemberDiscount">Family Member Discount</label>
+            <input
+              type="number"
+              className="form-control"
+              id="familyMemberDiscount"
+              name="familyMemberDiscount"
+              value={pack.familyMemberDiscount}
+              placeholder="Family Member Discount"
               onChange={handleInputChange}
             />
           </div>

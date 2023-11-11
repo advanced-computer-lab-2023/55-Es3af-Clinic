@@ -18,6 +18,8 @@ import AddMemberAcc from "./addMemberByAcc";
 import BookAnAppointment  from "./BookAnAppointment";
 import patientService from "../../services/patientService";
 import useDoctorSearch from "./searchDoctors";
+import ViewSubscribedPackages from './viewSubscribedPackages';
+
 
 
 function PatientPage() {
@@ -39,7 +41,7 @@ function PatientPage() {
       <Route path='/UploadMedicalHistory' element = {<UploadMedicalHistory/>} />
       <Route path='/:username/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
       <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />
-
+      <Route path="/viewSubscribedPackages" element={<ViewSubscribedPackages />} />
     </Routes>
   );
 }
@@ -98,6 +100,9 @@ function PatientHome() {
           </a>
           <a href={`/patient/${id}/BookAnAppointment/`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Book An Appointment </button>
+          </a>
+          <a href="/patient/viewSubscribedPackages" rel="noopener noreferrer">
+            <button className="btn btn-primary"> View Subscribed Health Packages </button>
           </a>
         </div>
       </header>

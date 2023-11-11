@@ -23,5 +23,7 @@ patientRoutes.get("/filterAppointmentsByDateAndStatus/:id", patientController.fi
 
 //patientRoutes.get('/', patientController.getAllSpecialities)
 //patientRoutes.post('/uploadMedicalHistory', patientController.uploadMedicalHistory);
-patientRoutes.post("/BookAnAppointment/:id", patientController.BookAnAppointment)
+patientRoutes.post("/BookAnAppointment/:id", patientController.BookAnAppointment);
+patientRoutes.get('/viewSubscribedHealthPackages/:username', patientController.viewSubscribedHealthPackages);
+
 module.exports = {patientRoutes}

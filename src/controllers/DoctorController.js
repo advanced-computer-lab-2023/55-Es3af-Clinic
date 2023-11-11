@@ -337,6 +337,46 @@ const getAmountInWallet = async(req,res)=>{
   const doctor =await doctorModel.findOne({username:username});
   res.status(200).send((doctor.amountInWallet).toString()+" EGP");
 }
+const getTimeSlots = async (req, res) => {
+  try {
+    const doctorId = req.params.id;
+    const doctor = await doctorModel.findById(doctorId);
+
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    const existingTimeSlots = doctor.availableTimeSlots || [];
+    res.status(200).json(existingTimeSlots);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
+const addTimeSlots = async (req, res) => {
+  try {
+    const doctorId = req.params.id;
+    const { availableTimeSlots } = req.body;
+
+    const doctor = await doctorModel.findById(doctorId);
+
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    doctor.availableTimeSlots = doctor.availableTimeSlots || [];
+    doctor.availableTimeSlots.push(...availableTimeSlots);
+    await doctor.save();
+
+    res.status(200).json({ status: 'success', message: 'Available time slots added successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 'error', message: 'Internal server error' });
+  }
+};
 
 module.exports = {
   getAllPatients,
@@ -352,5 +392,7 @@ module.exports = {
   selectPatient,
   changePassword,
   getPassword,
-  getAmountInWallet
+  getAmountInWallet,
+  getTimeSlots,
+  addTimeSlots
 };

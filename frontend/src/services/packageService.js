@@ -9,10 +9,9 @@ class PackageService {
     return http.put("/packages/updatePackage", pack);
   }
 
-  deletePackage(pack) {
-    return http.delete("/packages/deletePackage", pack);
+  deletePackage(id) {
+    return http.delete(`/packages/deletePackage/${id}`);
   }
-
   viewPackages() {
     return http.get("/packages");
   }
