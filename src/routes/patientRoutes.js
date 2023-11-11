@@ -22,4 +22,5 @@ patientRoutes.get("/filterAppointmentsByDateAndStatus/:id", patientController.fi
 patientRoutes.get("/searchBySpecDate/:id", patientController.searchBySpecDate)
 //patientRoutes.post('/uploadMedicalHistory', patientController.uploadMedicalHistory);
 patientRoutes.post("/BookAnAppointment/:id", patientController.BookAnAppointment)
+// patientRoutes.get('/:id/viewAppointments', patientController.viewAppointments);
 module.exports = {patientRoutes}

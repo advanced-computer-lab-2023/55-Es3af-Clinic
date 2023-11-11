@@ -71,13 +71,15 @@ const updatePackage = async (req, res) => {
 
 const deletePackage = async (req, res) => {
   try {
-    // Log the received id from the request URL
+
     console.log("ID to delete:", req.params.id);
 
-    // Find and delete the package by id
-    const deletedPackage = await Package.findByIdAndDelete(req.params.id);
 
-    // Log the deleted package (if found)
+    const deletedPackage = await Package.findOne({pID: id});
+    deletedPackage.deleteOne();
+    res.status(200).send("Order cancelled succesfully");
+
+
     console.log("Deleted Package:", deletedPackage);
 
     if (!deletedPackage) {
