@@ -63,6 +63,7 @@ const patientSchema = new Schema({
     default:0,
   },
   medicalHistory: [{
+    name: String,
     data: Buffer,
     contentType: String
   }]
