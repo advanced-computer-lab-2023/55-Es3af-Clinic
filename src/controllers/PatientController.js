@@ -5,15 +5,14 @@ const userModel = require("../Models/user.js");
 const packageModel = require("../Models/Packages.js");
 const appointmentModel = require("../Models/Appointments.js");
 const PrescriptionsModel = require("../Models/Prescriptions.js");
-const multer = require('multer');
-const fs = require('fs');
-const familyMembersAcc= require("../Models/familyMembersAccount.js");
+const multer = require("multer");
+const fs = require("fs");
+const familyMembersAcc = require("../Models/familyMembersAccount.js");
 const { error } = require("console");
 const { default: mongoose } = require("mongoose");
 const { disconnect } = require("process");
 
-
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: "uploads/" });
 
 const test = async (req, res) => {
   // const newDoc = new doctorModel({
@@ -458,6 +457,10 @@ const searchByNameSpec = async (req, res) => {
   }
 };
 
+async function getAllSpecialities(){
+  const specialities = await doctorModel.find({}, { projection: { speciality: 1 } })
+  console.log(specialities)
+}
 const searchBySpecDate = async (req, res) => {
   const { date, speciality } = req.query;
   //const patientID = req.params.id
@@ -577,24 +580,19 @@ const viewDocInfo = async (req, res) => {
 const filterAppointmentsByDateAndStatus = async (req, res) => {
   const { date, status } = req.query;
   const patientID = req.params.id;
-  let currentDate = new Date
-
+  let currentDate = new Date();
 
   try {
-    let filter = { patient: patientID, date: {$gte: currentDate} };
+    let filter = { patient: patientID, date: { $gte: currentDate } };
     if (date) {
-      let dateDate = new Date(date)
-      console.log(dateDate)
-      let nextDay = dateDate.getUTCDay()
-      console.log(nextDay)
-      filter.date =  {$and: [{$gte: date}, {$lt: nextDay}]} ;
+      filter.date = { $gte: date };
     }
     if (status) {
       filter.status = status;
     }
 
-    const appointments = await appointmentModel.find(filter)
-      //.populate("doctor", "name -_id -__t");
+    const appointments = await appointmentModel.find(filter);
+    //.populate("doctor", "name -_id -__t");
     console.log(appointments);
 
     if (appointments) {
@@ -685,22 +683,26 @@ const subscribeToAHealthPackage = async (req, res) => {
   const packageID = req.body.packageID;
   const patients = req.body.patients;
   const renewalDate = new Date();
-  renewalDate.setMonth(renewalDate.getMonth()+1);
-  var response="";
+  renewalDate.setMonth(renewalDate.getMonth() + 1);
+  var response = "";
   try {
     for (const patientID of patients) {
       const patient = await patientModel.findOne({ _id: patientID });
       if (patient) {
-        if(patient.package==packageID && patient.packageStatus=="Subscribed With Renewal Date"){
-          response+=patient.name +" is already subscribed to this package \n";
+        if (
+          patient.package == packageID &&
+          patient.packageStatus == "Subscribed With Renewal Date"
+        ) {
+          response +=
+            patient.name + " is already subscribed to this package \n";
+        } else {
+          patient.package = packageID;
+          patient.packageRenewalDate = renewalDate;
+          patient.packageStatus = "Subscribed With Renewal Date";
+          await patient.save();
+          response +=
+            patient.name + " is subscribed to package successfully \n";
         }
-        else{
-        patient.package = packageID;
-        patient.packageRenewalDate = renewalDate;
-        patient.packageStatus = "Subscribed With Renewal Date";
-        await patient.save();
-        response+=patient.name+' is subscribed to package successfully \n';
-      }
       }
     }
     res.status(200).send(response);
@@ -711,30 +713,28 @@ const subscribeToAHealthPackage = async (req, res) => {
 };
 
 const appointmentsForDoc = async (req, res) => {
-  const doctorID = req.query.doctor //doctor id
-  const doctor = await doctorModel.findById(doctorID)
-  const appointments = await appointmentModel.find({doctor: doctor})
-} 
-const withdrawFromWallet=async(req,res)=>{
-  const patientID=req.body.patientID;
-  const amountToWithdraw=req.body.amount;
-  try{
-  const patient= await patientModel.findById(patientID).exec();
-  if(patient.amountInWallet<amountToWithdraw){
-    return res.status(200).send("Not suffecient funds in wallet");
+  const doctorID = req.query.doctor; //doctor id
+  const doctor = await doctorModel.findById(doctorID);
+  const appointments = await appointmentModel.find({ doctor: doctor });
+};
+const withdrawFromWallet = async (req, res) => {
+  const patientID = req.body.patientID;
+  const amountToWithdraw = req.body.amount;
+  try {
+    const patient = await patientModel.findById(patientID).exec();
+    if (patient.amountInWallet < amountToWithdraw) {
+      return res.status(200).send("Not suffecient funds in wallet");
+    } else {
+      patient.amountInWallet -= amountToWithdraw;
+      await patient.save();
+      return res.status(200).send("Amount deducted successfully");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while withdrawing");
   }
-  else{
-    patient.amountInWallet-=amountToWithdraw;
-    await patient.save();
-    return res.status(200).send("Amount deducted successfully");
-  }
-}
-catch (error) {
-  console.error(error);
-  res.status(500).send('An error occurred while withdrawing');
-}
-}
-const BookAnAppointment = async(req,res)=>{
+};
+const BookAnAppointment = async (req, res) => {
   const patientid = req.params.id;
 
   try {
@@ -742,13 +742,12 @@ const BookAnAppointment = async(req,res)=>{
 
     //await viewFamilyMembers(req, res);
 
-    res.status(200).send('Appointment was booked successfully');
+    res.status(200).send("Appointment was booked successfully");
   } catch (error) {
     console.error(error);
-    res.status(500).send('An error occurred while booking the appointment');
+    res.status(500).send("An error occurred while booking the appointment");
   }
-
-}
+};
 
 module.exports = {
   addFamilyMember,
@@ -770,5 +769,6 @@ module.exports = {
   subscribeToAHealthPackage,
   appointmentsForDoc,
   BookAnAppointment,
+  getAllSpecialities,
   //uploadMedicalHistory,
 };

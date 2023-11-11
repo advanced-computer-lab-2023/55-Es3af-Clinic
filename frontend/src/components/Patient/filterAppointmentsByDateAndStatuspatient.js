@@ -55,7 +55,6 @@ function FilteredAppointmentsList() {
                 <option value="rescheduled">Rescheduled</option>
               </select>
             </div>
-            
             <div>
             <label>Date: </label>
             <input
