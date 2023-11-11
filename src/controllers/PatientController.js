@@ -747,7 +747,40 @@ const BookAnAppointment = async (req, res) => {
     console.error(error);
     res.status(500).send("An error occurred while booking the appointment");
   }
+
 };
+
+const uploadMedicalHistory = async (req, res) => {
+  upload.array('medicalHistory', 5)(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      return res.status(500).json(err);
+    } else if (err) {
+      return res.status(500).json(err);
+    }
+
+    const username = req.body.username;
+    const newMedicalHistory = req.files.map(file => {
+      return {
+        name: file.originalname,
+        data: fs.readFileSync(file.path),
+        contentType: file.mimetype,
+      };
+    });
+
+    patientModel.findOneAndUpdate(
+      { username: username },
+      { $push: { medicalHistory: { $each: newMedicalHistory } } },
+      { new: true }
+    )
+      .then(doc => {
+        return res.status(200).send(`Medical history file uploaded for ${username}`);
+      })
+      .catch(err => {
+        return res.status(500).json(err);
+      });
+  });
+};
+
 
 module.exports = {
   addFamilyMember,
@@ -771,4 +804,6 @@ module.exports = {
   BookAnAppointment,
   getAllSpecialities,
   //uploadMedicalHistory,
+  withdrawFromWallet,
+  uploadMedicalHistory,
 };
