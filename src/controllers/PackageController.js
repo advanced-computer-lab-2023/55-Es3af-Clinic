@@ -52,21 +52,35 @@ const createPackage = async (req, res) => {
 };
 
 const updatePackage = async (req, res) => {
-  const {type, price, sessionDiscount,medicationDiscount,familyMemberDiscount }= req.body;
-  const updatedPackage = await Package
-    .findOneAndUpdate(
+  try {
+    const { type, price, sessionDiscount, medicationDiscount, familyMemberDiscount } = req.body;
+
+    // Find the package by type
+    const updatedPackage = await Package.findOneAndUpdate(
       { type: type },
-      { price: price},
-      { sessionDiscount: sessionDiscount}, 
-      { medicationDiscount: medicationDiscount},
-      { familyMemberDiscount:familyMemberDiscount}
-    )
-    .catch((err) => console.log(err));
-    console.log(updatePackage);
-  res
-    .status(200)
-    .send("Package with name " + Name + " is updated successfully");
+      {
+        $set: {
+          price: price,
+          sessionDiscount: sessionDiscount,
+          medicationDiscount: medicationDiscount,
+          familyMemberDiscount: familyMemberDiscount,
+        },
+      },
+      { new: true } // Return the modified document
+    );
+
+    if (updatedPackage) {
+      console.log(updatedPackage);
+      res.status(200).send("Package with type " + type + " is updated successfully");
+    } else {
+      res.status(404).send("Package not found");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
 };
+
 
 
 const deletePackage = async (req, res) => {

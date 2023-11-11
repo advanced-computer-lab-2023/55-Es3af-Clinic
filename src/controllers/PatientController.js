@@ -831,5 +831,5 @@ module.exports = {
   //uploadMedicalHistory,
   withdrawFromWallet,
   uploadMedicalHistory,
-  viewAppointments,
+  //viewAppointments,
 };
