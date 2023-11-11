@@ -780,31 +780,6 @@ const uploadMedicalHistory = async (req, res) => {
       });
   });
 };
-// const viewAppointments = async (req, res) => {
-//   try {
-//     const patientID = req.params.id;
-//     const currentDate = new Date();
-
-//     const upcomingAppointments = await appointmentModel.find({
-//       patient: patientID,
-//       date: { $gte: currentDate },
-//     });
-
-//     const previousAppointments = await appointmentModel.find({
-//       patient: patientID,
-//       date: { $lt: currentDate },
-//     });
-
-//     res.status(200).json({
-//       upcomingAppointments,
-//       previousAppointments,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send("An error occurred while fetching appointments");
-//   }
-// };
-
 
 
 module.exports = {
@@ -831,5 +806,4 @@ module.exports = {
   //uploadMedicalHistory,
   withdrawFromWallet,
   uploadMedicalHistory,
-  //viewAppointments,
 };
