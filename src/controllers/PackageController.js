@@ -71,27 +71,27 @@ const updatePackage = async (req, res) => {
 
 const deletePackage = async (req, res) => {
   try {
-    const deletedPackage = await Package.findOne(req.params.type);
-    if (!deletedPackage) {
-      res.status(404).send({ error: "Package not found" });
-    } else {
-      res.send(deletedPackage);
-    }
-  } catch (e) {
-    res.status(400).send(e);
-  }
+    // Log the received id from the request URL
+    console.log("ID to delete:", req.params.id);
 
-  // try {
-  //   const deletedPackage = await Package.findByIdAndDelete(req.params.id);
-  //   if (!deletedPackage) {
-  //     res.status(404).send({ error: 'Package not found' });
-  //   } else {
-  //     res.send(deletedPackage);
-  //   }
-  // } catch (e) {
-  //   res.status(400).send(e);
-  // }
+    // Find and delete the package by id
+    const deletedPackage = await Package.findByIdAndDelete(req.params.id);
+
+    // Log the deleted package (if found)
+    console.log("Deleted Package:", deletedPackage);
+
+    if (!deletedPackage) {
+      return res.status(404).send({ error: "Package not found" });
+    }
+
+    return res.send(deletedPackage);
+  } catch (e) {
+    // Log any errors that occur during the process
+    console.error("Error:", e);
+    return res.status(500).send(e);
+  }
 };
+
 const viewPackages = async (req, res) => {
   try {
     const pkgData = await Package.find({});
