@@ -780,7 +780,46 @@ const uploadMedicalHistory = async (req, res) => {
       });
   });
 };
+const viewSubscribedHealthPackages = async (req, res) => {
+  const patientUsername = req.params.username;
 
+  try {
+    const patient = await patientModel.findOne({ username: patientUsername }).exec();
+
+    if (!patient) {
+      return res.status(404).send('Patient not found');
+    }
+
+    const familyMembers = await familyMembersAcc.find({ patient: patient._id }).exec();
+
+    const packageData = [];
+
+    // Add patient's health package data
+    packageData.push({
+      patientName: patient.name,
+      package: patient.package,
+      status: patient.packageStatus,
+      renewalDate: patient.packageRenewalDate,
+    });
+
+    // Add family members' health package data
+    for (const familyMember of familyMembers) {
+      const member = await userModel.findById(familyMember.Id).exec();
+
+      packageData.push({
+        patientName: member.name,
+        package: member.package,
+        status: member.packageStatus,
+        renewalDate: member.packageRenewalDate,
+      });
+    }
+
+    res.status(200).json(packageData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
 
 module.exports = {
   addFamilyMember,
@@ -803,7 +842,7 @@ module.exports = {
   appointmentsForDoc,
   BookAnAppointment,
   getAllSpecialities,
-  //uploadMedicalHistory,
   withdrawFromWallet,
   uploadMedicalHistory,
+  viewSubscribedHealthPackages
 };

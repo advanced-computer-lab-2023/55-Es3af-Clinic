@@ -84,8 +84,9 @@ class PatientService {
   BookAnAppointment(id){
 
     return http.post(`/patient/BookAnAppointment/${id}`)
-
-
+  }
+  viewSubscribedHealthPackages(id) {
+    return http.get(`/patient/viewSubscribedHealthPackages/${id}`);
   }
 }
 
