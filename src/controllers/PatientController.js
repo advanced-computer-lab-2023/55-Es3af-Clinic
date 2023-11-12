@@ -13,6 +13,7 @@ const { default: mongoose } = require("mongoose");
 const { disconnect } = require("process");
 const bcrypt = require("bcrypt");
 const upload = multer({ dest: "uploads/" });
+const jwt = require('jsonwebtoken');
 
 const test = async (req, res) => {
   // const newDoc = new doctorModel({
@@ -58,6 +59,7 @@ const test = async (req, res) => {
 
 const getPatient = async (req, res) => {
   try {
+    
     const patient = await patientModel.findById(req.params.id);
     res.send(patient);
   } catch (e) {
@@ -682,11 +684,29 @@ const changePassword = async (req, res) => {
     console.error(err);
   }
 };
+
+
 const getAmountInWallet = async (req, res) => {
-  const id = req.params.id;
-  const patient = await patientModel.findById( id);
+  const token = req.cookies.jwt;
+  var id;
+  jwt.verify(token, 'supersecret', (err, decodedToken) => {
+      if (err) {
+        // console.log('You are not logged in.');
+        // res send status 401 you are not logged in
+        res.status(401).json({message:"You are not logged in."})
+        // res.redirect('/login');
+      } else {
+        
+        id= decodedToken.name;
+      }
+    });
+    console.log(id);
+  const patient = await patientModel.findById(id);
   res.status(200).send(patient.amountInWallet.toString() + " EGP");
 };
+
+
+
 const subscribeToAHealthPackage = async (req, res) => {
   const packageID = req.body.packageID;
   const patients = req.body.patients;
