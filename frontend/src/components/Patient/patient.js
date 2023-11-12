@@ -52,8 +52,8 @@ function PatientHome() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await patientService.getAmountInWallet(id);
-        const amountInWalletResult = response.data; 
+        const response = await patientService.getAmountInWallet();
+        const amountInWalletResult = response.data;
         setResult(amountInWalletResult);
       } catch (error) {
         console.error(error);
@@ -92,13 +92,13 @@ function PatientHome() {
           <a href="/patient/viewHealthPackages/" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Health Packages </button>
           </a>
-          <a href={`/patient/${id}/updatePassword/`} rel="noopener noreferrer">
+          <a href={`/patient/updatePassword/`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Update my Password </button>
           </a>
           <a href={`/patient/UploadMedicalHistory/`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Upload Medical History </button>
           </a>
-          <a href={`/patient/${id}/BookAnAppointment/`} rel="noopener noreferrer">
+          <a href={`/patient/BookAnAppointment/`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Book An Appointment </button>
           </a>
           <a href="/patient/viewSubscribedPackages" rel="noopener noreferrer">

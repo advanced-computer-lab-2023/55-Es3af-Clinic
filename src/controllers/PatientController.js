@@ -59,6 +59,7 @@ const test = async (req, res) => {
 
 const getPatient = async (req, res) => {
   try {
+    
     const patient = await patientModel.findById(req.params.id);
     res.send(patient);
   } catch (e) {
@@ -66,14 +67,23 @@ const getPatient = async (req, res) => {
   }
 };
 const addFamilyMemberByUsername = async (req, res) => {
-  const patient = req.params.username;
-  const patientID = await userModel.findOne({ username: patient });
+  const token = req.cookies.jwt;
+  var patientID;
+  jwt.verify(token, "supersecret", (err, decodedToken) => {
+    if (err) {
+      res.status(401).json({ message: "You are not logged in." });
+    } else {
+      patientID = decodedToken.name;
+    }
+  });
+  // const patient = req.params.username;
+  // const patientID = await userModel.findOne({ username: patient });
 
-  if (patientID === null) {
-    console.log(patient);
-    res.status(404).send("Patient not found");
-    return;
-  }
+  // if (patientID === null) {
+  //   console.log(patient);
+  //   res.status(404).send("Patient not found");
+  //   return;
+  // }
 
   const email = req.body.email;
   const mobile = req.body.mobile;
@@ -104,7 +114,7 @@ const addFamilyMemberByUsername = async (req, res) => {
         const member = new familyMembersAcc({
           Id: familyMemberUserID._id.valueOf(),
           relationToPatient: req.body.relationToPatient,
-          patient: patientID._id.valueOf(), //id zy ma heya
+          patient: patientID, //id zy ma heya
         });
         res.status(200).send("Family Member Added Successfully");
         member.save().catch((err) => console.log(err));
@@ -469,7 +479,7 @@ const getAllSpecialities = async (req, res) => {
 const searchBySpecDate = async (req, res) => {
   const { date, speciality } = req.query;
   //const patientID = req.params.id
-  console.log(speciality)
+  console.log(speciality);
   if (date) {
     var date2 = new Date(date);
     date2.setHours(date2.getHours() + 2);
@@ -666,15 +676,15 @@ const getPatients = async (req, res) => {
 };
 
 const getPassword = async (req, res) => {
-
   const userID = req.params.id;
 
   var user = await patientModel.findById(userID);
   res.status(200).send(user.password);
 };
+
 const changePassword = async (req, res) => {
   const userID = req.params.id;
-  
+
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
   var newPassword = hashedPassword;
@@ -763,7 +773,7 @@ const BookAnAppointment = async (req, res) => {
 };
 
 const uploadMedicalHistory = async (req, res) => {
-  upload.array('medicalHistory', 5)(req, res, function (err) {
+  upload.array("medicalHistory", 5)(req, res, function (err) {
     if (err instanceof multer.MulterError) {
       return res.status(500).json(err);
     } else if (err) {
@@ -771,7 +781,7 @@ const uploadMedicalHistory = async (req, res) => {
     }
 
     const username = req.body.username;
-    const newMedicalHistory = req.files.map(file => {
+    const newMedicalHistory = req.files.map((file) => {
       return {
         name: file.originalname,
         data: fs.readFileSync(file.path),
