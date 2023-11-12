@@ -23,7 +23,7 @@ patientRoutes.get("/filterprescriptionsbydatestatusdoctor/:id", patientControlle
 patientRoutes.get("/filterAppointmentsByDateAndStatus/:id", patientController.filterAppointmentsByDateAndStatus)
 
 //patientRoutes.get('/', patientController.getAllSpecialities)
-//patientRoutes.post('/uploadMedicalHistory', patientController.uploadMedicalHistory);
+patientRoutes.post('/uploadMedicalHistory', patientController.uploadMedicalHistory);
 patientRoutes.post("/BookAnAppointment/:id", patientController.BookAnAppointment);
 patientRoutes.get('/viewSubscribedHealthPackages/:username', patientController.viewSubscribedHealthPackages);
 
