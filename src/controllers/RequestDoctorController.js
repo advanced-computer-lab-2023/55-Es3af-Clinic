@@ -10,6 +10,7 @@ const upload = multer({ storage: storage });
 const docReq = require('../Models/RequestDoctor.js')
 
 const bcrypt = require("bcrypt");
+const { createToken } = require("../utils/auth.js");
 
 const requestDoctor = async (req, res) => {
     try {
@@ -31,6 +32,7 @@ const requestDoctor = async (req, res) => {
   
       // Handle file uploads
       if (req.files) {
+        
         if (req.files.IDdoc) {
           newDoctor.IDdoc = {
             name: req.files.IDdoc[0].originalname,
@@ -56,14 +58,15 @@ const requestDoctor = async (req, res) => {
         }
       }
   
-      await newDoctor.save();
+      
       newDoctor.save().catch(err => console.log(err));
+      
       const token = createToken(newDoctor._id);
       const maxAge = 3 * 24 * 60 * 60;
 
       res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
-      res.status(200).send(newPatient);
-      res.status(200).send('Doctor registered successfully.');
+      res.status(200).send(newDoctor);
+      //res.status(200).send('Doctor registered successfully.');
     } catch (error) {
       console.error(error);
       res.status(400).send({ error: 'Error during registration.' });
