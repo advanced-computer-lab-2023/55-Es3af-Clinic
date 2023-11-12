@@ -127,13 +127,16 @@ const PkgListP = (props) => {
           if(response.data.localeCompare("Amount deducted successfully")==0){
             patientService.subscribeToAHealthPackage(body).then((response1) => {
               alert(response1.data+"\n Amount deducted successfully");
+              history("/patient");
             })
             .catch((e) => {
               console.log(e);
             });
           }
-          else
+          else{
           alert(response.data);
+          history("/patient");
+        }
           //alert(updatedMoney.amount);
         } catch (e) {
           console.log(e);
@@ -148,19 +151,21 @@ const PkgListP = (props) => {
         if(response.data.localeCompare("Amount deducted successfully")==0){
           patientService.subscribeToAHealthPackage(body).then((response1) => {
             alert(response1.data+"\n Amount deducted successfully");
+            history("/patient");
           })
           .catch((e) => {
             console.log(e);
           });
         }
-        else
+        else{
         alert(response.data);
+        history("/patient");
+      }
         //alert(updatedMoney.amount);
       } catch (e) {
         console.log(e);
       }
     }
-    history("/patient");
   }
   return (
     <div>
