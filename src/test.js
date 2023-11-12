@@ -47,13 +47,14 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use("/login"  ,userController.login);
+app.post('/forgetPassword', userController.forgetPassword)
 
 app.use("/", router);
 
 //app.use(auth);
 
 
-app.get('/getSpec', patientController.getAllSpecialities)
+//app.get('/getSpec', patientController.getAllSpecialities)
 
 
 

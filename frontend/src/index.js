@@ -9,6 +9,7 @@ import RequestDoctor from "./components/RequestDoctor"
 import DoctorPage from './components/Doctor/doctor';
 import AdminPage from './components/Admin/admin';
 import Login from './components/login';
+import ForgetPassword from './components/forgetPassword'
 //import page that i want to test
 
 
@@ -22,6 +23,7 @@ root.render(
     <Route path="/register/*" element={<RegisterPatient />} />
     <Route path="requestDoctor/*" element={<RequestDoctor/>} />
     <Route path="/admin/*" element={<AdminPage/>} />
+    <Route path="/forgetPassword" element={<ForgetPassword/>} />
     
     <Route path="/login" element={<Login />} />
     </Routes>

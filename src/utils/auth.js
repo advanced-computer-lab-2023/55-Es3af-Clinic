@@ -19,6 +19,7 @@ const auth = (req, res, next) => {
       }
     });
   } else {
+    console.log("i am here");
     res.status(401).json({ message: "You are not logged in." });
   }
 };

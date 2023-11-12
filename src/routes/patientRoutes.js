@@ -4,6 +4,7 @@ const patientController = require('../controllers/PatientController')
 
 const patientRoutes = new Router();
 
+patientRoutes.get('/viewPatientAppointments/:id', patientController.viewPatientAppointments);
 patientRoutes.get('/:id/getAmountInWallet', patientController.getAmountInWallet)
 patientRoutes.put('/:id/updatePassword', patientController.changePassword)
 patientRoutes.get("/searchBySpecDate", patientController.searchBySpecDate)
