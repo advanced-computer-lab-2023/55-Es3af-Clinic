@@ -14,13 +14,22 @@ function RequestDoctor() {
     affiliation: "",
     educationBackground: "",
     speciality: "",
+    IDdoc: null,
+    MedicalLicenses: [],
+    MedicalDegree: null,
   };
 
   const [doc, setDoctor] = useState (initialUserState);
   const [message, setMessage] = useState('')
 
   const handleInputChange = (event) => {
-    const { name, value } = event.target;
+    const { name, value, type, files } = event.target;
+
+    if (type === 'file') {
+      setDoctor({ ...doc, [name]: files });
+    } else {
+      setDoctor({ ...doc, [name]: value });
+    }
     if(name == 'password'){
       if (value.length < 6) {
         setMessage('Password is too short');
@@ -38,14 +47,29 @@ function RequestDoctor() {
 
   async function requestDoctor(e) {
     e.preventDefault();
-    // no need to console log response data, only for testing
-    ReqDoctorService.requestDoctor(doc)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
+
+    const formData = new FormData();
+  Object.entries(doc).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((file, index) => {
+        formData.append(`${key}[${index}]`, file);
       });
+    } else {
+      formData.append(key, value);
+    }
+  });
+
+  // Send the form data to the service for API call
+  ReqDoctorService.requestDoctor(formData)
+    .then((response) => {
+      console.log(response.data);
+      // Optionally, reset the form or navigate to another page on success
+      setDoctor(initialUserState);
+    })
+    .catch((error) => {
+      console.error(error);
+      // Handle errors appropriately (e.g., show an error message to the user)
+    });
   }
 
   return (
@@ -168,7 +192,41 @@ function RequestDoctor() {
               onChange={handleInputChange}
             ></input>
           </div>
-          
+
+
+          <div className="form-group">
+            <label htmlFor="IDdoc">ID Document</label>
+            <input
+              type="file"
+              className="form-control"
+              id="IDdoc"
+              name="IDdoc"
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="MedicalLicenses">Medical Licenses</label>
+            <input
+              type="file"
+              className="form-control"
+              id="MedicalLicenses"
+              name="MedicalLicenses"
+              onChange={handleInputChange}
+              multiple
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="MedicalDegree">Medical Degree</label>
+            <input
+              type="file"
+              className="form-control"
+              id="MedicalDegree"
+              name="MedicalDegree"
+              onChange={handleInputChange}
+            />
+          </div>          
 
 
 

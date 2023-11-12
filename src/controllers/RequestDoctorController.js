@@ -1,49 +1,79 @@
-const userModel = require('../Models/RequestDoctor.js');
-const {default: mongoose} = require('mongoose');
-const doctorReqModel = require('../Models/RequestDoctor.js');
+const express = require('express');
+const router = express.Router();
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
+const mongoose = require('mongoose');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+const docReq = require('../Models/RequestDoctor.js')
+
 const bcrypt = require("bcrypt");
+const { createToken } = require("../utils/auth.js");
 
-const requestDoctor = async(req,res) => {
-    
-    try{
+const requestDoctor = async (req, res) => {
+    try {
+
         const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(req.body.password, salt);
-        const newDoctor = new doctorReqModel({
-            username: req.body.username,
-            password: hashedPassword,
-            name: req.body.name,
-            email: req.body.email,
-            dateOfBirth: req.body.dateOfBirth,
-            hourlyRate: req.body.hourlyRate,
-            affiliation: req.body.affiliation,
-            educationBackground: req.body.educationBackground,
-            speciality: req.body.speciality
-        });
-        newDoctor.save().catch(err => console.log(err));
-        newDoctor.save().catch(err => console.log(err));
-        const token = createToken(newDoctor._id);
-        const maxAge = 3 * 24 * 60 * 60;
+        const hashedPassword = await bcrypt.hash(req.body.password, salt);  
+        const newDoctor = new docReq({
+        username: req.body.username,
+        password: hashedPassword,
+        name: req.body.name,
+        email: req.body.email,
+        dateOfBirth: req.body.dateOfBirth,
+        hourlyRate: req.body.hourlyRate,
+        affiliation: req.body.affiliation,
+        educationBackground: req.body.educationBackground,
+        speciality: req.body.speciality,
+        status: req.body.status || "Pending",
+      });
+  
+      // Handle file uploads
+      if (req.files) {
+        
+        if (req.files.IDdoc) {
+          newDoctor.IDdoc = {
+            name: req.files.IDdoc[0].originalname,
+            data: req.files.IDdoc[0].buffer,
+            contentType: req.files.IDdoc[0].mimetype,
+          };
+        }
+  
+        if (req.files.MedicalLicenses) {
+          newDoctor.MedicalLicenses = req.files.MedicalLicenses.map((license) => ({
+            name: license.originalname,
+            data: license.buffer,
+            contentType: license.mimetype,
+          }));
+        }
+  
+        if (req.files.MedicalDegree) {
+          newDoctor.MedicalDegree = {
+            name: req.files.MedicalDegree[0].originalname,
+            data: req.files.MedicalDegree[0].buffer,
+            contentType: req.files.MedicalDegree[0].mimetype,
+          };
+        }
+      }
+  
+      
+      newDoctor.save().catch(err => console.log(err));
+      
+      const token = createToken(newDoctor._id);
+      const maxAge = 3 * 24 * 60 * 60;
 
-        res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
-        res.status(200).send(newPatient);
-        //res.status(200).send("Request sent.");
+      res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+      res.status(200).send(newDoctor);
+      //res.status(200).send('Doctor registered successfully.');
+    } catch (error) {
+      console.error(error);
+      res.status(400).send({ error: 'Error during registration.' });
     }
-    catch(error){
-        requestDoctor.status(400).send({error:error});
-    }
- }
-
- const getDocReq = async (req, res) => {
-    //retrieve all Doctor requests from the database
-    const doctorReq= await doctorReqModel.find({});
-    console.log(doctorReq);
-    res.status(200).send(doctorReq);
-   }
-
-module.exports = {requestDoctor, getDocReq};
-
-
-   // const requestDoctor = async(req,res) => {
+  };
+  
+  module.exports = { requestDoctor };
 //     userModel.findOne({username: req.body.username})
 //     .exec()
 //     .then((result) => {
