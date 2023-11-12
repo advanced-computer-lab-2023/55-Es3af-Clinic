@@ -39,7 +39,22 @@ const doctorSchema = new Schema({
   amountInWallet:{
     type:Number,
     default:0,
-  }
+  },
+  IDdoc: {
+    name: String,
+    data: Buffer,
+    contentType: String
+  },
+  MedicalLicenses: [{
+    name: String,
+    data: Buffer,
+    contentType: String
+  }],
+  MedicalDegree: {
+    name: String,
+    data: Buffer,
+    contentType: String
+  },
 });
 
 //const doctor = mongoose.model("doctor", doctorSchema);

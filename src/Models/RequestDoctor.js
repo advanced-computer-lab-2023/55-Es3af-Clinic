@@ -44,7 +44,22 @@ const doctorReqSchema = new Schema({
     type: String,
     enum : ["Pending", "Rejected"],
     default: "Pending"
-  }
+  },
+  IDdoc: {
+    name: String,
+    data: Buffer,
+    contentType: String
+  },
+  MedicalLicenses: [{
+    name: String,
+    data: Buffer,
+    contentType: String
+  }],
+  MedicalDegree: {
+    name: String,
+    data: Buffer,
+    contentType: String
+  },
 });
 
 const docReq = mongoose.model("docReq", doctorReqSchema);
