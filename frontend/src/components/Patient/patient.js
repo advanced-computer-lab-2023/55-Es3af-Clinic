@@ -40,12 +40,11 @@ function PatientPage() {
 
 function PatientHome() {
   var id = '654bed1dbe07a9603f5b4030'
-  var username = "farouhaTe3bet"
   const [result, setResult] = useState("");
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await patientService.getAmountInWallet(username);
+        const response = await patientService.getAmountInWallet(id);
         const amountInWalletResult = response.data; 
         setResult(amountInWalletResult);
       } catch (error) {

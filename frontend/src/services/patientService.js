@@ -7,8 +7,16 @@ class PatientService {
       `http://localhost:8000/patient/search?name=${name}&speciality=${spec}`
     );
   }
+  getPatient(id){
+    return http.get(`/patient/${id}`);
+  }
+
+  //de btshtaghal b ID 3ady bas ana mesameyah username
   async getAmountInWallet(username){
     return http.get(`/patient/${username}/getAmountInWallet`)
+  }
+  async withdrawFromWallet(body){
+    return http.put("/patient/widrawFromWallet",body)
   }
   async subscribeToAHealthPackage(info){
     return http.put("/patient/subscribeToAHealthPackage",info)

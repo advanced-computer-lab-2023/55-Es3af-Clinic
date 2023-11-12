@@ -5,6 +5,7 @@ const patientController = require('../controllers/PatientController')
 const patientRoutes = new Router();
 
 patientRoutes.put('/:id/updatePassword', patientController.changePassword)
+patientRoutes.put('/widrawFromWallet',patientController.withdrawFromWallet)
 patientRoutes.post('/:username/addFamilyMemberByAcc',patientController.addFamilyMemberByUsername)
 patientRoutes.get('/:username/getAmountInWallet', patientController.getAmountInWallet)
 patientRoutes.get('/:id/updatePassword', patientController.getPassword)
