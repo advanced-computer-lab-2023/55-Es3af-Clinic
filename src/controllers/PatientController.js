@@ -828,6 +828,40 @@ const viewSubscribedHealthPackages = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
+const viewPatientAppointments = async (req, res) => {
+  const patientId = req.params.id;
+
+  try {
+      const patient = await patientModel.findById(patientId);
+
+      if (!patient) {
+          return res.status(404).send('Patient not found');
+      }
+
+      const appointments = await appointmentModel.find({ patient: patientId })
+          .populate('doctor', 'name')
+          .exec();
+
+      if (appointments.length === 0) {
+          return res.status(200).send("No appointments found for this patient.");
+      }
+
+      const formattedAppointments = appointments.map(appointment => {
+          return {
+              id: appointment._id,
+              doctor: appointment.doctor.name,
+              date: appointment.date,
+              duration: appointment.duration,
+              status: appointment.status,
+          };
+      });
+
+      res.status(200).json(formattedAppointments);
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+  }
+};
 
 module.exports = {
   addFamilyMember,
@@ -853,5 +887,6 @@ module.exports = {
   getAllSpecialities,
   withdrawFromWallet,
   uploadMedicalHistory,
-  viewSubscribedHealthPackages
+  viewSubscribedHealthPackages,
+  viewPatientAppointments,
 };
