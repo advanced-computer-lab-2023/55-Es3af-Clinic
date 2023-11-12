@@ -66,7 +66,7 @@ class PatientService {
       params: queryParams,
     });
   }
-  FilterDoctors(patientid, date, speciality) {
+  useDoctorSearch(date, speciality) {
     const queryParams = {};
 
     if (date) {
@@ -76,10 +76,14 @@ class PatientService {
       queryParams.speciality = speciality;
     }
 
-    return http.get(`/patient/searchBySpecDate/${patientid}`, {
+    return http.get(`/patient/searchBySpecDate`, {
       params: queryParams,
     });
   }
+
+  // getAllSpecialities(){
+  //   return http.get('/patient')
+  // }
 
   updatePassword(id, password){
     console.log('put is called')
@@ -88,6 +92,13 @@ class PatientService {
 
   getPassword(id){
     return http.get(`/patient/${id}/updatePassword`)
+  }
+  BookAnAppointment(id){
+
+    return http.post(`/patient/BookAnAppointment/${id}`)
+  }
+  viewSubscribedHealthPackages(id) {
+    return http.get(`/patient/viewSubscribedHealthPackages/${id}`);
   }
 }
 

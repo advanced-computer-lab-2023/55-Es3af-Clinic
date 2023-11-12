@@ -26,7 +26,7 @@ const appointmentsSchema = new Schema({
       
      status:{
          type: String, 
-        enum:["done", "canceled", "currently working", "pending"]
+        enum:["done", "canceled", "currently working", "pending", 'rescheduled']
     }
 })
 

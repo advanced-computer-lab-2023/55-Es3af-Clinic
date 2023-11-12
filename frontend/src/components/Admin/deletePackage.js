@@ -5,7 +5,7 @@ import PackageService from "../../services/packageService";
 
 function DeletePackage() {
   const initialUserState = {
-    _id: "",
+    id: "", // change from type to id
   };
 
   const [pack, setPack] = useState(initialUserState);
@@ -15,9 +15,8 @@ function DeletePackage() {
     setPack({ ...pack, [name]: value });
   };
 
-  const deletePackage = (event) => {
-    const { name } = event.target;
-    PackageService.deletePackage(name)
+  const deletePackage = () => {
+    PackageService.deletePackage(pack.id)
       .then((response) => {
         console.log(response.data);
         window.location.reload(false);
@@ -30,7 +29,7 @@ function DeletePackage() {
   return (
     <div className="App">
       <header className="App-header">
-        <form className="App-header" >
+        <form className="App-header">
           <div className="form-group">
             <label htmlFor="InputId">Package ID</label>
             <input
@@ -38,14 +37,13 @@ function DeletePackage() {
               className="form-control"
               id="id"
               name="id"
-              value={pack._id}
+              value={pack.id}
               placeholder="Enter Package ID to delete"
               onChange={handleInputChange}
-            ></input>
+            />
           </div>
 
-          <button className="btn btn-danger" onClick={(pack) => deletePackage(pack)}
-value={pack.id}>
+          <button className="btn btn-danger" onClick={deletePackage}>
             Delete Package
           </button>
         </form>

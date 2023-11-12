@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const patientSchema = require('./Patient')
+const Patient = require('./Patient');  
 
 const familyMemberSchema = new Schema({
   name: {
@@ -12,8 +12,8 @@ const familyMemberSchema = new Schema({
     required: true,
   },
   age: {
-    type : Number,
-    required: true
+    type: Number,
+    required: true,
   },
   gender: {
     type: String,
@@ -22,14 +22,14 @@ const familyMemberSchema = new Schema({
   },
   patient: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'patient',
-    autoRemove: true,
+    ref: 'Patient',  
+    // autoRemove: true,  
   },
-  relationToPatient : {
+  relationToPatient: {
     type: String,
-    enum: ["Wife", "Child","Husband","Wife/Husband"]
+    enum: ["Wife", "Child", "Husband", "Wife/Husband"]
   }
 });
 
-const FamilyMembers = mongoose.model("familyMembers", familyMemberSchema);
-module.exports = FamilyMembers;
+const FamilyMember = mongoose.model("FamilyMember", familyMemberSchema);
+module.exports = FamilyMember;  

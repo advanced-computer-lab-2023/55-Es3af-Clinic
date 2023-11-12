@@ -25,6 +25,13 @@ class AdminService {
   getPassword(id){
     return http.get(`/admin/${id}/updatePassword`)
   }
+  acceptDoctorRequest(id) {
+    return http.put(`/admin/acceptDoctorRequest/${id}`);
+  }
+  rejectDoctorRequest(id) {
+    return http.put(`/admin/rejectDoctorRequest/${id}`);
+  }
+    
 }
 
 export default new AdminService();
