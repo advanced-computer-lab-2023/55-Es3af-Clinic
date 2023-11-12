@@ -199,7 +199,7 @@ const getAllMyPatients = async (req, res) => {
 
 const searchPatientByName = async (req, res) => {
   const { name } = req.query;
-  const doctorId = req.query.doctorId; 
+  const doctorId = req.query.doctorId;
 
   try {
     const appointments = await appointment.find({ doctor: doctorId });
@@ -230,11 +230,11 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
   const currentDate = new Date()
 
   try {
-    let filter = { doctor: doctorid, date: {$gte: currentDate} };
+    let filter = { doctor: doctorid, date: { $gte: currentDate } };
 
     // Check if date is provided
     if (date) {
-      filter.date = {$gte: date};
+      filter.date = { $gte: date };
     }
 
     // Check if status is provided
@@ -244,7 +244,7 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 
     const appointments = await appointment
       .find(filter)
-      //.populate("patient", "name -_id -__t");
+    //.populate("patient", "name -_id -__t");
     res.status(200).send(appointments);
   } catch (err) {
     res.status(400).json({
@@ -317,25 +317,25 @@ const selectPatient = async (req, res) => {
   }
 };
 
-const getPassword = async(req, res) => {
+const getPassword = async (req, res) => {
   const userID = req.params.id
   var user = await doctorModel.findById(userID);
   res.status(200).send(user.password)
 }
-const changePassword = async(req, res) => {
+const changePassword = async (req, res) => {
   const userID = req.params.id
   var newPassword = req.body.password
-  try{
-      await doctorModel.findByIdAndUpdate(userID, {password: newPassword})
-      res.status(200).send('Password updated successfully')
-    }
-  catch(err){console.error(err)}
+  try {
+    await doctorModel.findByIdAndUpdate(userID, { password: newPassword })
+    res.status(200).send('Password updated successfully')
+  }
+  catch (err) { console.error(err) }
 
 }
-const getAmountInWallet = async(req,res)=>{
-  const username=req.params.username
-  const doctor =await doctorModel.findOne({username:username});
-  res.status(200).send((doctor.amountInWallet).toString()+" EGP");
+const getAmountInWallet = async (req, res) => {
+  const username = req.params.username
+  const doctor = await doctorModel.findOne({ username: username });
+  res.status(200).send((doctor.amountInWallet).toString() + " EGP");
 }
 const getTimeSlots = async (req, res) => {
   try {
@@ -377,6 +377,8 @@ const addTimeSlots = async (req, res) => {
     res.status(500).json({ status: 'error', message: 'Internal server error' });
   }
 };
+
+
 
 module.exports = {
   getAllPatients,
