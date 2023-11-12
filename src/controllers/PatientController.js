@@ -678,8 +678,8 @@ const changePassword = async (req, res) => {
   }
 };
 const getAmountInWallet = async (req, res) => {
-  const username = req.params.username;
-  const patient = await patientModel.findOne({ username: username });
+  const id = req.params.id;
+  const patient = await patientModel.findById( id);
   res.status(200).send(patient.amountInWallet.toString() + " EGP");
 };
 const subscribeToAHealthPackage = async (req, res) => {

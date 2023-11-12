@@ -4,11 +4,11 @@ const patientController = require('../controllers/PatientController')
 
 const patientRoutes = new Router();
 
+patientRoutes.get('/:id/getAmountInWallet', patientController.getAmountInWallet)
 patientRoutes.put('/:id/updatePassword', patientController.changePassword)
 patientRoutes.get("/searchBySpecDate", patientController.searchBySpecDate)
 patientRoutes.put('/widrawFromWallet',patientController.withdrawFromWallet)
 patientRoutes.post('/:username/addFamilyMemberByAcc',patientController.addFamilyMemberByUsername)
-patientRoutes.get('/:username/getAmountInWallet', patientController.getAmountInWallet)
 patientRoutes.get('/:id/updatePassword', patientController.getPassword)
 patientRoutes.get('/search', patientController.searchByNameSpec)
 patientRoutes.get('/familyMembers', patientController.viewFamilyMembers)
