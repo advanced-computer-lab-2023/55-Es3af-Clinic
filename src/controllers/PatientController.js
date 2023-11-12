@@ -11,7 +11,7 @@ const familyMembersAcc = require("../Models/familyMembersAccount.js");
 const { error } = require("console");
 const { default: mongoose } = require("mongoose");
 const { disconnect } = require("process");
-
+const bcrypt = require("bcrypt");
 const upload = multer({ dest: "uploads/" });
 
 const test = async (req, res) => {
@@ -663,13 +663,18 @@ const getPatients = async (req, res) => {
 };
 
 const getPassword = async (req, res) => {
+
   const userID = req.params.id;
+
   var user = await patientModel.findById(userID);
   res.status(200).send(user.password);
 };
 const changePassword = async (req, res) => {
   const userID = req.params.id;
-  var newPassword = req.body.password;
+  
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  var newPassword = hashedPassword;
   try {
     await patientModel.findByIdAndUpdate(userID, { password: newPassword });
     res.status(200).send("Password updated successfully");

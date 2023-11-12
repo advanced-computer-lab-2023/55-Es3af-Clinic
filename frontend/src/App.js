@@ -31,6 +31,11 @@ function App() {
             <button className="btn btn-primary"> Register as Patient </button>
           </a>
         </div>
+        <div>
+          <a href="/login" rel="noopener noreferrer">
+            <button className="btn btn-primary"> Login </button>
+          </a>
+        </div>
       </header>
     </div>
   );

@@ -1,13 +1,16 @@
 const userModel = require('../Models/RequestDoctor.js');
 const {default: mongoose} = require('mongoose');
 const doctorReqModel = require('../Models/RequestDoctor.js');
-
+const bcrypt = require("bcrypt");
 
 const requestDoctor = async(req,res) => {
+    
     try{
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(req.body.password, salt);
         const newDoctor = new doctorReqModel({
             username: req.body.username,
-            password: req.body.password,
+            password: hashedPassword,
             name: req.body.name,
             email: req.body.email,
             dateOfBirth: req.body.dateOfBirth,
@@ -17,7 +20,13 @@ const requestDoctor = async(req,res) => {
             speciality: req.body.speciality
         });
         newDoctor.save().catch(err => console.log(err));
-        res.status(200).send("Request sent.");
+        newDoctor.save().catch(err => console.log(err));
+        const token = createToken(newDoctor._id);
+        const maxAge = 3 * 24 * 60 * 60;
+
+        res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+        res.status(200).send(newPatient);
+        //res.status(200).send("Request sent.");
     }
     catch(error){
         requestDoctor.status(400).send({error:error});

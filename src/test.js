@@ -3,7 +3,11 @@ const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
 const cors = require("cors");
 const{router}=require("../src/routes/main")
-const patientController = require('./controllers/PatientController')
+const patientController = require('./controllers/PatientController');
+const userController = require('./controllers/UserController');
+const {auth} = require("./utils/auth");
+
+const cookieParser = require("cookie-parser");
 //require("dotenv").config();
 //const {createUser,getUsers, updateUser, deleteUser} = require("./Routes/userController");
 const MongoURI = "mongodb+srv://55Es3af:SVH8v8XKZSxU1J6p@cluster0.zqasadb.mongodb.net/Clinic?retryWrites=true&w=majority" ;
@@ -33,12 +37,38 @@ mongoose.connect(MongoURI, {dbName: 'Clinic'})
 })
 .catch(err => console.log(err));
 
-app.use(cors());
-app.use(express.json())
+app.use(
+  cors({
+    origin: 'http://localhost:3000', // Replace with the actual origin of your React app
+    credentials: true,
+  })
+);
+
+app.use(express.json());
+app.use(cookieParser());
+app.use("/login"  ,userController.login);
 
 app.use("/", router);
 
+//app.use(auth);
+
+
 app.get('/getSpec', patientController.getAllSpecialities)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // app.post("/addFamilyMember", patientController.addFamilyMember);
 // app.get("/viewFamilyMembers", patientController.viewFamilyMembers)
 // app.get("/viewDoctors", patientController.viewDoctors)

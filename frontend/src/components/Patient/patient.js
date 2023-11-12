@@ -19,7 +19,7 @@ import BookAnAppointment  from "./BookAnAppointment";
 import patientService from "../../services/patientService";
 import useDoctorSearch from "./searchDoctors";
 import ViewSubscribedPackages from './viewSubscribedPackages';
-
+import Navbar from "../navbar";
 
 
 function PatientPage() {
@@ -64,6 +64,7 @@ function PatientHome() {
   });
   return (
     <div className="App">
+      <Navbar />
       <header className="App-header">
         <div className="payment-buttons">
           <h5 className="top-right-button">Amount In Wallet: {result} </h5>

@@ -13,6 +13,7 @@ import UpdatePassword from '../Doctor/updatePassword';
 import doctorService from "../../services/doctorService.js";
 import AddTimeSlots from './addTimeSlots';
 import { Link } from 'react-router-dom';
+import Navbar from "../navbar.js";
 
 
 
@@ -54,6 +55,7 @@ function DoctorHome() {
   });
   return (
     <div className="App">
+      <Navbar />
       <header className="App-header">
         <div>
         <h5 className="top-right-button">Amount In Wallet: {result} </h5>

@@ -5,7 +5,7 @@ const patientModel = require("../Models/Patient");
 const user = require("../Models/user.js");
 const appointment = require("../Models/Appointments.js");
 const healthRecord = require("../Models/HealthRecord.js");
-
+const bcrypt = require("bcrypt");
 // const Patient = JSON.parse(fs.readFileSync('./data/patient.json'));
 // const Doctors = JSON.parse(fs.readFileSync('./data/doctor.json'));
 
@@ -324,7 +324,10 @@ const getPassword = async (req, res) => {
 }
 const changePassword = async (req, res) => {
   const userID = req.params.id
-  var newPassword = req.body.password
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  var newPassword = hashedPassword;
+  
   try {
     await doctorModel.findByIdAndUpdate(userID, { password: newPassword })
     res.status(200).send('Password updated successfully')
