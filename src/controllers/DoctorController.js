@@ -6,6 +6,8 @@ const user = require("../Models/user.js");
 const appointment = require("../Models/Appointments.js");
 const healthRecord = require("../Models/HealthRecord.js");
 const bcrypt = require("bcrypt");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 // const Patient = JSON.parse(fs.readFileSync('./data/patient.json'));
 // const Doctors = JSON.parse(fs.readFileSync('./data/doctor.json'));
 
@@ -381,6 +383,37 @@ const addTimeSlots = async (req, res) => {
   }
 };
 
+const uploadPatientHealthRec = async (req, res) => {
+  upload.array('medicalHistory', 5)(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      return res.status(500).json(err);
+    } else if (err) {
+      return res.status(500).json(err);
+    }
+
+    const username = req.body.username;
+    const newMedicalHistory = req.files.map(file => {
+      return {
+        name: file.originalname,
+        data: fs.readFileSync(file.path),
+        contentType: file.mimetype,
+      };
+    });
+
+    patientModel.findOneAndUpdate(
+      { username: username },
+      { $push: { medicalHistory: { $each: newMedicalHistory } } },
+      { new: true }
+    )
+      .then(doc => {
+        return res.status(200).send(`Health record file uploaded for ${username}`);
+      })
+      .catch(err => {
+        return res.status(500).json(err);
+      });
+  });
+};
+
 
 
 module.exports = {
@@ -399,5 +432,6 @@ module.exports = {
   getPassword,
   getAmountInWallet,
   getTimeSlots,
-  addTimeSlots
+  addTimeSlots,
+  uploadPatientHealthRec,
 };

@@ -37,6 +37,7 @@ doctorRouter.route("/:id/updatePassword").put(doctorController.changePassword);
 doctorRouter.route("/:username/getAmountInWallet").get(doctorController.getAmountInWallet);
 doctorRouter.route("/getTimeSlots/:id").get(doctorController.getTimeSlots);
 doctorRouter.route("/addTimeSlots/:id").post(doctorController.addTimeSlots);
+doctorRouter.route("/uploadHealthRec").post(doctorController.uploadPatientHealthRec);
 
 // router.route('/getDoctors').get(doctorController.getAllDoctors);
 // router.route('/getDoctor/:id').patch(doctorController.updateEmail);
