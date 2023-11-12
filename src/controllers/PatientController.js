@@ -911,5 +911,6 @@ module.exports = {
   getAllSpecialities,
   withdrawFromWallet,
   uploadMedicalHistory,
-  viewSubscribedHealthPackages
+  viewSubscribedHealthPackages,
+  viewPatientAppointments,
 };
