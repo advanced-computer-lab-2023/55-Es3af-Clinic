@@ -11,46 +11,12 @@ const familyMembersAcc = require("../Models/familyMembersAccount.js");
 const { error } = require("console");
 const { default: mongoose } = require("mongoose");
 const { disconnect } = require("process");
+const stripe= require('stripe')("sk_test_51NxqUnLoGRs62ex4Yxz9G8uKeNFYxSs27BlQznMivk0eBNxx7eZzj6X1Q2ZCYEhOmLOhbGwVLNMzLwMsV1Xf4fZv00ert3YhEW");
+
 
 const upload = multer({ dest: "uploads/" });
 
 const test = async (req, res) => {
-  // const newDoc = new doctorModel({
-
-  //     // username: 'doc2',
-  //     // name: 'doc2',
-  //     // email: 'doc2@email.com',
-  //     // password: 'doc2',
-  //     // dateOfBirth: '2002-11-11',
-  //     // type: 'doctor',
-  //     // hourlyRate: 5,
-  //     // affiliation: 'hospital',
-  //     // educationBackground: 'uni',
-  //     // speciality: 'surgery'
-
-  //     username: 'doc2',
-  //     password: 'fsfs',
-  //     name: 'doc2',
-  //     email: 'doc2@email.com',
-  //     dateOfBirth: '2000-11-12',
-  //     hourlyRate: 5,
-  //     affiliation: 'place',
-  //     educationBackground: 'college',
-  //     speciality: 'surgery'
-  // })
-  // newDoc.save().catch(err => console.error(err))
-  // res.status(200).send(newDoc)
-
-  //     const package = new packageModel({
-  //         type: 'Gold',
-  //         price: 6000,
-  //         sessionDiscount: 0.6,
-  //         medicationDiscount: 0.3,
-  //         familyMemberDiscount: 0.15
-  //     })
-  //     package.save().catch(err => console.error(err))
-  //     console.log(package)
-  //     res.status(200).send(package)
 
   const app = await appointmentModel.find({ date: req.query.date });
   res.status(200).send(app);
@@ -65,8 +31,8 @@ const getPatient = async (req, res) => {
   }
 };
 const addFamilyMemberByUsername = async (req, res) => {
-  const patient = req.params.username;
-  const patientID = await userModel.findOne({ username: patient });
+  const patient = req.params.id;
+  const patientID = await userModel.findById( patient );
 
   if (patientID === null) {
     console.log(patient);
@@ -169,9 +135,7 @@ const viewFamilyMembers = async (req, res) => {
   console.log(`Patient is ${neededPatient}`);
 
   try {
-    const neededPatientID = await userModel.findOne({
-      username: neededPatient,
-    });
+    const neededPatientID = await userModel.findById(neededPatient);
 
     if (!neededPatientID) {
       console.log("Patient not found.");
@@ -824,6 +788,26 @@ const viewSubscribedHealthPackages = async (req, res) => {
   }
 };
 
+const checkoutSession = async (req,res)=>{
+  try{
+    const  lineItems  = req.body.lineItems;
+    const success_url=req.body.success_url;
+    const cancel_url= req.body.cancel_url;
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode:'payment',
+      line_items: lineItems,
+      success_url:success_url,
+      cancel_url:cancel_url,
+    })
+    res.json({url:session.url})
+  }
+  catch (error){
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+}
+
 module.exports = {
   addFamilyMember,
   viewFamilyMembers,
@@ -848,5 +832,6 @@ module.exports = {
   getAllSpecialities,
   withdrawFromWallet,
   uploadMedicalHistory,
-  viewSubscribedHealthPackages
+  viewSubscribedHealthPackages,
+  checkoutSession
 };

@@ -10,6 +10,9 @@ class PatientService {
   getPatient(id){
     return http.get(`/patient/${id}`);
   }
+  async createSession(body){
+    return http.post("/patient/createSession", body)
+  }
 
   //de btshtaghal b ID 3ady bas ana mesameyah username
   async getAmountInWallet(username){
