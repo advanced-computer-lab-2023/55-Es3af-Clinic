@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UserService from "../services/userService";
 
-function Login() {
+function Login(props) {
   const initialUserState = {
     username: "",
     password: "",

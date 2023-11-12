@@ -13,6 +13,7 @@ const { default: mongoose } = require("mongoose");
 const { disconnect } = require("process");
 const bcrypt = require("bcrypt");
 const upload = multer({ dest: "uploads/" });
+const jwt = require('jsonwebtoken');
 
 const test = async (req, res) => {
   // const newDoc = new doctorModel({
@@ -457,11 +458,13 @@ const searchByNameSpec = async (req, res) => {
   }
 };
 
-const getAllSpecialities = async(req, res) => {
-  const specialities = await doctorModel.find({},{speciality: 1, _id: 0, __t: 0}).distinct('speciality')
-  console.log(specialities)
-  res.status(200).send(specialities)
-}
+const getAllSpecialities = async (req, res) => {
+  const specialities = await doctorModel
+    .find({}, { speciality: 1, _id: 0, __t: 0 })
+    .distinct("speciality");
+  console.log(specialities);
+  res.status(200).send(specialities);
+};
 
 const searchBySpecDate = async (req, res) => {
   const { date, speciality } = req.query;
@@ -725,6 +728,7 @@ const appointmentsForDoc = async (req, res) => {
   const doctor = await doctorModel.findById(doctorID);
   const appointments = await appointmentModel.find({ doctor: doctor });
 };
+
 const withdrawFromWallet = async (req, res) => {
   const patientID = req.body.patientID;
   const amountToWithdraw = req.body.amount;
@@ -742,6 +746,7 @@ const withdrawFromWallet = async (req, res) => {
     res.status(500).send("An error occurred while withdrawing");
   }
 };
+
 const BookAnAppointment = async (req, res) => {
   const patientid = req.params.id;
 
@@ -755,7 +760,6 @@ const BookAnAppointment = async (req, res) => {
     console.error(error);
     res.status(500).send("An error occurred while booking the appointment");
   }
-
 };
 
 const uploadMedicalHistory = async (req, res) => {
@@ -775,30 +779,38 @@ const uploadMedicalHistory = async (req, res) => {
       };
     });
 
-    patientModel.findOneAndUpdate(
-      { username: username },
-      { $push: { medicalHistory: { $each: newMedicalHistory } } },
-      { new: true }
-    )
-      .then(doc => {
-        return res.status(200).send(`Medical history file uploaded for ${username}`);
+    patientModel
+      .findOneAndUpdate(
+        { username: username },
+        { $push: { medicalHistory: { $each: newMedicalHistory } } },
+        { new: true }
+      )
+      .then((doc) => {
+        return res
+          .status(200)
+          .send(`Medical history file uploaded for ${username}`);
       })
-      .catch(err => {
+      .catch((err) => {
         return res.status(500).json(err);
       });
   });
 };
+
 const viewSubscribedHealthPackages = async (req, res) => {
   const patientUsername = req.params.username;
 
   try {
-    const patient = await patientModel.findOne({ username: patientUsername }).exec();
+    const patient = await patientModel
+      .findOne({ username: patientUsername })
+      .exec();
 
     if (!patient) {
-      return res.status(404).send('Patient not found');
+      return res.status(404).send("Patient not found");
     }
 
-    const familyMembers = await familyMembersAcc.find({ patient: patient._id }).exec();
+    const familyMembers = await familyMembersAcc
+      .find({ patient: patient._id })
+      .exec();
 
     const packageData = [];
 
@@ -825,41 +837,43 @@ const viewSubscribedHealthPackages = async (req, res) => {
     res.status(200).json(packageData);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send("Internal Server Error");
   }
 };
+
 const viewPatientAppointments = async (req, res) => {
   const patientId = req.params.id;
 
   try {
-      const patient = await patientModel.findById(patientId);
+    const patient = await patientModel.findById(patientId);
 
-      if (!patient) {
-          return res.status(404).send('Patient not found');
-      }
+    if (!patient) {
+      return res.status(404).send("Patient not found");
+    }
 
-      const appointments = await appointmentModel.find({ patient: patientId })
-          .populate('doctor', 'name')
-          .exec();
+    const appointments = await appointmentModel
+      .find({ patient: patientId })
+      .populate("doctor", "name")
+      .exec();
 
-      if (appointments.length === 0) {
-          return res.status(200).send("No appointments found for this patient.");
-      }
+    if (appointments.length === 0) {
+      return res.status(200).send("No appointments found for this patient.");
+    }
 
-      const formattedAppointments = appointments.map(appointment => {
-          return {
-              id: appointment._id,
-              doctor: appointment.doctor.name,
-              date: appointment.date,
-              duration: appointment.duration,
-              status: appointment.status,
-          };
-      });
+    const formattedAppointments = appointments.map((appointment) => {
+      return {
+        id: appointment._id,
+        doctor: appointment.doctor.name,
+        date: appointment.date,
+        duration: appointment.duration,
+        status: appointment.status,
+      };
+    });
 
-      res.status(200).json(formattedAppointments);
+    res.status(200).json(formattedAppointments);
   } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal Server Error');
+    console.error(error);
+    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -887,6 +901,5 @@ module.exports = {
   getAllSpecialities,
   withdrawFromWallet,
   uploadMedicalHistory,
-  viewSubscribedHealthPackages,
-  viewPatientAppointments,
+  viewSubscribedHealthPackages
 };
