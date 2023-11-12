@@ -5,7 +5,7 @@ const patientModel = require("../Models/Patient");
 const user = require("../Models/user.js");
 const appointment = require("../Models/Appointments.js");
 const healthRecord = require("../Models/HealthRecord.js");
-
+const bcrypt = require("bcrypt");
 // const Patient = JSON.parse(fs.readFileSync('./data/patient.json'));
 // const Doctors = JSON.parse(fs.readFileSync('./data/doctor.json'));
 
@@ -199,7 +199,7 @@ const getAllMyPatients = async (req, res) => {
 
 const searchPatientByName = async (req, res) => {
   const { name } = req.query;
-  const doctorId = req.query.doctorId; 
+  const doctorId = req.query.doctorId;
 
   try {
     const appointments = await appointment.find({ doctor: doctorId });
@@ -227,13 +227,14 @@ const searchPatientByName = async (req, res) => {
 const filterAppointmentsByDateAndStatus = async (req, res) => {
   const { date, status } = req.query;
   const doctorid = req.params.id;
+  const currentDate = new Date()
 
   try {
-    let filter = { doctor: doctorid };
+    let filter = { doctor: doctorid, date: { $gte: currentDate } };
 
     // Check if date is provided
     if (date) {
-      filter.date = date;
+      filter.date = { $gte: date };
     }
 
     // Check if status is provided
@@ -243,7 +244,7 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 
     const appointments = await appointment
       .find(filter)
-      .populate("patient", "name -_id -__t");
+    //.populate("patient", "name -_id -__t");
     res.status(200).send(appointments);
   } catch (err) {
     res.status(400).json({
@@ -316,26 +317,71 @@ const selectPatient = async (req, res) => {
   }
 };
 
-const getPassword = async(req, res) => {
+const getPassword = async (req, res) => {
   const userID = req.params.id
   var user = await doctorModel.findById(userID);
   res.status(200).send(user.password)
 }
-const changePassword = async(req, res) => {
+const changePassword = async (req, res) => {
   const userID = req.params.id
-  var newPassword = req.body.password
-  try{
-      await doctorModel.findByIdAndUpdate(userID, {password: newPassword})
-      res.status(200).send('Password updated successfully')
-    }
-  catch(err){console.error(err)}
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  var newPassword = hashedPassword;
+  
+  try {
+    await doctorModel.findByIdAndUpdate(userID, { password: newPassword })
+    res.status(200).send('Password updated successfully')
+  }
+  catch (err) { console.error(err) }
 
 }
-const getAmountInWallet = async(req,res)=>{
-  const username=req.params.username
-  const doctor =await doctorModel.findOne({username:username});
-  res.status(200).send((doctor.amountInWallet).toString()+" EGP");
+const getAmountInWallet = async (req, res) => {
+  const username = req.params.username
+  const doctor = await doctorModel.findOne({ username: username });
+  res.status(200).send((doctor.amountInWallet).toString() + " EGP");
 }
+const getTimeSlots = async (req, res) => {
+  try {
+    const doctorId = req.params.id;
+    const doctor = await doctorModel.findById(doctorId);
+
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    const existingTimeSlots = doctor.availableTimeSlots || [];
+    res.status(200).json(existingTimeSlots);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
+const addTimeSlots = async (req, res) => {
+  try {
+    const doctorId = req.params.id;
+    const { availableTimeSlots } = req.body;
+
+    const doctor = await doctorModel.findById(doctorId);
+
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    doctor.availableTimeSlots = doctor.availableTimeSlots || [];
+    doctor.availableTimeSlots.push(...availableTimeSlots);
+    await doctor.save();
+
+    res.status(200).json({ status: 'success', message: 'Available time slots added successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 'error', message: 'Internal server error' });
+  }
+};
+
+
 
 module.exports = {
   getAllPatients,
@@ -351,5 +397,7 @@ module.exports = {
   selectPatient,
   changePassword,
   getPassword,
-  getAmountInWallet
+  getAmountInWallet,
+  getTimeSlots,
+  addTimeSlots
 };

@@ -1,31 +1,37 @@
 const mongoose = require("mongoose");
-const patient = require("./Patient");
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 const packageSchema = new Schema({
-    type : {
-        type : String,
-        enum : ["Silver", "Gold", "Platinum"],
-        required : true
+    type: {
+        type: String,
+        enum: ["Silver", "Gold", "Platinum"],
+        required: true,
     },
-    price : {
+    price: {
         type: Number,
-        required : true
+        required: true,
     },
-    sessionDiscount : {
+    sessionDiscount: {
         type: Number,
-        required : true
+        required: true,
     },
-    medicationDiscount : {
-        type : Number,
-        required : true
+    medicationDiscount: {
+        type: Number,
+        required: true,
     },
-    familyMemberDiscount : {
-        type : Number,
-        required : true
-    }
-
+    familyMemberDiscount: {
+        type: Number,
+        required: true,
+    },
+    patient: {
+        type: Schema.Types.ObjectId,
+        ref: "Patient",
+    },
+    familyMember: {
+        type: Schema.Types.ObjectId,
+        ref: "FamilyMember",
+    },
 });
 
-const package = mongoose.model("package", packageSchema);
-module.exports = package;
+const Package = mongoose.model("Package", packageSchema);
+module.exports = Package;

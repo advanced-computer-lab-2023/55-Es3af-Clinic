@@ -1,6 +1,7 @@
 import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import PackageService from "../../services/packageService";
 import MemberService from "../../services/familyMemberService";
 import patientService from "../../services/patientService";
@@ -10,14 +11,22 @@ const PkgListP = (props) => {
     packageID:"",
     patients:["654bed1dbe07a9603f5b4030"]
   };
+  const intialMoney ={
+    patientID:"654bed1dbe07a9603f5b4030",
+    amount:0,
+    disc:0
+  };
     const [users, setUsers] = useState([]);
     const [members, setMembers] = useState([]);
     const [body,setBody]= useState(intialBody);
     const [showBanner, setShowBanner] = useState(false);
-  
+    const [money, setMoney]=useState(intialMoney);
+    const history = useNavigate();
+
     useEffect(() => {
       retrievePkgs();
       retrieveMembers();
+      retrievePatient();
     }, []);
 
   const retrievePkgs = () => {
@@ -55,39 +64,108 @@ const PkgListP = (props) => {
         console.log(e);
       });
   };
-  const handleSubscribeClick = (userId) => {
-    setBody((prevBody) => ({
-      ...prevBody,
-      packageID: userId,
-    }));
-    setShowBanner(true); 
-  };
-  const membersWithPackage = members.filter((member) => member.package);
-  const handleCheckboxChange = (memberId) => {
-    const isChecked = body.patients.includes(memberId);
-  
-    if (isChecked) {
-      setBody({
-        ...body,
-        patients: body.patients.filter((id) => id !== memberId),
-      });
-    } else {
-      setBody({
-        ...body,
-        patients: [...body.patients, memberId],
-      });
-    }
-  };
-  async function subscribe(e){
-    e.preventDefault();
-    patientService.subscribeToAHealthPackage(body).then((response) => {
-      console.log(response.data);
-      console.log(body.patients);
-      alert(response.data);
+  const [Ppkg,setPpkg]= useState("");
+  const retrievePatient =() =>{
+    patientService.getPatient("654bed1dbe07a9603f5b4030").then((response) =>{
+      setPpkg(response.data.package);
     })
     .catch((e) => {
       console.log(e);
     });
+  }
+  const handleSubscribeClick = (pkgType, amnt, discount ) => {
+    setBody((prevBody) => ({
+      ...prevBody,
+      packageID: pkgType,
+    }));
+    setShowBanner(true); 
+    setMoney((prevMoney)=>({
+      ...prevMoney,
+      amount: amnt,
+      disc: discount
+    }));
+  };
+  const membersWithPackage = members.filter((member) => member.package);
+  const handleCheckboxChange = (memberId) => {
+    setBody((prevBody) => {
+      const isChecked = prevBody.patients.includes(memberId);
+  
+      if (isChecked) {
+        const updatedBody = {
+          ...prevBody,
+          patients: prevBody.patients.filter((id) => id !== memberId),
+        };
+        return updatedBody;
+      } else {
+        const updatedBody = {
+          ...prevBody,
+          patients: [...prevBody.patients, memberId],
+        };
+        return updatedBody;
+      }
+    });
+  
+  };
+  async function subscribe(e){
+    e.preventDefault();
+    var finalAmnt=0;
+    console.log(body,money)
+    if(body.patients.length>1){
+      for (let i = 0; i < body.patients.length; i++) {
+        finalAmnt += money.amount * (1 - money.disc * i);
+      }
+      setMoney(async (prevMoney) => {
+        const updatedMoney = {
+          ...prevMoney,
+          amount: finalAmnt,
+        };
+  
+        console.log("Updated Money State:", updatedMoney); 
+  
+        try {
+          const response = await patientService.withdrawFromWallet(updatedMoney);
+          if(response.data.localeCompare("Amount deducted successfully")==0){
+            patientService.subscribeToAHealthPackage(body).then((response1) => {
+              alert(response1.data+"\n Amount deducted successfully");
+              history("/patient");
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+          }
+          else{
+          alert(response.data);
+          history("/patient");
+        }
+          //alert(updatedMoney.amount);
+        } catch (e) {
+          console.log(e);
+        }
+  
+        return updatedMoney; 
+      });
+    }
+    else{
+      try {
+        const response = await patientService.withdrawFromWallet(money);
+        if(response.data.localeCompare("Amount deducted successfully")==0){
+          patientService.subscribeToAHealthPackage(body).then((response1) => {
+            alert(response1.data+"\n Amount deducted successfully");
+            history("/patient");
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+        }
+        else{
+        alert(response.data);
+        history("/patient");
+      }
+        //alert(updatedMoney.amount);
+      } catch (e) {
+        console.log(e);
+      }
+    }
   }
   return (
     <div>
@@ -119,7 +197,11 @@ const PkgListP = (props) => {
                   <h4 className="card-title" style={{ color: "white" }}>
                     Price: {user.price} EGP
                   </h4> 
-                  <button className = "btn btn-primary" onClick={() => handleSubscribeClick(user.type)}>Subscribe</button>
+                  
+                  <button className = "btn btn-primary" 
+                  onClick={() => handleSubscribeClick(user.type, user.price, user.familyMemberDiscount)}
+                  disabled={Ppkg == user.type}
+                  >Subscribe</button>
                 </div>
               </div>
             );

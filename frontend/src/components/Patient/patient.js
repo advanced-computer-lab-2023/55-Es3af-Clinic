@@ -18,6 +18,9 @@ import AddMemberAcc from "./addMemberByAcc";
 import BookAnAppointment  from "./BookAnAppointment";
 import patientService from "../../services/patientService";
 import useDoctorSearch from "./searchDoctors";
+import ViewSubscribedPackages from './viewSubscribedPackages';
+import Navbar from "../navbar";
+
 
 function PatientPage() {
   return (
@@ -33,24 +36,23 @@ function PatientPage() {
       <Route path="/viewPrescriptions" element={<PrescriptionList />} />
       <Route path="/filterprescriptionsbydatestatusdoctor" element={<FilteredPrescriptionList />} />
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
-      <Route path="/searchBySpecDate" element= {<useDoctorSearch />} />
+      <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
       <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
       <Route path='/UploadMedicalHistory' element = {<UploadMedicalHistory/>} />
       <Route path='/:username/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
       <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />
-
+      <Route path="/viewSubscribedPackages" element={<ViewSubscribedPackages />} />
     </Routes>
   );
 }
 
 function PatientHome() {
   var id = '654bed1dbe07a9603f5b4030'
-  var username = "farouhaTe3bet"
   const [result, setResult] = useState("");
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await patientService.getAmountInWallet(username);
+        const response = await patientService.getAmountInWallet(id);
         const amountInWalletResult = response.data; 
         setResult(amountInWalletResult);
       } catch (error) {
@@ -62,6 +64,7 @@ function PatientHome() {
   });
   return (
     <div className="App">
+      <Navbar />
       <header className="App-header">
         <div className="payment-buttons">
           <h5 className="top-right-button">Amount In Wallet: {result} </h5>
@@ -97,6 +100,9 @@ function PatientHome() {
           </a>
           <a href={`/patient/${id}/BookAnAppointment/`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Book An Appointment </button>
+          </a>
+          <a href="/patient/viewSubscribedPackages" rel="noopener noreferrer">
+            <button className="btn btn-primary"> View Subscribed Health Packages </button>
           </a>
         </div>
       </header>

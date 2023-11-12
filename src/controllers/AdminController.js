@@ -2,12 +2,19 @@ const userModel = require("../Models/user.js");
 const Doctor = require("../Models/Doctor.js");
 const { default: mongoose } = require("mongoose");
 const DoctorRequest = require("../Models/RequestDoctor");
+const bcrypt = require("bcrypt");
 
 const addAdmin = async (req, res) => {
   try {
     const { username, password } = req.body;
-    res.send(await userModel.create({ username, password, type: "admin" }));
+
+    const salt = await bcrypt.genSalt();
+
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+    res.send(await userModel.create({ username,password:hashedPassword, type: "admin" }));
   } catch (e) {
+    
     res.status(400).send(e);
   }
 };
@@ -50,11 +57,14 @@ const getPassword = async (req, res) => {
   var user = await userModel.findById(userID);
   res.status(200).send(user.password);
 };
+
 const changePassword = async (req, res) => {
   const userID = req.params.id;
   var newPassword = req.body.password;
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(newPassword, salt);
   try {
-    await userModel.findByIdAndUpdate(userID, { password: newPassword });
+    await userModel.findByIdAndUpdate(userID, { password: hashedPassword });
     res.status(200).send("Password updated successfully");
   } catch (err) {
     console.error(err);
@@ -69,10 +79,12 @@ const acceptDoctorRequest = async (req, res) => {
     if (!doctorRequest) {
       return res.status(404).json({ message: 'Doctor request not found' });
     }
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(doctorRequest.password, salt);
 
     const newDoctor = new Doctor({
       username: doctorRequest.username,
-      password: doctorRequest.password,
+      password: hashedPassword,
       name: doctorRequest.name,
       email: doctorRequest.email,
       dateOfBirth: doctorRequest.dateOfBirth,

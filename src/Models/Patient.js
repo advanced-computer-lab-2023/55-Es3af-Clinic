@@ -62,6 +62,9 @@ const patientSchema = new Schema({
     type:Number,
     default:0,
   },
+  familyMembers: [{
+     type: Schema.Types.ObjectId, ref: 'FamilyMember' 
+  }],
   medicalHistory: [{
     name: String,
     data: Buffer,

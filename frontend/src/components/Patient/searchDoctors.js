@@ -2,20 +2,22 @@
 import { useState } from 'react';
 import patientService from '../../services/patientService';
 
-function useDoctorSearch() {
+
+function UseDoctorSearch() {
   const [results, setResults] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
+  //const [specs, setSpecs] = useState([])
 
-  const searchDoctors = async (patientid, date, speciality) => {
-      const response = await patientService.useDoctorSearch(patientid, date, speciality);
+  //setSpecs = patientService.getAllSpecialities()
+
+  const searchDoctors = async (date, speciality) => {
+      const response = await patientService.useDoctorSearch(date, speciality);
 
       setResults(response.data);
       setSearchPerformed(true);
-
-
   };
 
   return { results, searchPerformed, searchDoctors };
 }
 
-export default useDoctorSearch;
+export default UseDoctorSearch;

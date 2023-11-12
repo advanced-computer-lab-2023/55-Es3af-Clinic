@@ -7,8 +7,16 @@ class PatientService {
       `http://localhost:8000/patient/search?name=${name}&speciality=${spec}`
     );
   }
+  getPatient(id){
+    return http.get(`/patient/${id}`);
+  }
+
+  //de btshtaghal b ID 3ady bas ana mesameyah username
   async getAmountInWallet(username){
     return http.get(`/patient/${username}/getAmountInWallet`)
+  }
+  async withdrawFromWallet(body){
+    return http.put("/patient/widrawFromWallet",body)
   }
   async subscribeToAHealthPackage(info){
     return http.put("/patient/subscribeToAHealthPackage",info)
@@ -58,7 +66,7 @@ class PatientService {
       params: queryParams,
     });
   }
-  useDoctorSearch(patientid, date, speciality) {
+  useDoctorSearch(date, speciality) {
     const queryParams = {};
 
     if (date) {
@@ -68,10 +76,14 @@ class PatientService {
       queryParams.speciality = speciality;
     }
 
-    return http.get(`/patient/searchBySpecDate/${patientid}`, {
+    return http.get(`/patient/searchBySpecDate`, {
       params: queryParams,
     });
   }
+
+  // getAllSpecialities(){
+  //   return http.get('/patient')
+  // }
 
   updatePassword(id, password){
     console.log('put is called')
@@ -84,8 +96,9 @@ class PatientService {
   BookAnAppointment(id){
 
     return http.post(`/patient/BookAnAppointment/${id}`)
-
-
+  }
+  viewSubscribedHealthPackages(id) {
+    return http.get(`/patient/viewSubscribedHealthPackages/${id}`);
   }
 }
 

@@ -5,15 +5,14 @@ const userModel = require("../Models/user.js");
 const packageModel = require("../Models/Packages.js");
 const appointmentModel = require("../Models/Appointments.js");
 const PrescriptionsModel = require("../Models/Prescriptions.js");
-const multer = require('multer');
-const fs = require('fs');
-const familyMembersAcc= require("../Models/familyMembersAccount.js");
+const multer = require("multer");
+const fs = require("fs");
+const familyMembersAcc = require("../Models/familyMembersAccount.js");
 const { error } = require("console");
 const { default: mongoose } = require("mongoose");
 const { disconnect } = require("process");
-
-
-const upload = multer({ dest: 'uploads/' });
+const bcrypt = require("bcrypt");
+const upload = multer({ dest: "uploads/" });
 
 const test = async (req, res) => {
   // const newDoc = new doctorModel({
@@ -458,9 +457,16 @@ const searchByNameSpec = async (req, res) => {
   }
 };
 
+const getAllSpecialities = async(req, res) => {
+  const specialities = await doctorModel.find({},{speciality: 1, _id: 0, __t: 0}).distinct('speciality')
+  console.log(specialities)
+  res.status(200).send(specialities)
+}
+
 const searchBySpecDate = async (req, res) => {
   const { date, speciality } = req.query;
   //const patientID = req.params.id
+  console.log(speciality)
   if (date) {
     var date2 = new Date(date);
     date2.setHours(date2.getHours() + 2);
@@ -577,24 +583,19 @@ const viewDocInfo = async (req, res) => {
 const filterAppointmentsByDateAndStatus = async (req, res) => {
   const { date, status } = req.query;
   const patientID = req.params.id;
-  let currentDate = new Date
-
+  let currentDate = new Date();
 
   try {
-    let filter = { patient: patientID, date: {$gte: currentDate} };
+    let filter = { patient: patientID, date: { $gte: currentDate } };
     if (date) {
-      let dateDate = new Date(date)
-      console.log(dateDate)
-      let nextDay = dateDate.getUTCDay()
-      console.log(nextDay)
-      filter.date =  {$and: [{$gte: date}, {$lt: nextDay}]} ;
+      filter.date = { $gte: date };
     }
     if (status) {
       filter.status = status;
     }
 
-    const appointments = await appointmentModel.find(filter)
-      //.populate("doctor", "name -_id -__t");
+    const appointments = await appointmentModel.find(filter);
+    //.populate("doctor", "name -_id -__t");
     console.log(appointments);
 
     if (appointments) {
@@ -662,13 +663,18 @@ const getPatients = async (req, res) => {
 };
 
 const getPassword = async (req, res) => {
+
   const userID = req.params.id;
+
   var user = await patientModel.findById(userID);
   res.status(200).send(user.password);
 };
 const changePassword = async (req, res) => {
   const userID = req.params.id;
-  var newPassword = req.body.password;
+  
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  var newPassword = hashedPassword;
   try {
     await patientModel.findByIdAndUpdate(userID, { password: newPassword });
     res.status(200).send("Password updated successfully");
@@ -677,30 +683,34 @@ const changePassword = async (req, res) => {
   }
 };
 const getAmountInWallet = async (req, res) => {
-  const username = req.params.username;
-  const patient = await patientModel.findOne({ username: username });
+  const id = req.params.id;
+  const patient = await patientModel.findById( id);
   res.status(200).send(patient.amountInWallet.toString() + " EGP");
 };
 const subscribeToAHealthPackage = async (req, res) => {
   const packageID = req.body.packageID;
   const patients = req.body.patients;
   const renewalDate = new Date();
-  renewalDate.setMonth(renewalDate.getMonth()+1);
-  var response="";
+  renewalDate.setMonth(renewalDate.getMonth() + 1);
+  var response = "";
   try {
     for (const patientID of patients) {
       const patient = await patientModel.findOne({ _id: patientID });
       if (patient) {
-        if(patient.package==packageID && patient.packageStatus=="Subscribed With Renewal Date"){
-          response+=patient.name +" is already subscribed to this package \n";
+        if (
+          patient.package == packageID &&
+          patient.packageStatus == "Subscribed With Renewal Date"
+        ) {
+          response +=
+            patient.name + " is already subscribed to this package \n";
+        } else {
+          patient.package = packageID;
+          patient.packageRenewalDate = renewalDate;
+          patient.packageStatus = "Subscribed With Renewal Date";
+          await patient.save();
+          response +=
+            patient.name + " is subscribed to package successfully \n";
         }
-        else{
-        patient.package = packageID;
-        patient.packageRenewalDate = renewalDate;
-        patient.packageStatus = "Subscribed With Renewal Date";
-        await patient.save();
-        response+=patient.name+' is subscribed to package successfully \n';
-      }
       }
     }
     res.status(200).send(response);
@@ -711,30 +721,28 @@ const subscribeToAHealthPackage = async (req, res) => {
 };
 
 const appointmentsForDoc = async (req, res) => {
-  const doctorID = req.query.doctor //doctor id
-  const doctor = await doctorModel.findById(doctorID)
-  const appointments = await appointmentModel.find({doctor: doctor})
-} 
-const withdrawFromWallet=async(req,res)=>{
-  const patientID=req.body.patientID;
-  const amountToWithdraw=req.body.amount;
-  try{
-  const patient= await patientModel.findById(patientID).exec();
-  if(patient.amountInWallet<amountToWithdraw){
-    return res.status(200).send("Not suffecient funds in wallet");
+  const doctorID = req.query.doctor; //doctor id
+  const doctor = await doctorModel.findById(doctorID);
+  const appointments = await appointmentModel.find({ doctor: doctor });
+};
+const withdrawFromWallet = async (req, res) => {
+  const patientID = req.body.patientID;
+  const amountToWithdraw = req.body.amount;
+  try {
+    const patient = await patientModel.findById(patientID).exec();
+    if (patient.amountInWallet < amountToWithdraw) {
+      return res.status(200).send("Not suffecient funds in wallet");
+    } else {
+      patient.amountInWallet -= amountToWithdraw;
+      await patient.save();
+      return res.status(200).send("Amount deducted successfully");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while withdrawing");
   }
-  else{
-    patient.amountInWallet-=amountToWithdraw;
-    await patient.save();
-    return res.status(200).send("Amount deducted successfully");
-  }
-}
-catch (error) {
-  console.error(error);
-  res.status(500).send('An error occurred while withdrawing');
-}
-}
-const BookAnAppointment = async(req,res)=>{
+};
+const BookAnAppointment = async (req, res) => {
   const patientid = req.params.id;
 
   try {
@@ -742,10 +750,10 @@ const BookAnAppointment = async(req,res)=>{
 
     //await viewFamilyMembers(req, res);
 
-    res.status(200).send('Appointment was booked successfully');
+    res.status(200).send("Appointment was booked successfully");
   } catch (error) {
     console.error(error);
-    res.status(500).send('An error occurred while booking the appointment');
+    res.status(500).send("An error occurred while booking the appointment");
   }
 
 };
@@ -780,7 +788,46 @@ const uploadMedicalHistory = async (req, res) => {
       });
   });
 };
+const viewSubscribedHealthPackages = async (req, res) => {
+  const patientUsername = req.params.username;
 
+  try {
+    const patient = await patientModel.findOne({ username: patientUsername }).exec();
+
+    if (!patient) {
+      return res.status(404).send('Patient not found');
+    }
+
+    const familyMembers = await familyMembersAcc.find({ patient: patient._id }).exec();
+
+    const packageData = [];
+
+    // Add patient's health package data
+    packageData.push({
+      patientName: patient.name,
+      package: patient.package,
+      status: patient.packageStatus,
+      renewalDate: patient.packageRenewalDate,
+    });
+
+    // Add family members' health package data
+    for (const familyMember of familyMembers) {
+      const member = await userModel.findById(familyMember.Id).exec();
+
+      packageData.push({
+        patientName: member.name,
+        package: member.package,
+        status: member.packageStatus,
+        renewalDate: member.packageRenewalDate,
+      });
+    }
+
+    res.status(200).json(packageData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
 
 module.exports = {
   addFamilyMember,
@@ -800,8 +847,11 @@ module.exports = {
   addFamilyMemberByUsername,
   getAmountInWallet,
   subscribeToAHealthPackage,
+  withdrawFromWallet,
   appointmentsForDoc,
   BookAnAppointment,
+  getAllSpecialities,
   withdrawFromWallet,
   uploadMedicalHistory,
+  viewSubscribedHealthPackages
 };

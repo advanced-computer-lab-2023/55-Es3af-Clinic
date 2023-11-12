@@ -55,6 +55,14 @@ const doctorSchema = new Schema({
     data: Buffer,
     contentType: String
   },
+  availableTimeSlots: [
+    {
+      day: { type: String, required: true },
+      startTime: { type: String, required: true },
+      endTime: { type: String, required: true },
+    }
+  ]
+  
 });
 
 //const doctor = mongoose.model("doctor", doctorSchema);

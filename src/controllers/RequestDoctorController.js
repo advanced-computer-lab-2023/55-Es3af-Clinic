@@ -9,13 +9,16 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const docReq = require('../Models/RequestDoctor.js')
 
-
+const bcrypt = require("bcrypt");
 
 const requestDoctor = async (req, res) => {
     try {
-      const newDoctor = new docReq({
+
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(req.body.password, salt);  
+        const newDoctor = new docReq({
         username: req.body.username,
-        password: req.body.password,
+        password: hashedPassword,
         name: req.body.name,
         email: req.body.email,
         dateOfBirth: req.body.dateOfBirth,
@@ -54,6 +57,12 @@ const requestDoctor = async (req, res) => {
       }
   
       await newDoctor.save();
+      newDoctor.save().catch(err => console.log(err));
+      const token = createToken(newDoctor._id);
+      const maxAge = 3 * 24 * 60 * 60;
+
+      res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+      res.status(200).send(newPatient);
       res.status(200).send('Doctor registered successfully.');
     } catch (error) {
       console.error(error);
