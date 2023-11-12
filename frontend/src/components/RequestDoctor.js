@@ -14,15 +14,11 @@ function RequestDoctor() {
     affiliation: "",
     educationBackground: "",
     speciality: "",
-  };
-
-  const initialFiles={   
     IDdoc: null,
     MedicalLicenses: [],
     MedicalDegree: null,
   };
 
-  const [files, setFiles] = useState(initialFiles);
   const [doc, setDoctor] = useState (initialUserState);
   const [message, setMessage] = useState('')
 
@@ -30,7 +26,7 @@ function RequestDoctor() {
     const { name, value, type, files } = event.target;
 
     if (type === 'file') {
-      setFiles({ ...doc, [name]: Array.from(files) });
+      setDoctor({ ...doc, [name]: files });
     } else {
       setDoctor({ ...doc, [name]: value });
     }
@@ -64,7 +60,7 @@ function RequestDoctor() {
   });
 
   // Send the form data to the service for API call
-  ReqDoctorService.requestDoctor(formData, files)
+  ReqDoctorService.requestDoctor(formData)
     .then((response) => {
       console.log(response.data);
       // Optionally, reset the form or navigate to another page on success
@@ -205,7 +201,6 @@ function RequestDoctor() {
               className="form-control"
               id="IDdoc"
               name="IDdoc"
-              value = {files.IDdoc}
               onChange={handleInputChange}
             />
           </div>
@@ -217,7 +212,6 @@ function RequestDoctor() {
               className="form-control"
               id="MedicalLicenses"
               name="MedicalLicenses"
-              value = {files.MedicalLicenses}
               onChange={handleInputChange}
               multiple
             />
@@ -230,7 +224,6 @@ function RequestDoctor() {
               className="form-control"
               id="MedicalDegree"
               name="MedicalDegree"
-              value = {files.MedicalDegree}
               onChange={handleInputChange}
             />
           </div>          
