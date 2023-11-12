@@ -100,6 +100,9 @@ class PatientService {
   viewSubscribedHealthPackages(id) {
     return http.get(`/patient/viewSubscribedHealthPackages/${id}`);
   }
+  viewPatientsAppointments(id) {
+    return http.get(`/patient/viewPatientAppointments/${id}`);
+  }
 }
 
 export default new PatientService();

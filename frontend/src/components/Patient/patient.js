@@ -62,6 +62,10 @@ function PatientHome() {
     };
     fetchData(); 
   });
+  const handleViewAppointments = () => {
+    // Replace this URL with the correct one for viewing appointments
+    window.location.href = '/patient/viewAppointments/' + id;
+  };
   return (
     <div className="App">
       <Navbar />
@@ -77,6 +81,9 @@ function PatientHome() {
             <a href="/patient/viewDoctors" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Doctors </button>
           </a>
+          <button className="btn btn-primary" onClick={handleViewAppointments}>
+            View Appointments
+          </button>
           <a href="/patient/viewPrescriptions/" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Prescriptions </button>
           </a>
