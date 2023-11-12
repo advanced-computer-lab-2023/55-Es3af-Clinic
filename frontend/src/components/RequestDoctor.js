@@ -2,6 +2,7 @@ import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import ReqDoctorService from "../services/RequestDoctorService";
+import axios from 'axios';
 
 function RequestDoctor() {
   const initialUserState = {
@@ -45,6 +46,12 @@ function RequestDoctor() {
     setDoctor({ ...doc, [name]: value });
   };
 
+
+  const handleFileChange = (event, field) => {
+    const fileList = event.target.files;
+    setDoctor({ ...doc, [field]: fileList });
+  };  
+
   async function requestDoctor(e) {
     e.preventDefault();
 
@@ -59,18 +66,20 @@ function RequestDoctor() {
     }
   });
 
-  // Send the form data to the service for API call
-  ReqDoctorService.requestDoctor(formData)
-    .then((response) => {
-      console.log(response.data);
-      // Optionally, reset the form or navigate to another page on success
-      setDoctor(initialUserState);
-    })
-    .catch((error) => {
-      console.error(error);
-      // Handle errors appropriately (e.g., show an error message to the user)
+  try {
+    const response = await axios.post('http://localhost:8000/requestDoctor/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
+
+    console.log(response.data);
+    setDoctor(initialUserState);
+  } catch (error) {
+    console.error(error);
+    // Handle errors appropriately (e.g., show an error message to the user)
   }
+};
 
   return (
     <div className="App">
@@ -201,7 +210,7 @@ function RequestDoctor() {
               className="form-control"
               id="IDdoc"
               name="IDdoc"
-              onChange={handleInputChange}
+              onChange={(event) => handleFileChange(event, 'IDdoc')}
             />
           </div>
 
@@ -212,7 +221,7 @@ function RequestDoctor() {
               className="form-control"
               id="MedicalLicenses"
               name="MedicalLicenses"
-              onChange={handleInputChange}
+              onChange={(event) => handleFileChange(event, 'MedicalLicenses')}
               multiple
             />
           </div>
@@ -224,7 +233,7 @@ function RequestDoctor() {
               className="form-control"
               id="MedicalDegree"
               name="MedicalDegree"
-              onChange={handleInputChange}
+              onChange={(event) => handleFileChange(event, 'MedicalDegree')}
             />
           </div>          
 
