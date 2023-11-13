@@ -19,7 +19,7 @@ import BookAnAppointment  from "./BookAnAppointment";
 import patientService from "../../services/patientService";
 import useDoctorSearch from "./searchDoctors";
 import ViewSubscribedPackages from './viewSubscribedPackages';
-
+import Navbar from "../navbar";
 
 
 function PatientPage() {
@@ -52,8 +52,8 @@ function PatientHome() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await patientService.getAmountInWallet(id);
-        const amountInWalletResult = response.data; 
+        const response = await patientService.getAmountInWallet();
+        const amountInWalletResult = response.data;
         setResult(amountInWalletResult);
       } catch (error) {
         console.error(error);
@@ -62,8 +62,13 @@ function PatientHome() {
     };
     fetchData(); 
   });
+  const handleViewAppointments = () => {
+    // Replace this URL with the correct one for viewing appointments
+    window.location.href = '/patient/viewAppointments/' + id;
+  };
   return (
     <div className="App">
+      <Navbar />
       <header className="App-header">
         <div className="payment-buttons">
           <h5 className="top-right-button">Amount In Wallet: {result} </h5>
@@ -76,6 +81,9 @@ function PatientHome() {
             <a href="/patient/viewDoctors" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Doctors </button>
           </a>
+          <button className="btn btn-primary" onClick={handleViewAppointments}>
+            View Appointments
+          </button>
           <a href="/patient/viewPrescriptions/" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Prescriptions </button>
           </a>
@@ -91,13 +99,13 @@ function PatientHome() {
           <a href="/patient/viewHealthPackages/" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Health Packages </button>
           </a>
-          <a href={`/patient/${id}/updatePassword/`} rel="noopener noreferrer">
+          <a href={`/patient/updatePassword/`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Update my Password </button>
           </a>
           <a href={`/patient/UploadMedicalHistory/`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Upload Medical History </button>
           </a>
-          <a href={`/patient/${id}/BookAnAppointment/`} rel="noopener noreferrer">
+          <a href={`/patient/BookAnAppointment/`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Book An Appointment </button>
           </a>
           <a href="/patient/viewSubscribedPackages" rel="noopener noreferrer">

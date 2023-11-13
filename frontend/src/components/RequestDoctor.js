@@ -2,6 +2,7 @@ import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import ReqDoctorService from "../services/RequestDoctorService";
+import axios from 'axios';
 
 function RequestDoctor() {
   const initialUserState = {
@@ -14,13 +15,22 @@ function RequestDoctor() {
     affiliation: "",
     educationBackground: "",
     speciality: "",
+    IDdoc: null,
+    MedicalLicenses: [],
+    MedicalDegree: null,
   };
 
   const [doc, setDoctor] = useState (initialUserState);
   const [message, setMessage] = useState('')
 
   const handleInputChange = (event) => {
-    const { name, value } = event.target;
+    const { name, value, type, files } = event.target;
+
+    if (type === 'file') {
+      setDoctor({ ...doc, [name]: files });
+    } else {
+      setDoctor({ ...doc, [name]: value });
+    }
     if(name == 'password'){
       if (value.length < 6) {
         setMessage('Password is too short');
@@ -36,17 +46,40 @@ function RequestDoctor() {
     setDoctor({ ...doc, [name]: value });
   };
 
+
+  const handleFileChange = (event, field) => {
+    const fileList = event.target.files;
+    setDoctor({ ...doc, [field]: fileList });
+  };  
+
   async function requestDoctor(e) {
     e.preventDefault();
-    // no need to console log response data, only for testing
-    ReqDoctorService.requestDoctor(doc)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
+
+    const formData = new FormData();
+  Object.entries(doc).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((file, index) => {
+        formData.append(`${key}[${index}]`, file);
       });
+    } else {
+      formData.append(key, value);
+    }
+  });
+
+  try {
+    const response = await axios.post('http://localhost:8000/requestDoctor/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    console.log(response.data);
+    setDoctor(initialUserState);
+  } catch (error) {
+    console.error(error);
+    // Handle errors appropriately (e.g., show an error message to the user)
   }
+};
 
   return (
     <div className="App">
@@ -168,7 +201,41 @@ function RequestDoctor() {
               onChange={handleInputChange}
             ></input>
           </div>
-          
+
+
+          <div className="form-group">
+            <label htmlFor="IDdoc">ID Document</label>
+            <input
+              type="file"
+              className="form-control"
+              id="IDdoc"
+              name="IDdoc"
+              onChange={(event) => handleFileChange(event, 'IDdoc')}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="MedicalLicenses">Medical Licenses</label>
+            <input
+              type="file"
+              className="form-control"
+              id="MedicalLicenses"
+              name="MedicalLicenses"
+              onChange={(event) => handleFileChange(event, 'MedicalLicenses')}
+              multiple
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="MedicalDegree">Medical Degree</label>
+            <input
+              type="file"
+              className="form-control"
+              id="MedicalDegree"
+              name="MedicalDegree"
+              onChange={(event) => handleFileChange(event, 'MedicalDegree')}
+            />
+          </div>          
 
 
 
