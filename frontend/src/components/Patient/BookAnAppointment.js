@@ -3,34 +3,42 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import patientService from "../../services/patientService";
 import React from 'react';
-import useDoctorSearch from './searchDoctors';
+import { useHistory } from 'react-router-dom';
 
 function BookAnAppointment() {
-  const { results, searchPerformed, searchDoctors } = useDoctorSearch();
-
-  const search = async (event) => {
-    event.preventDefault();
-
-    const date = event.target.date.value;
-    const speciality = event.target.speciality.value;
-    const patientid = '652b2da81a7433f37b218610';
-
-    // Call the searchDoctors function from the custom hook
-    await searchDoctors(patientid, date, speciality);
-  };
+  
+  const [results, setResults] = useState([]);
+  const [searchPerformed, setSearchPerformed] = useState(false);
+  
+    const search = async (event) => {
+      event.preventDefault();
+  
+      const date = event.target.date.value;
+      const speciality = event.target.speciality.value;
+  
+      const response = await patientService.FilterDoctors(date, speciality);
+      // Do something with the response if needed
+  
+      // Redirect to the FilterDoctors component
+      setResults(response.data);
+      console.log(response)
+      setSearchPerformed(true);
+    };
+  
     return (
+      
         <div className="App">
           <header className="App-header">
             <form className="App-header" onSubmit={search}>
               <div className="form-group">
-                <label htmlFor="InputUsername">Choose by date</label>
+                <label htmlFor="InputUsername">Choose by speciality</label>
                 <input
                 type="string"
                 className="form-control"
                 id="speciality"
                 name="speciality"
                 placeholder="enter speciality" />
-                <label htmlFor="InputUsername">Choose by speciality</label>
+                <label htmlFor="InputUsername">Choose by date</label>
                 <input
                   type="datetime"
                   className="form-control"
@@ -40,6 +48,7 @@ function BookAnAppointment() {
                 />
     
               </div>
+              <a href={`/patient/searchBySpecDate/`} rel="noopener noreferrer"></a>
               <button type="submit" className="btn btn-primary">
                 Search
               </button>

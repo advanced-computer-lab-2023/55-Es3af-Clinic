@@ -17,8 +17,8 @@ import UploadMedicalHistory from './UploadMedicalHistory';
 import AddMemberAcc from "./addMemberByAcc";
 import BookAnAppointment  from "./BookAnAppointment";
 import patientService from "../../services/patientService";
-import useDoctorSearch from "./searchDoctors";
 import ViewSubscribedPackages from './viewSubscribedPackages';
+import ViewAppointments from "./viewAppointment";
 import Navbar from "../navbar";
 
 
@@ -36,12 +36,14 @@ function PatientPage() {
       <Route path="/viewPrescriptions" element={<PrescriptionList />} />
       <Route path="/filterprescriptionsbydatestatusdoctor" element={<FilteredPrescriptionList />} />
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
-      <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
       <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
       <Route path='/UploadMedicalHistory' element = {<UploadMedicalHistory/>} />
       <Route path='/:username/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
-      <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />
       <Route path="/viewSubscribedPackages" element={<ViewSubscribedPackages />} />
+      <Route path="/viewAppointments" element={<ViewAppointments />} />
+        <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />
+        <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
+
     </Routes>
   );
 }
@@ -62,10 +64,7 @@ function PatientHome() {
     };
     fetchData(); 
   });
-  const handleViewAppointments = () => {
-    // Replace this URL with the correct one for viewing appointments
-    window.location.href = '/patient/viewAppointments/' + id;
-  };
+
   return (
     <div className="App">
       <Navbar />
@@ -81,9 +80,10 @@ function PatientHome() {
             <a href="/patient/viewDoctors" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Doctors </button>
           </a>
-          <button className="btn btn-primary" onClick={handleViewAppointments}>
-            View Appointments
-          </button>
+          <a href = '/patient/viewAppointments' rel="noopener noreferrer">
+          <button className="btn btn-primary"> View Appointments </button>
+          </a>
+          
           <a href="/patient/viewPrescriptions/" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Prescriptions </button>
           </a>
