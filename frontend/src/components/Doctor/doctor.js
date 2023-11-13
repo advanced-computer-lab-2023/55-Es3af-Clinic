@@ -40,12 +40,12 @@ function DoctorPage() {
 
 function DoctorHome() {
   var id = '6525afac114367999aba79df'
-  var username="doc1"
+ // var username="doc1"
   const [result, setResult] = useState("");
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await doctorService.getAmountInWallet(username);
+        const response = await doctorService.getAmountInWallet();
         const amountInWalletResult = response.data; 
         setResult(amountInWalletResult);
       } catch (error) {

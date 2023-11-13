@@ -8,6 +8,7 @@ const doctorRouter = express.Router();
 
 doctorRouter.use(express.json());
 
+doctorRouter.post("/addDoctor", doctorController.addDoctor);
 doctorRouter.put('/:id/updatePassword', doctorController.changePassword)
 doctorRouter.get('/:id/updatePassword', doctorController.getPassword)
 doctorRouter.route("/updateDoctor").put(doctorController.updateDoctor);
@@ -34,9 +35,9 @@ doctorRouter
   .get(doctorController.filterPatientsByUpcomingPendingAppointments);
 doctorRouter.route("/selectPatient").patch(doctorController.selectPatient);
 doctorRouter.route("/:id/updatePassword").put(doctorController.changePassword);
-doctorRouter.route("/:username/getAmountInWallet").get(doctorController.getAmountInWallet);
+doctorRouter.route("/getAmountInWallet").get(doctorController.getAmountInWallet);
 doctorRouter.route("/getTimeSlots/:id").get(doctorController.getTimeSlots);
-doctorRouter.route("/addTimeSlots/:id").post(doctorController.addTimeSlots);
+doctorRouter.route("/addTimeSlots").post(doctorController.addTimeSlots);
 doctorRouter.route("/uploadHealthRec").post(doctorController.uploadPatientHealthRec);
 
 // router.route('/getDoctors').get(doctorController.getAllDoctors);

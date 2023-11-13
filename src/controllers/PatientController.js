@@ -25,8 +25,17 @@ const test = async (req, res) => {
 
 const getPatient = async (req, res) => {
   try {
-    
-    const patient = await patientModel.findById(req.params.id);
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const patient = await patientModel.findById(id);
     res.send(patient);
   } catch (e) {
     res.status(400).send(e);
