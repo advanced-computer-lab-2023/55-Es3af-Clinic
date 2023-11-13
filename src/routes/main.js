@@ -22,4 +22,5 @@ router.use("/register",registerPatientRoutes);
 router.use("/admin", adminRoutes);
 router.use("/packages", packageRoutes);
 router.get("/logout", userController.logout);
+router.put('/forgetPassword', userController.forgetPassword)
 module.exports={router};

@@ -811,59 +811,64 @@ const viewSubscribedHealthPackages = async (req, res) => {
     res.status(200).json(packageData);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send('Internal Server Error');
   }
 };
-  // const token = req.cookies.jwt;
-    // var id;
-    // jwt.verify(token, 'supersecret', (err, decodedToken)=> {
-    //   if (err){
-    //     // console.log('You are not logged in.');
-    //     // res send status 401 you are not logged in 
-    //     console.log('not logged in')
-    //     res.status(401).json({message: "You are not logged in"})
-    //     // res.redirect('/login');
-    //   }
-    //   else {
-    //     console.log('else')
-    //     id = decodedToken.name;
-    //     console.loge(id)
-    //   }
-    // })
-    const viewPatientAppointments = async (req, res) => {
-      const patientId = req.params.id;
-    
-      try {
-          const patient = await patientModel.findById(patientId);
-    
-          if (!patient) {
-              return res.status(404).send('Patient not found');
-          }
-    
-          const appointments = await appointmentModel.find({ patient: patientId })
-              .populate('doctor', 'name')
-              .exec();
-    
-          if (appointments.length === 0) {
-              return res.status(200).send("No appointments found for this patient.");
-          }
-    
-          const formattedAppointments = appointments.map(appointment => {
-              return {
-                  id: appointment._id,
-                  doctor: appointment.doctor.name,
-                  date: appointment.date,
-                  duration: appointment.duration,
-                  status: appointment.status,
-              };
-          });
-    
-          res.status(200).json(formattedAppointments);
-      } catch (error) {
-          console.error(error);
-          res.status(500).send('Internal Server Error');
+
+
+// const checkoutSession = async (req,res)=>{
+//   try{
+//     const  lineItems  = req.body.lineItems;
+//     const success_url=req.body.success_url;
+//     const cancel_url= req.body.cancel_url;
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ['card'],
+//       mode:'payment',
+//       line_items: lineItems,
+//       success_url:success_url,
+//       cancel_url:cancel_url,
+//     })
+//     res.json({url:session.url})
+//   }
+//   catch (error){
+//     console.error(error);
+//     res.status(500).send('Internal Server Error');
+//   }
+// }
+const viewPatientAppointments = async (req, res) => {
+  const patientId = req.params.id;
+
+  try {
+      const patient = await patientModel.findById(patientId);
+
+      if (!patient) {
+          return res.status(404).send('Patient not found');
       }
-    };
+
+      const appointments = await appointmentModel.find({ patient: patientId })
+          .populate('doctor', 'name')
+          .exec();
+
+      if (appointments.length === 0) {
+          return res.status(200).send("No appointments found for this patient.");
+      }
+
+      const formattedAppointments = appointments.map(appointment => {
+          return {
+              id: appointment._id,
+              doctor: appointment.doctor.name,
+              date: appointment.date,
+              duration: appointment.duration,
+              status: appointment.status,
+          };
+      });
+
+      res.status(200).json(formattedAppointments);
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+  }
+};
 
 const checkoutSession = async (req,res)=>{
   try{
@@ -884,6 +889,42 @@ const checkoutSession = async (req,res)=>{
     res.status(500).send('Internal Server Error');
   }
 }
+
+const cancelHealthPackageSubscription = async (req, res) => {
+  const patientId = req.params.id;
+
+  try {
+    // Find the patient
+    const patient = await patientModel.findById(patientId);
+
+    if (!patient) {
+      return res.status(404).send('Patient not found');
+    }
+
+    // Cancel the patient's health package subscription
+    patient.packageStatus = 'Canceled';
+    patient.packageRenewalDate = null;
+    await patient.save();
+
+    // Find and cancel health package subscriptions for family members
+    const familyMembers = await familyMembersAcc.find({ patient: patientId });
+
+    for (const familyMember of familyMembers) {
+      const member = await userModel.findById(familyMember.Id);
+
+      if (member) {
+        member.packageStatus = 'Canceled';
+        member.packageRenewalDate = null;
+        await member.save();
+      }
+    }
+
+    res.status(200).send('Health package subscription canceled successfully.');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while canceling the health package subscription.');
+  }
+};
 const viewAvailableAppointments = async (req, res) => {
   const doctorId  = req.params.id;
 
@@ -951,10 +992,10 @@ module.exports = {
   appointmentsForDoc,
   BookAnAppointment,
   getAllSpecialities,
-  withdrawFromWallet,
   uploadMedicalHistory,
   viewSubscribedHealthPackages,
   checkoutSession,
   viewPatientAppointments,
+  cancelHealthPackageSubscription
   viewAvailableAppointments
 };

@@ -86,10 +86,28 @@ const createHealthRecords = async (req, res) => {
 
 //edit/ update my email, hourly rate or affiliation (hospital):
 const updateDoctor = async (req, res) => {
-  const doctorId = req.query.doctorId;
+
+  //const doctorId = req.query.doctorId;
   const { email, hourlyRate, affiliation } = req.body;
 
   try {
+
+    const token = req.cookies.jwt;
+      var id;
+  jwt.verify(token, 'supersecret', (err, decodedToken) => {
+      if (err) {
+        // console.log('You are not logged in.');
+        // res send status 401 you are not logged in
+        res.status(401).json({message:"You are not logged in."})
+        // res.redirect('/login');
+      } else {
+        
+        id= decodedToken.name;
+      }
+    });
+ 
+    
+    const doctorId = id;
     const updatedDoctor = await doctorModel.findByIdAndUpdate(
       doctorId,
       { email: email, hourlyRate: hourlyRate, affiliation: affiliation },
@@ -313,9 +331,9 @@ const selectPatient = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(400).json({
-      message: err.message,
-    });
+    //res.status(400).json({
+      //message: err.message,
+   // });
   }
 };
 
@@ -337,11 +355,16 @@ const changePassword = async (req, res) => {
   catch (err) { console.error(err) }
 
 }
+
 const getAmountInWallet = async (req, res) => {
   const username = req.params.username
+  try {
   const doctor = await doctorModel.findOne({ username: username });
   res.status(200).send((doctor.amountInWallet).toString() + " EGP");
+  }catch (err) { console.error(err) }
 }
+
+
 const getTimeSlots = async (req, res) => {
   try {
     const doctorId = req.params.id;

@@ -10,6 +10,7 @@ const upload = multer({ storage: storage });
 const docReq = require('../Models/RequestDoctor.js')
 
 const bcrypt = require("bcrypt");
+const { createToken } = require("../utils/auth.js");
 
 const requestDoctor = async (req, res) => {
     try {
@@ -62,8 +63,8 @@ const requestDoctor = async (req, res) => {
       const maxAge = 3 * 24 * 60 * 60;
 
       res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
-      res.status(200).send(newPatient);
-      res.status(200).send('Doctor registered successfully.');
+      res.status(200).send(newDoctor);
+      
     } catch (error) {
       console.error(error);
       res.status(400).send({ error: 'Error during registration.' });

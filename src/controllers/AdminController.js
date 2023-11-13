@@ -53,6 +53,7 @@ const viewDoctorData = async (req, res) => {
 };
 
 const getPassword = async (req, res) => {
+  
   const userID = req.params.id;
   var user = await userModel.findById(userID);
   res.status(200).send(user.password);
@@ -71,6 +72,7 @@ const changePassword = async (req, res) => {
   }
 };
 
+
 const acceptDoctorRequest = async (req, res) => {
   try {
     const doctorRequestId = req.params.id;
@@ -79,12 +81,11 @@ const acceptDoctorRequest = async (req, res) => {
     if (!doctorRequest) {
       return res.status(404).json({ message: 'Doctor request not found' });
     }
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(doctorRequest.password, salt);
+    
 
     const newDoctor = new Doctor({
       username: doctorRequest.username,
-      password: hashedPassword,
+      password: doctorRequest.password,
       name: doctorRequest.name,
       email: doctorRequest.email,
       dateOfBirth: doctorRequest.dateOfBirth,
