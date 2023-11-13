@@ -4,9 +4,9 @@ class DoctorService {
   async getAllMyPatients(doctor) {
     return http.get("/doctor/getAllMyPatients", { params: { doctor } });
   }
-  async updateDoctor(doctorId, doctor) {
+  async updateDoctor(doctor) {
     try {
-      const response = await http.put(`/doctor/updateDoctor?doctorId=${doctorId}`, doctor, {
+      const response = await http.put("/doctor/updateDoctor", doctor, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -16,8 +16,8 @@ class DoctorService {
       throw error;
     }
   }
-  async getAmountInWallet(username){
-    return http.get(`/doctor/${username}/getAmountInWallet`)
+  async getAmountInWallet(){
+    return http.get("/doctor/getAmountInWallet")
   }
 
   // selectPatient(doctorId, patientId) {
@@ -41,8 +41,8 @@ class DoctorService {
       params: queryParams,
     });
   }
-  async SearchPatientByName(name, doctorId) {
-    return http.get(`/doctor/searchPatientByName?name=${name}&doctorId=${doctorId}`);
+  async SearchPatientByName(name) {
+    return http.get(`/doctor/searchPatientByName?name=${name}`);
   }
 
   filterPatient(doctorId, inputDate) {

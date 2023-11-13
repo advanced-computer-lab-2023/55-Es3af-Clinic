@@ -23,14 +23,14 @@ function BookAnAppointment() {
           <header className="App-header">
             <form className="App-header" onSubmit={search}>
               <div className="form-group">
-                <label htmlFor="InputUsername">Choose by date</label>
+                <label htmlFor="InputUsername">Choose by specialty</label>
                 <input
                 type="string"
                 className="form-control"
                 id="speciality"
                 name="speciality"
                 placeholder="enter speciality" />
-                <label htmlFor="InputUsername">Choose by speciality</label>
+                <label htmlFor="InputUsername">Choose by date</label>
                 <input
                   type="datetime"
                   className="form-control"

@@ -24,11 +24,13 @@ function Login(props) {
 
     UserService.login(user)
       .then((response) => {
+        console.log(response.data); 
+
         
         switch (response.data.__t) {
           
-          case "pharmacist":
-            navigate("../pharmacist", { replace: true });
+          case "doctor":
+            navigate("../doctor", { replace: true });
             break;
           case "patient":
             navigate("../patient", { replace: true });
@@ -75,7 +77,7 @@ function Login(props) {
             Submit
           </button>
           <a href="/requestDoctor" rel="noopener noreferrer">
-            Request as a Doctor
+            Register as  Doctor
           </a>
           <a href="/register" rel="noopener noreferrer">
             Register as Patient

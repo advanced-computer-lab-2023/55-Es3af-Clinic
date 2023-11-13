@@ -15,7 +15,7 @@ const createUser = async(req,res) => {
     Email: req.body.email,
     Password: hashedPassword,
     DateOfBirth: req.body.dateOfBirth,
-    Type:req.body.dateOfBirth
+    Type:req.body.type
    });
    newUser.save().catch(err => console.log(err));
    res.status(200).send("created");
@@ -37,7 +37,7 @@ const updateUser = async (req, res) => {
    var Email= req.body.email;
    var Password= hashedPassword;
    var DateOfBirth= req.body.dateOfBirth;
-   var Type= req.body.tyoe;
+   var Type= req.body.type;
 
    userModel.findOneAndUpdate({Username:Username},{Name:Name, Email:Email, Password:Password,
      DateOfBirth:DateOfBirth, Type:Type }).catch(err=> console.log(err));
@@ -66,7 +66,7 @@ const deleteUser = async (req, res) => {
       if (!isPasswordValid) {
         return res.status(401).json({ message: "Invalid password" });
       }
-  
+
       const token = createToken(user._id);
       const maxAge = 3 * 24 * 60 * 60;
   

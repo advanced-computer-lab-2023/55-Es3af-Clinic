@@ -22,8 +22,7 @@ function EditDoctor() {
         e.preventDefault();
         try {
           console.log("Updating doctor with data:", doctor);
-          const doctorId = "6525afac114367999aba79df";
-          await DoctorService.updateDoctor(doctorId, doctor);  
+          await DoctorService.updateDoctor(doctor);  
           setIsUpdated(true);
         } catch (error) {
           console.error("Error updating doctor:", error.message);
