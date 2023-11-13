@@ -824,6 +824,43 @@ const viewSubscribedHealthPackages = async (req, res) => {
   }
 };
 
+const cancelHealthPackageSubscription = async (req, res) => {
+  const patientId = req.params.id;
+
+  try {
+    // Find the patient
+    const patient = await patientModel.findById(patientId);
+
+    if (!patient) {
+      return res.status(404).send('Patient not found');
+    }
+
+    // Cancel the patient's health package subscription
+    patient.packageStatus = 'Canceled';
+    patient.packageRenewalDate = null;
+    await patient.save();
+
+    // Find and cancel health package subscriptions for family members
+    const familyMembers = await familyMembersAcc.find({ patient: patientId });
+
+    for (const familyMember of familyMembers) {
+      const member = await userModel.findById(familyMember.Id);
+
+      if (member) {
+        member.packageStatus = 'Canceled';
+        member.packageRenewalDate = null;
+        await member.save();
+      }
+    }
+
+    res.status(200).send('Health package subscription canceled successfully.');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while canceling the health package subscription.');
+  }
+};
+
+
 module.exports = {
   addFamilyMember,
   viewFamilyMembers,
@@ -848,5 +885,6 @@ module.exports = {
   getAllSpecialities,
   withdrawFromWallet,
   uploadMedicalHistory,
-  viewSubscribedHealthPackages
+  viewSubscribedHealthPackages,
+  cancelHealthPackageSubscription
 };

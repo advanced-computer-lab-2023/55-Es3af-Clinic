@@ -103,6 +103,9 @@ function PatientHome() {
           <a href="/patient/viewSubscribedPackages" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Subscribed Health Packages </button>
           </a>
+          <a href="/patient/cancelHealthPackage" rel="noopener noreferrer">
+            <button className="btn btn-primary"> Cancel Health Package Subscription </button>
+          </a>
         </div>
       </header>
     </div>
