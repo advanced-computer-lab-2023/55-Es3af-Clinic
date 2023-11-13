@@ -110,31 +110,46 @@ const createHealthRecords = async (req, res) => {
   }
 };
 
+
 //edit/ update my email, hourly rate or affiliation (hospital):
 const updateDoctor = async (req, res) => {
   try {
     const token = req.cookies.jwt;
-
-    jwt.verify(token, 'supersecret', async (err, decodedToken) => {
+    let id;
+    
+    jwt.verify(token, 'supersecret', (err, decodedToken) => {
       if (err) {
-        return res.status(401).json({ message: "You are not logged in." });
+        console.log("alo");
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        id = decodedToken.name;
+        console.log(id);
+
+        // Perform the update operation here
+        performUpdate(req, res, id);
       }
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
-      const doctorId = decodedToken.name;
-      const { email, hourlyRate, affiliation } = req.body;
+const performUpdate = async (req, res, id) => {
+  const { email, hourlyRate, affiliation } = req.body;
 
-      const updatedDoctor = await doctorModel.findByIdAndUpdate(
-        doctorId,
-        { email: email, hourlyRate: hourlyRate, affiliation: affiliation },
-        { new: true }
-      );
+  try {
+    const updatedDoctor = await doctorModel.findByIdAndUpdate(
+      id,
+      { email: email, hourlyRate: hourlyRate, affiliation: affiliation },
+      { new: true }
+    );
 
-      return res.status(200).json({
-        status: "success",
-        data: {
-          updatedDoctor,
-        },
-      });
+    return res.status(200).json({
+      status: "success",
+      data: {
+        updatedDoctor,
+      },
     });
   } catch (err) {
     console.log(err);
@@ -427,7 +442,7 @@ const getAmountInWallet = async (req, res) => {
     const decodedToken = jwt.verify(token, 'supersecret');
     const userId = decodedToken.name;
 
-    const doctor = await doctorModel.findOne({ id: userId });
+    const doctor = await doctorModel.findById(userId );
 
     return res.status(200).send((doctor.amountInWallet).toString() + " EGP");
   } catch (error) {

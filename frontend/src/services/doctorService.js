@@ -6,15 +6,18 @@ class DoctorService {
   }
   async updateDoctor(doctor) {
     try {
-      const response = await http.put("/doctor/updateDoctor", doctor, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+      const token = localStorage.getItem('token');
+    const response = await http.put("/doctor/updateDoctor", doctor, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
   }
   async getAmountInWallet(){
     return http.get("/doctor/getAmountInWallet")

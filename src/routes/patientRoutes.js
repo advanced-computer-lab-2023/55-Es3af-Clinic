@@ -4,7 +4,7 @@ const patientController = require('../controllers/PatientController')
 
 const patientRoutes = new Router();
 
-patientRoutes.get('/:id/getAmountInWallet', patientController.getAmountInWallet)
+patientRoutes.get('/getAmountInWallet', patientController.getAmountInWallet)
 patientRoutes.post("/createSession",patientController.checkoutSession)
 patientRoutes.put('/:id/updatePassword', patientController.changePassword)
 patientRoutes.get("/searchBySpecDate", patientController.searchBySpecDate)

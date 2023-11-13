@@ -16,7 +16,7 @@ class PatientService {
 
   //de btshtaghal b ID 3ady bas ana mesameyah username
   async getAmountInWallet(){
-    return http.get(`/patient/getAmountInWallet`)
+    return http.get("/patient/getAmountInWallet")
   }
   async withdrawFromWallet(body){
     return http.put("/patient/widrawFromWallet",body)

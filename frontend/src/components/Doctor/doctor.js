@@ -54,7 +54,7 @@ function DoctorHome() {
       }
     };
     fetchData(); 
-  });
+  }, []);
   return (
     <div className="App">
       <Navbar />
