@@ -17,15 +17,6 @@ const app = express();
 app.use(express.json());
 
 const port = process.env.PORT || "8000";
-// const patient = require('./Models/Patient');
-// const familyMember = require('./Models/FamilyMembers');
-// const patientController = require('./controllers/PatientController')
-// const registerPatientController = require('./controllers/RegisterPatientController');
-// const requestDoctorController = require('./controllers/RequestDoctorController');
-// const UserController= require('./controllers/UserController');
-// const DoctorController = require('./controllers/DoctorController');
-// const admin = require('./routes/adminRoutes');
-
 
 mongoose.connect(MongoURI, {dbName: 'Clinic'})
 .then(()=>{
@@ -47,60 +38,8 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use("/login"  ,userController.login);
-app.post('/forgetPassword', userController.forgetPassword)
+//app.post('/forgetPassword', userController.forgetPassword)
 
 app.use("/", router);
 
-//app.use(auth);
-
-
-//app.get('/getSpec', patientController.getAllSpecialities)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// app.post("/addFamilyMember", patientController.addFamilyMember);
-// app.get("/viewFamilyMembers", patientController.viewFamilyMembers)
-// app.get("/viewDoctors", patientController.viewDoctors)
-// app.post("/registerPatient", registerPatientController.registerPatient)
-// app.post("/requestDoctor", requestDoctorController.requestDoctor)
-// app.get('/test', patientController.test)
-// app.get("/users", UserController.getUsers)
-// app.get("/patients", patientController.getPatients)
-// app.get("/getDocReq", requestDoctorController.getDocReq)
-// app.get('/getPatients', DoctorController.getAllPatients);
-// app.get('/getDoctors', DoctorController.getAllDoctors);
-// app.patch('/updateDoctors/:id', DoctorController.updateDoctor);
-// app.post("/createAppointment", DoctorController.createAppointment);
-//app.get("/filterAppointmentsByDate", DoctorController.filterAppointmentsByDate);
-//app.get("/filterAppointmentsByDateAndStatus", patientController.filterAppointmentsByDateAndStatus);
-//app.get("/viewDoctorData", AdminController.viewDoctorData);
-//app.get("/listUsers", AdminController.listUsers);
-
-// app.get("/filterAppointmentsByDateAndStatus", DoctorController.filterAppointmentsByDateAndStatus);
-// app.get("/getAllMyPatients", DoctorController.getAllMyPatients);
-// app.get("/searchPatientByName", DoctorController.searchPatientByName);
-//app.get("/filterPatientsByUpcomingPendingAppointments", DoctorController.filterPatientsByUpcomingPendingAppointments);
-//app.get("/viewHealthRecords", DoctorController.viewHealthRecords);
-//app.post("/createHealthRecords", DoctorController.createHealthRecords);
-
-// app.get('/searchDoc', patientController.searchByNameSpec)
-// app.get('/viewDocInfo', patientController.viewDocInfo)
-// app.get('/viewPrescriptions', patientController.viewPrescriptions)
-// app.get('/specDate', patientController.searchBySpecDate)
-//app.get('/searchDoc', patientController.searchDoctorsByName)
-// // app.get('/viewPrescriptions', patientController.viewPrescriptions);
-
-//// app.get('/filterprescriptions',patientController.filterprescriptionsbydatedoctorstatus)
-
+app.get('/getSpec', patientController.getAllSpecialities)

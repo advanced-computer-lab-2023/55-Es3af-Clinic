@@ -9,18 +9,40 @@ import patientService from "../../services/patientService";
 const PkgListP = (props) => {
   const intialBody = {
     packageID:"",
-    patients:["654bed1dbe07a9603f5b4030"]
+    patients:["6550f3b6d9aee1af3acedf0a"]
   };
   const intialMoney ={
-    patientID:"654bed1dbe07a9603f5b4030",
+    patientID:"6550f3b6d9aee1af3acedf0a",
     amount:0,
     disc:0
+  };
+  const intialItems={
+    lineItems:[
+      {
+        quantity:1,
+        price_data:{
+          currency:"egp",
+          product_data:{
+            name:""
+          },
+          unit_amount:0
+        },
+      }
+    ],
+    success_url:"",
+    cancel_url:"",
+    discounts: [
+      {
+        percentage: 0, 
+      }
+    ]
   };
     const [users, setUsers] = useState([]);
     const [members, setMembers] = useState([]);
     const [body,setBody]= useState(intialBody);
     const [showBanner, setShowBanner] = useState(false);
     const [money, setMoney]=useState(intialMoney);
+    const [cBody,setCBody]=useState(intialItems);
     const history = useNavigate();
 
     useEffect(() => {
@@ -48,7 +70,7 @@ const PkgListP = (props) => {
   };
 
   const retrieveMembers = () => {
-    MemberService.getAll("farouhaTe3bet")
+    MemberService.getAll("6550f3b6d9aee1af3acedf0a")
         .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data)) {
@@ -66,7 +88,7 @@ const PkgListP = (props) => {
   };
   const [Ppkg,setPpkg]= useState("");
   const retrievePatient =() =>{
-    patientService.getPatient("654bed1dbe07a9603f5b4030").then((response) =>{
+    patientService.getPatient("6550f3b6d9aee1af3acedf0a").then((response) =>{
       setPpkg(response.data.package);
     })
     .catch((e) => {
@@ -112,7 +134,7 @@ const PkgListP = (props) => {
     console.log(body,money)
     if(body.patients.length>1){
       for (let i = 0; i < body.patients.length; i++) {
-        finalAmnt += money.amount * (1 - money.disc * i);
+        finalAmnt += money.amount * (1 - money.disc);
       }
       setMoney(async (prevMoney) => {
         const updatedMoney = {
@@ -166,6 +188,63 @@ const PkgListP = (props) => {
         console.log(e);
       }
     }
+  }
+  async function payWithCredit(e){
+    e.preventDefault();
+    var finalAmnt=money.amount;
+    if(body.patients.length>1)
+      for (let i = 1; i < body.patients.length; i++) {
+        finalAmnt += money.amount * (1 - money.disc);
+      }
+    setCBody(async(prevCBody)=>{
+      const updatedCBody = {
+        lineItems: [
+          {
+            price_data: {
+              currency: "egp",
+              product_data: {
+                name: body.packageID,
+              },
+              unit_amount: finalAmnt*100/body.patients.length,
+            },
+            quantity: body.patients.length,
+          },
+        ],
+        success_url: "http://localhost:3000/patient/viewSubscribedPackages",
+        cancel_url: "http://localhost:3000/patient",
+      };
+      console.log(updatedCBody);
+        try{
+          const response = await fetch("http://localhost:8000/patient/createSession", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedCBody),
+          });
+      
+          if (!response.ok) {
+            const errorResponse = await response.json();
+            console.error(errorResponse); // Log the error details
+            return;
+          }
+      
+          const jsonResponse = await response.json();
+          const { url } = jsonResponse;
+          window.location = url;
+          patientService.subscribeToAHealthPackage(body).then((response1) => {
+            alert(response1.data+"\n Amount deducted successfully");
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+
+       }
+        catch (e) {
+        console.log(e);
+        }
+      return updatedCBody;
+    })
   }
   return (
     <div>
@@ -229,7 +308,7 @@ const PkgListP = (props) => {
           </div>
           <div className="payment-buttons">
             <button className="btn btn-primary" onClick={subscribe}>Pay Using Wallet</button>
-            <button className="btn btn-primary">Pay Using Credit Card</button>
+            <button className="btn btn-primary"onClick={payWithCredit}>Pay Using Credit Card</button>
           </div>
         </div>
       )}

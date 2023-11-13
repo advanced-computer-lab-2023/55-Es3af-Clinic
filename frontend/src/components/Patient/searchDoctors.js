@@ -1,23 +1,23 @@
-// Custom hook for search functionality
-import { useState } from 'react';
-import patientService from '../../services/patientService';
+// // Custom hook for search functionality
+// import { useState } from 'react';
+// import patientService from '../../services/patientService';
 
 
-function UseDoctorSearch() {
-  const [results, setResults] = useState([]);
-  const [searchPerformed, setSearchPerformed] = useState(false);
-  //const [specs, setSpecs] = useState([])
+// function UseDoctorSearch() {
+//   const [results, setResults] = useState([]);
+//   const [searchPerformed, setSearchPerformed] = useState(false);
+//   //const [specs, setSpecs] = useState([])
 
-  //setSpecs = patientService.getAllSpecialities()
+//   //setSpecs = patientService.getAllSpecialities()
 
-  const searchDoctors = async (date, speciality) => {
-      const response = await patientService.useDoctorSearch(date, speciality);
+//   const searchDoctors = async (date, speciality) => {
+//       const response = await patientService.useDoctorSearch(date, speciality);
 
-      setResults(response.data);
-      setSearchPerformed(true);
-  };
+//       setResults(response.data);
+//       setSearchPerformed(true);
+//   };
 
-  return { results, searchPerformed, searchDoctors };
-}
+//   return { results, searchPerformed, searchDoctors };
+// }
 
-export default UseDoctorSearch;
+// export default UseDoctorSearch;

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UserService from "../services/userService";
 
-function Login() {
+function Login(props) {
   const initialUserState = {
     username: "",
     password: "",
@@ -69,9 +69,6 @@ function Login() {
               placeholder="Password"
               onChange={handleInputChange}
             ></input>
-            <a href="/forgetPassword" rel="noopener noreferrer">
-              Forgot your password?
-            </a>
           </div>
 
           <button className="btn btn-primary" type="submit">
