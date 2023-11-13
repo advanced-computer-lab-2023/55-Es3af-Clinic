@@ -907,7 +907,6 @@ module.exports = {
   appointmentsForDoc,
   BookAnAppointment,
   getAllSpecialities,
-  withdrawFromWallet,
   uploadMedicalHistory,
   viewSubscribedHealthPackages,
   checkoutSession,

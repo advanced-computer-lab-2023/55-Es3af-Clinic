@@ -31,11 +31,6 @@ const PkgListP = (props) => {
     ],
     success_url:"",
     cancel_url:"",
-    discounts: [
-      {
-        percentage: 0, 
-      }
-    ]
   };
     const [users, setUsers] = useState([]);
     const [members, setMembers] = useState([]);
