@@ -3,6 +3,7 @@ const patientController = require('../controllers/PatientController')
 
 
 const patientRoutes = new Router();
+patientRoutes.get('/viewAvailableAppoinments', patientController.viewAvailableAppointments);
 
 patientRoutes.get('/:id/getAmountInWallet', patientController.getAmountInWallet)
 patientRoutes.post("/createSession",patientController.checkoutSession)
@@ -22,7 +23,6 @@ patientRoutes.get("/filterPrescriptions/:id", patientController.filterprescripti
 patientRoutes.put('/subscribeToAHealthPackage', patientController.subscribeToAHealthPackage)
 patientRoutes.get("/filterprescriptionsbydatestatusdoctor/:id", patientController.filterprescriptionsbydatestatusdoctor)
 patientRoutes.get("/filterAppointmentsByDateAndStatus/:id", patientController.filterAppointmentsByDateAndStatus)
-patientRoutes.get("/viewAvailableAppoinments/:id", patientController.viewAvailableAppointments);
 
 
 //patientRoutes.get('/', patientController.getAllSpecialities)
