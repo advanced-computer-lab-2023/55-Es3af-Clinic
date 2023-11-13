@@ -27,8 +27,8 @@ function Login(props) {
         
         switch (response.data.__t) {
           
-          case "pharmacist":
-            navigate("../pharmacist", { replace: true });
+          case "doctor":
+            navigate("../doctor", { replace: true });
             break;
           case "patient":
             navigate("../patient", { replace: true });
