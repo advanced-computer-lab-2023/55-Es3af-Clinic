@@ -9,8 +9,8 @@ const ViewAppointments = () => {
   }, []);
 
   const retrieveAppointments = () => {
-    
-    PatientService.viewPatientsAppointments("")
+    const patientID = "6550d16d35b498d6ba1de825";
+    PatientService.viewPatientsAppointments(patientID)
       .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data)) {
@@ -47,6 +47,9 @@ const ViewAppointments = () => {
                     Date: {appointment.date}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
+                    Duration: {appointment.duration}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
                     Status: {appointment.status}
                   </h3>
                 </div>
@@ -64,4 +67,3 @@ const ViewAppointments = () => {
 };
 
 export default ViewAppointments;
-
