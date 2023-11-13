@@ -9,8 +9,8 @@ const ViewAppointments = () => {
   }, []);
 
   const retrieveAppointments = () => {
-    
-    PatientService.viewPatientsAppointments("")
+    const patientID = "6550d16d35b498d6ba1de825";
+    PatientService.viewPatientsAppointments(patientID)
       .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data)) {
