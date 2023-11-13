@@ -5,7 +5,9 @@ const patientModel = require("../Models/Patient");
 const user = require("../Models/user.js");
 const appointment = require("../Models/Appointments.js");
 const healthRecord = require("../Models/HealthRecord.js");
-
+const bcrypt = require("bcrypt");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 // const Patient = JSON.parse(fs.readFileSync('./data/patient.json'));
 // const Doctors = JSON.parse(fs.readFileSync('./data/doctor.json'));
 
@@ -84,10 +86,28 @@ const createHealthRecords = async (req, res) => {
 
 //edit/ update my email, hourly rate or affiliation (hospital):
 const updateDoctor = async (req, res) => {
-  const doctorId = req.query.doctorId;
+
+  //const doctorId = req.query.doctorId;
   const { email, hourlyRate, affiliation } = req.body;
 
   try {
+
+    const token = req.cookies.jwt;
+      var id;
+  jwt.verify(token, 'supersecret', (err, decodedToken) => {
+      if (err) {
+        // console.log('You are not logged in.');
+        // res send status 401 you are not logged in
+        res.status(401).json({message:"You are not logged in."})
+        // res.redirect('/login');
+      } else {
+        
+        id= decodedToken.name;
+      }
+    });
+ 
+    
+    const doctorId = id;
     const updatedDoctor = await doctorModel.findByIdAndUpdate(
       doctorId,
       { email: email, hourlyRate: hourlyRate, affiliation: affiliation },
@@ -311,9 +331,9 @@ const selectPatient = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(400).json({
-      message: err.message,
-    });
+    //res.status(400).json({
+      //message: err.message,
+   // });
   }
 };
 
@@ -324,7 +344,10 @@ const getPassword = async (req, res) => {
 }
 const changePassword = async (req, res) => {
   const userID = req.params.id
-  var newPassword = req.body.password
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  var newPassword = hashedPassword;
+  
   try {
     await doctorModel.findByIdAndUpdate(userID, { password: newPassword })
     res.status(200).send('Password updated successfully')
@@ -332,11 +355,16 @@ const changePassword = async (req, res) => {
   catch (err) { console.error(err) }
 
 }
+
 const getAmountInWallet = async (req, res) => {
   const username = req.params.username
+  try {
   const doctor = await doctorModel.findOne({ username: username });
   res.status(200).send((doctor.amountInWallet).toString() + " EGP");
+  }catch (err) { console.error(err) }
 }
+
+
 const getTimeSlots = async (req, res) => {
   try {
     const doctorId = req.params.id;
@@ -378,6 +406,37 @@ const addTimeSlots = async (req, res) => {
   }
 };
 
+const uploadPatientHealthRec = async (req, res) => {
+  upload.array('medicalHistory', 5)(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      return res.status(500).json(err);
+    } else if (err) {
+      return res.status(500).json(err);
+    }
+
+    const username = req.body.username;
+    const newMedicalHistory = req.files.map(file => {
+      return {
+        name: file.originalname,
+        data: fs.readFileSync(file.path),
+        contentType: file.mimetype,
+      };
+    });
+
+    patientModel.findOneAndUpdate(
+      { username: username },
+      { $push: { medicalHistory: { $each: newMedicalHistory } } },
+      { new: true }
+    )
+      .then(doc => {
+        return res.status(200).send(`Health record file uploaded for ${username}`);
+      })
+      .catch(err => {
+        return res.status(500).json(err);
+      });
+  });
+};
+
 
 
 module.exports = {
@@ -396,5 +455,6 @@ module.exports = {
   getPassword,
   getAmountInWallet,
   getTimeSlots,
-  addTimeSlots
+  addTimeSlots,
+  uploadPatientHealthRec,
 };

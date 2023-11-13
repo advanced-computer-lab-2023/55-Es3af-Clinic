@@ -44,6 +44,8 @@ function RegisterPatient() {
     RegisterPatientService.registerPatient(patient)
       .then((response) => {
         console.log(response.data);
+        alert("Patient Registered successfully");
+        window.location="http://localhost:3000/"
       })
       .catch((e) => {
         console.log(e);
