@@ -47,6 +47,9 @@ const ViewAppointments = () => {
                     Date: {appointment.date}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
+                    Duration: {appointment.duration}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
                     Status: {appointment.status}
                   </h3>
                 </div>
@@ -64,4 +67,3 @@ const ViewAppointments = () => {
 };
 
 export default ViewAppointments;
-
