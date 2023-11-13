@@ -11,7 +11,7 @@ const familyMembersAcc = require("../Models/familyMembersAccount.js");
 const { error } = require("console");
 const { default: mongoose } = require("mongoose");
 const { disconnect } = require("process");
-//const stripe= require('stripe')("sk_test_51NxqUnLoGRs62ex4Yxz9G8uKeNFYxSs27BlQznMivk0eBNxx7eZzj6X1Q2ZCYEhOmLOhbGwVLNMzLwMsV1Xf4fZv00ert3YhEW");
+const stripe = require('stripe')("sk_test_51NxqUnLoGRs62ex4Yxz9G8uKeNFYxSs27BlQznMivk0eBNxx7eZzj6X1Q2ZCYEhOmLOhbGwVLNMzLwMsV1Xf4fZv00ert3YhEW");
 
 const bcrypt = require("bcrypt");
 const upload = multer({ dest: "uploads/" });
