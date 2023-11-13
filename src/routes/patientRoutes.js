@@ -22,6 +22,8 @@ patientRoutes.get("/filterPrescriptions/:id", patientController.filterprescripti
 patientRoutes.put('/subscribeToAHealthPackage', patientController.subscribeToAHealthPackage)
 patientRoutes.get("/filterprescriptionsbydatestatusdoctor/:id", patientController.filterprescriptionsbydatestatusdoctor)
 patientRoutes.get("/filterAppointmentsByDateAndStatus/:id", patientController.filterAppointmentsByDateAndStatus)
+patientRoutes.get("/viewAvailableAppoinments/:id", patientController.viewAvailableAppointments);
+
 
 //patientRoutes.get('/', patientController.getAllSpecialities)
 patientRoutes.get('/viewPatientAppointments/:id', patientController.viewPatientAppointments);

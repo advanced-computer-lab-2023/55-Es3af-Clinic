@@ -884,6 +884,50 @@ const checkoutSession = async (req,res)=>{
     res.status(500).send('Internal Server Error');
   }
 }
+const viewAvailableAppointments = async (req, res) => {
+  const doctorId  = req.params.id;
+
+  try {
+    // Get the doctor's information, including available time slots
+    const doctor = await doctorModel.findById(doctorId);
+
+    if (!doctor) {
+      return res.status(404).json({ error: 'Doctor not found' });
+    }
+
+    const { availableTimeSlots } = doctor;
+
+    // Get all appointments for the doctor that are in the future
+    const futureAppointments = await appointmentModel.find({
+      doctor: doctorId,
+      date: { $gte: new Date() },
+    });
+
+    // Extract the booked time slots from future appointments
+    const bookedTimeSlots = futureAppointments.map((appointment) => ({
+      day: appointment.day,
+      startTime: appointment.startTime,
+      endTime: appointment.endTime,
+    }));
+
+    // Calculate available time slots by subtracting booked time slots
+    const availableTimeSlotsFiltered = availableTimeSlots.filter(
+      (availableSlot) =>
+        !bookedTimeSlots.some(
+          (bookedSlot) =>
+            bookedSlot.day === availableSlot.day &&
+            bookedSlot.startTime === availableSlot.startTime &&
+            bookedSlot.endTime === availableSlot.endTime
+        )
+    );
+
+    res.status(200).json({ availableTimeSlots: availableTimeSlotsFiltered });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 
 module.exports = {
   addFamilyMember,
@@ -912,4 +956,5 @@ module.exports = {
   viewSubscribedHealthPackages,
   checkoutSession,
   viewPatientAppointments,
+  viewAvailableAppointments
 };

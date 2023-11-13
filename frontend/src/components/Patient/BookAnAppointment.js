@@ -6,7 +6,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 function BookAnAppointment() {
-  
+
   const [results, setResults] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
   
@@ -71,7 +71,9 @@ function BookAnAppointment() {
                       <h3 className="card-title" style={{ color: "white" }}>
                       Speciality: {result.speciality}
                       </h3>
-                     
+                      
+                  <button className = "btn btn-primary"
+                                    >Book This Doctor</button>
                       </div>
                   </div>
                 );
