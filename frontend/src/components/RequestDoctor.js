@@ -1,90 +1,124 @@
 import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useState } from "react";
-import ReqDoctorService from "../services/RequestDoctorService";
+import React, { useState } from 'react'
 import axios from 'axios';
 
-function RequestDoctor() {
-  const initialUserState = {
-    name: "",
-    email: "",
-    username: "",
-    password: "",
-    dateOfBirth: "",
-    hourlyRate: "",
-    affiliation: "",
-    educationBackground: "",
-    speciality: "",
+const DoctorRegistration = () => {
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+    name: '',
+    email: '',
+    dateOfBirth: '',
+    hourlyRate: '',
+    affiliation: '',
+    educationBackground: '',
+    speciality: '',
+  });
+
+  const [fileData, setFileData] = useState({
     IDdoc: null,
     MedicalLicenses: [],
     MedicalDegree: null,
-  };
+  });
 
-  const [doc, setDoctor] = useState (initialUserState);
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState('');
 
-  const handleInputChange = (event) => {
-    const { name, value, type, files } = event.target;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-    if (type === 'file') {
-      setDoctor({ ...doc, [name]: files });
-    } else {
-      setDoctor({ ...doc, [name]: value });
-    }
-    if(name == 'password'){
+    // Password strength validation
+    if (name === 'password') {
       if (value.length < 6) {
         setMessage('Password is too short');
       } else if (!/\d/.test(value)) {
         setMessage('Password should contain at least one digit');
-      } else if(!/[A-Z]/.test(value)){
-        setMessage('Password should contain at least one capital letters');
-      }
-      else {
+      } else if (!/[A-Z]/.test(value)) {
+        setMessage('Password should contain at least one capital letter');
+      } else {
         setMessage('Password strength is good');
       }
     }
-    setDoctor({ ...doc, [name]: value });
+
+    // Update form data
+    setFormData({ ...formData, [name]: value });
   };
 
+  const handleFileChange = (e) => {
+    const fieldName = e.target.name;
+    const file = e.target.files[0];
 
-  const handleFileChange = (event, field) => {
-    const fileList = event.target.files;
-    setDoctor({ ...doc, [field]: fileList });
-  };  
-
-  async function requestDoctor(e) {
-    e.preventDefault();
-
-    const formData = new FormData();
-  Object.entries(doc).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
-      value.forEach((file, index) => {
-        formData.append(`${key}[${index}]`, file);
-      });
-    } else {
-      formData.append(key, value);
-    }
-  });
-
-  try {
-    const response = await axios.post('http://localhost:8000/requestDoctor/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+    setFileData({
+      ...fileData,
+      [fieldName]: file,
     });
+  };
 
-    console.log(response.data);
-    setDoctor(initialUserState);
-  } catch (error) {
-    console.error(error);
-    // Handle errors appropriately (e.g., show an error message to the user)
-  }
-};
+  const handleMedicalLicensesChange = (e) => {
+    const files = e.target.files;
+  
+    if (files.length > 0) {
+      setFileData((prevFileData) => ({
+        ...prevFileData,
+        MedicalLicenses: [...prevFileData.MedicalLicenses, ...files],
+      }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const form = new FormData();
+  
+      // Append form data fields
+      for (const key in formData) {
+        form.append(key, formData[key]);
+      }
+  
+      // Append IDdoc file
+      if (fileData.IDdoc) {
+        form.append('IDdoc', fileData.IDdoc);
+      }
+  
+      // Append MedicalDegree file
+      if (fileData.MedicalDegree) {
+        form.append('MedicalDegree', fileData.MedicalDegree);
+      }
+  
+      // Append multiple MedicalLicenses files
+      for (const file of fileData.MedicalLicenses) {
+        form.append('MedicalLicenses', file);
+      }
+  
+      const response = await axios.post('http://localhost:8000/requestDoctor/', form, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      console.log(response.data); // Handle the response as needed
+    } catch (error) {
+      console.error('Error during registration:', error);
+  
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('No response received:', error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Request setup error:', error.message);
+      }
+    }
+  };
 
   return (
     <div className="App">
       <header className="App-header">
-        <form className="App-header" onSubmit={requestDoctor}>
+        <form className="App-header" onSubmit={handleSubmit}>
         <div className="form-group">
             <label htmlFor="InputName">Name</label>
             <input
@@ -92,9 +126,9 @@ function RequestDoctor() {
               className="form-control"
               id="name"
               name="name"
-              value={doc.name}
+              value={formData.name}
               placeholder="Enter Name"
-              onChange={handleInputChange}
+              onChange={handleChange}
             ></input>
           </div>
 
@@ -105,9 +139,9 @@ function RequestDoctor() {
               className="form-control"
               id="email"
               name="email"
-              value={doc.email}
+              value={formData.email}
               placeholder="Enter Email"
-              onChange={handleInputChange}
+              onChange={handleChange}
             ></input>
           </div>
 
@@ -118,9 +152,9 @@ function RequestDoctor() {
               className="form-control"
               id="username"
               name="username"
-              value={doc.username}
+              value={formData.username}
               placeholder="Enter Username"
-              onChange={handleInputChange}
+              onChange={handleChange}
             ></input>
           </div>
 
@@ -131,9 +165,9 @@ function RequestDoctor() {
               className="form-control"
               id="password"
               name="password"
-              value={doc.password}
+              value={formData.password}
               placeholder="Enter Password"
-              onChange={handleInputChange}
+              onChange={handleChange}
             ></input>
             <p style={{ color: 'red' }}>{message}</p>
           </div>
@@ -145,9 +179,9 @@ function RequestDoctor() {
               className="form-control"
               id="dateOfBirth"
               name="dateOfBirth"
-              value={doc.dateOfBirth}
+              value={formData.dateOfBirth}
               placeholder="dateOfBirth"
-              onChange={handleInputChange}
+              onChange={handleChange}
             ></input>
           </div>
 
@@ -158,9 +192,9 @@ function RequestDoctor() {
               className="form-control"
               id="hourlyRate"
               name="hourlyRate"
-              value={doc.hourlyRate}
+              value={formData.hourlyRate}
               placeholder="Enter Hourly Rate"
-              onChange={handleInputChange}
+              onChange={handleChange}
             ></input>
           </div>
           <div className="form-group">
@@ -170,9 +204,9 @@ function RequestDoctor() {
               className="form-control"
               id="affiliation"
               name="affiliation"
-              value={doc.affiliation}
+              value={formData.affiliation}
               placeholder="Enter Affiliation"
-              onChange={handleInputChange}
+              onChange={handleChange}
             ></input>
           </div>
 
@@ -183,9 +217,9 @@ function RequestDoctor() {
               className="form-control"
               id="educationBackground"
               name="educationBackground"
-              value={doc.educationBackground}
+              value={formData.educationBackground}
               placeholder="Enter Education Background"
-              onChange={handleInputChange}
+              onChange={handleChange}
             ></input>
           </div>
 
@@ -196,9 +230,9 @@ function RequestDoctor() {
               className="form-control"
               id="speciality"
               name="speciality"
-              value={doc.speciality}
+              value={formData.speciality}
               placeholder="Enter Speciality"
-              onChange={handleInputChange}
+              onChange={handleChange}
             ></input>
           </div>
 
@@ -210,7 +244,7 @@ function RequestDoctor() {
               className="form-control"
               id="IDdoc"
               name="IDdoc"
-              onChange={(event) => handleFileChange(event, 'IDdoc')}
+              onChange={handleFileChange}
             />
           </div>
 
@@ -221,7 +255,7 @@ function RequestDoctor() {
               className="form-control"
               id="MedicalLicenses"
               name="MedicalLicenses"
-              onChange={(event) => handleFileChange(event, 'MedicalLicenses')}
+              onChange={handleMedicalLicensesChange}
               multiple
             />
           </div>
@@ -233,9 +267,9 @@ function RequestDoctor() {
               className="form-control"
               id="MedicalDegree"
               name="MedicalDegree"
-              onChange={(event) => handleFileChange(event, 'MedicalDegree')}
+              onChange={handleFileChange}
             />
-          </div>          
+          </div>     
 
 
 
@@ -248,4 +282,4 @@ function RequestDoctor() {
   );
 }
 
-export default RequestDoctor;
+export default DoctorRegistration;
