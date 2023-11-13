@@ -8,7 +8,7 @@ patientRoutes.get('/:id/getAmountInWallet', patientController.getAmountInWallet)
 patientRoutes.post("/createSession",patientController.checkoutSession)
 patientRoutes.put('/:id/updatePassword', patientController.changePassword)
 patientRoutes.get("/searchBySpecDate", patientController.searchBySpecDate)
-patientRoutes.put('/widrawFromWallet',patientController.withdrawFromWallet)
+patientRoutes.put('/withdrawFromWallet',patientController.withdrawFromWallet)
 patientRoutes.post('/:id/addFamilyMemberByAcc',patientController.addFamilyMemberByUsername)
 patientRoutes.get('/:id/updatePassword', patientController.getPassword)
 patientRoutes.get('/search', patientController.searchByNameSpec)
@@ -23,9 +23,7 @@ patientRoutes.put('/subscribeToAHealthPackage', patientController.subscribeToAHe
 patientRoutes.get("/filterprescriptionsbydatestatusdoctor/:id", patientController.filterprescriptionsbydatestatusdoctor)
 patientRoutes.get("/filterAppointmentsByDateAndStatus/:id", patientController.filterAppointmentsByDateAndStatus)
 patientRoutes.get("/viewAvailableAppoinments/:id", patientController.viewAvailableAppointments);
-
-
-//patientRoutes.get('/', patientController.getAllSpecialities)
+patientRoutes.get('/', patientController.getAllSpecialities)
 patientRoutes.get('/viewPatientAppointments/:id', patientController.viewPatientAppointments);
 patientRoutes.post('/uploadMedicalHistory', patientController.uploadMedicalHistory);
 patientRoutes.post("/BookAnAppointment/:id", patientController.BookAnAppointment);
