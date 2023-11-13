@@ -996,6 +996,6 @@ module.exports = {
   viewSubscribedHealthPackages,
   checkoutSession,
   viewPatientAppointments,
-  cancelHealthPackageSubscription
+  cancelHealthPackageSubscription,
   viewAvailableAppointments
 };
