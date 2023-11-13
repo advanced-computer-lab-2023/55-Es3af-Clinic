@@ -21,16 +21,18 @@ class UserService{
     }
 
 
-    login(user) {
-        console.log(user);
-        return http.post("/login", user);
-      }
+  login(user) {
+    console.log(user);
+    return http.post("/login", user);
+  }
 
+  logout() {
+    return http.get("/logout");
+  }
 
-    
-      logout() {
-        return http.get("/logout");
-      }
+  forgetPassword(user) {
+    return http.put("/forgetPassword", user);
+  }
 }
 
-export default new UserService()
+export default new UserService();

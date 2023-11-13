@@ -391,9 +391,9 @@ const selectPatient = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(400).json({
-      message: err.message,
-    });
+    //res.status(400).json({
+      //message: err.message,
+   // });
   }
 };
 
@@ -415,6 +415,7 @@ const changePassword = async (req, res) => {
   catch (err) { console.error(err) }
 
 }
+
 const getAmountInWallet = async (req, res) => {
   try {
     const token = req.cookies.jwt;

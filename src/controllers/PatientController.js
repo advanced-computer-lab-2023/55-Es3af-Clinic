@@ -11,47 +11,13 @@ const familyMembersAcc = require("../Models/familyMembersAccount.js");
 const { error } = require("console");
 const { default: mongoose } = require("mongoose");
 const { disconnect } = require("process");
+const stripe = require('stripe')("sk_test_51NxqUnLoGRs62ex4Yxz9G8uKeNFYxSs27BlQznMivk0eBNxx7eZzj6X1Q2ZCYEhOmLOhbGwVLNMzLwMsV1Xf4fZv00ert3YhEW");
+
 const bcrypt = require("bcrypt");
 const upload = multer({ dest: "uploads/" });
 const jwt = require('jsonwebtoken');
 
 const test = async (req, res) => {
-  // const newDoc = new doctorModel({
-
-  //     // username: 'doc2',
-  //     // name: 'doc2',
-  //     // email: 'doc2@email.com',
-  //     // password: 'doc2',
-  //     // dateOfBirth: '2002-11-11',
-  //     // type: 'doctor',
-  //     // hourlyRate: 5,
-  //     // affiliation: 'hospital',
-  //     // educationBackground: 'uni',
-  //     // speciality: 'surgery'
-
-  //     username: 'doc2',
-  //     password: 'fsfs',
-  //     name: 'doc2',
-  //     email: 'doc2@email.com',
-  //     dateOfBirth: '2000-11-12',
-  //     hourlyRate: 5,
-  //     affiliation: 'place',
-  //     educationBackground: 'college',
-  //     speciality: 'surgery'
-  // })
-  // newDoc.save().catch(err => console.error(err))
-  // res.status(200).send(newDoc)
-
-  //     const package = new packageModel({
-  //         type: 'Gold',
-  //         price: 6000,
-  //         sessionDiscount: 0.6,
-  //         medicationDiscount: 0.3,
-  //         familyMemberDiscount: 0.15
-  //     })
-  //     package.save().catch(err => console.error(err))
-  //     console.log(package)
-  //     res.status(200).send(package)
 
   const app = await appointmentModel.find({ date: req.query.date });
   res.status(200).send(app);
@@ -189,9 +155,7 @@ const viewFamilyMembers = async (req, res) => {
   console.log(`Patient is ${neededPatient}`);
 
   try {
-    const neededPatientID = await userModel.findOne({
-      username: neededPatient,
-    });
+    const neededPatientID = await userModel.findById(neededPatient);
 
     if (!neededPatientID) {
       console.log("Patient not found.");
@@ -856,45 +820,164 @@ const viewSubscribedHealthPackages = async (req, res) => {
     res.status(200).json(packageData);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send('Internal Server Error');
   }
 };
 
+
+// const checkoutSession = async (req,res)=>{
+//   try{
+//     const  lineItems  = req.body.lineItems;
+//     const success_url=req.body.success_url;
+//     const cancel_url= req.body.cancel_url;
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ['card'],
+//       mode:'payment',
+//       line_items: lineItems,
+//       success_url:success_url,
+//       cancel_url:cancel_url,
+//     })
+//     res.json({url:session.url})
+//   }
+//   catch (error){
+//     console.error(error);
+//     res.status(500).send('Internal Server Error');
+//   }
+// }
 const viewPatientAppointments = async (req, res) => {
   const patientId = req.params.id;
 
   try {
+      const patient = await patientModel.findById(patientId);
+
+      if (!patient) {
+          return res.status(404).send('Patient not found');
+      }
+
+      const appointments = await appointmentModel.find({ patient: patientId })
+          .populate('doctor', 'name')
+          .exec();
+
+      if (appointments.length === 0) {
+          return res.status(200).send("No appointments found for this patient.");
+      }
+
+      const formattedAppointments = appointments.map(appointment => {
+          return {
+              id: appointment._id,
+              doctor: appointment.doctor.name,
+              date: appointment.date,
+              duration: appointment.duration,
+              status: appointment.status,
+          };
+      });
+
+      res.status(200).json(formattedAppointments);
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+  }
+};
+
+const checkoutSession = async (req,res)=>{
+  try{
+    const  lineItems  = req.body.lineItems;
+    const success_url=req.body.success_url;
+    const cancel_url= req.body.cancel_url;
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode:'payment',
+      line_items: lineItems,
+      success_url:success_url,
+      cancel_url:cancel_url,
+    })
+    res.json({url:session.url})
+  }
+  catch (error){
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+const cancelHealthPackageSubscription = async (req, res) => {
+  const patientId = req.params.id;
+
+  try {
+    // Find the patient
     const patient = await patientModel.findById(patientId);
 
     if (!patient) {
-      return res.status(404).send("Patient not found");
+      return res.status(404).send('Patient not found');
     }
 
-    const appointments = await appointmentModel
-      .find({ patient: patientId })
-      .populate("doctor", "name")
-      .exec();
+    // Cancel the patient's health package subscription
+    patient.packageStatus = 'Canceled';
+    patient.packageRenewalDate = null;
+    await patient.save();
 
-    if (appointments.length === 0) {
-      return res.status(200).send("No appointments found for this patient.");
+    // Find and cancel health package subscriptions for family members
+    const familyMembers = await familyMembersAcc.find({ patient: patientId });
+
+    for (const familyMember of familyMembers) {
+      const member = await userModel.findById(familyMember.Id);
+
+      if (member) {
+        member.packageStatus = 'Canceled';
+        member.packageRenewalDate = null;
+        await member.save();
+      }
     }
 
-    const formattedAppointments = appointments.map((appointment) => {
-      return {
-        id: appointment._id,
-        doctor: appointment.doctor.name,
-        date: appointment.date,
-        duration: appointment.duration,
-        status: appointment.status,
-      };
-    });
-
-    res.status(200).json(formattedAppointments);
+    res.status(200).send('Health package subscription canceled successfully.');
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send('An error occurred while canceling the health package subscription.');
   }
 };
+const viewAvailableAppointments = async (req, res) => {
+  const doctorId  = req.params.id;
+
+  try {
+    // Get the doctor's information, including available time slots
+    const doctor = await doctorModel.findById(doctorId);
+
+    if (!doctor) {
+      return res.status(404).json({ error: 'Doctor not found' });
+    }
+
+    const { availableTimeSlots } = doctor;
+
+    // Get all appointments for the doctor that are in the future
+    const futureAppointments = await appointmentModel.find({
+      doctor: doctorId,
+      date: { $gte: new Date() },
+    });
+
+    // Extract the booked time slots from future appointments
+    const bookedTimeSlots = futureAppointments.map((appointment) => ({
+      day: appointment.day,
+      startTime: appointment.startTime,
+      endTime: appointment.endTime,
+    }));
+
+    // Calculate available time slots by subtracting booked time slots
+    const availableTimeSlotsFiltered = availableTimeSlots.filter(
+      (availableSlot) =>
+        !bookedTimeSlots.some(
+          (bookedSlot) =>
+            bookedSlot.day === availableSlot.day &&
+            bookedSlot.startTime === availableSlot.startTime &&
+            bookedSlot.endTime === availableSlot.endTime
+        )
+    );
+
+    res.status(200).json({ availableTimeSlots: availableTimeSlotsFiltered });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 
 module.exports = {
   addFamilyMember,
@@ -918,7 +1001,10 @@ module.exports = {
   appointmentsForDoc,
   BookAnAppointment,
   getAllSpecialities,
-  withdrawFromWallet,
   uploadMedicalHistory,
-  viewSubscribedHealthPackages
+  viewSubscribedHealthPackages,
+  checkoutSession,
+  viewPatientAppointments,
+  cancelHealthPackageSubscription,
+  viewAvailableAppointments
 };

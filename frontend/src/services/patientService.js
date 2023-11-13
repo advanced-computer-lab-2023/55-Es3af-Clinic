@@ -10,6 +10,9 @@ class PatientService {
   getPatient(id){
     return http.get(`/patient/${id}`);
   }
+  async createSession(body){
+    return http.post("/patient/createSession", body)
+  }
 
   //de btshtaghal b ID 3ady bas ana mesameyah username
   async getAmountInWallet(){
@@ -66,7 +69,7 @@ class PatientService {
       params: queryParams,
     });
   }
-  useDoctorSearch(date, speciality) {
+  FilterDoctors(date, speciality) {
     const queryParams = {};
 
     if (date) {
@@ -99,6 +102,9 @@ class PatientService {
   }
   viewSubscribedHealthPackages(id) {
     return http.get(`/patient/viewSubscribedHealthPackages/${id}`);
+  }
+  viewPatientsAppointments(id) {
+    return http.get(`/patient/viewPatientAppointments/${id}`);
   }
 }
 

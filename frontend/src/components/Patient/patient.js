@@ -17,8 +17,8 @@ import UploadMedicalHistory from './UploadMedicalHistory';
 import AddMemberAcc from "./addMemberByAcc";
 import BookAnAppointment  from "./BookAnAppointment";
 import patientService from "../../services/patientService";
-import useDoctorSearch from "./searchDoctors";
 import ViewSubscribedPackages from './viewSubscribedPackages';
+import ViewAppointments from "./viewAppointment";
 import Navbar from "../navbar";
 
 
@@ -36,18 +36,20 @@ function PatientPage() {
       <Route path="/viewPrescriptions" element={<PrescriptionList />} />
       <Route path="/filterprescriptionsbydatestatusdoctor" element={<FilteredPrescriptionList />} />
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
-      <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
       <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
       <Route path='/UploadMedicalHistory' element = {<UploadMedicalHistory/>} />
       <Route path='/:username/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
-      <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />
       <Route path="/viewSubscribedPackages" element={<ViewSubscribedPackages />} />
+      <Route path="/viewAppointments" element={<ViewAppointments />} />
+        <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />
+        <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
+
     </Routes>
   );
 }
 
 function PatientHome() {
-  var id = '654bed1dbe07a9603f5b4030'
+  var id = '6550f3b6d9aee1af3acedf0a'
   const [result, setResult] = useState("");
   useEffect(() => {
     const fetchData = async () => {
@@ -62,6 +64,7 @@ function PatientHome() {
     };
     fetchData(); 
   });
+
   return (
     <div className="App">
       <Navbar />
@@ -77,6 +80,10 @@ function PatientHome() {
             <a href="/patient/viewDoctors" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Doctors </button>
           </a>
+          <a href = '/patient/viewAppointments' rel="noopener noreferrer">
+          <button className="btn btn-primary"> View Appointments </button>
+          </a>
+          
           <a href="/patient/viewPrescriptions/" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Prescriptions </button>
           </a>
@@ -103,6 +110,9 @@ function PatientHome() {
           </a>
           <a href="/patient/viewSubscribedPackages" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Subscribed Health Packages </button>
+          </a>
+          <a href="/patient/cancelHealthPackage" rel="noopener noreferrer">
+            <button className="btn btn-primary"> Cancel Health Package Subscription </button>
           </a>
         </div>
       </header>

@@ -3,24 +3,27 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import patientService from "../../services/patientService";
 import { Link } from "react-router-dom";
-import React from 'react';
-import useDoctorSearch from './searchDoctors';
-
 
 function FilterDoctors() {
-  const { results, searchPerformed, searchDoctors } = useDoctorSearch();
-
-  //console.log(specs)
+  const [results, setResults] = useState([]);
+  const [searchPerformed, setSearchPerformed] = useState(false);
 
   const search = async (event) => {
     event.preventDefault();
 
-    const date = event.target.date.value;
+    const date = event.target.date.value
     const speciality = event.target.speciality.value;
-    //const patientid = '652b2da81a7433f37b218610';
+   // const patientid = "652b2da81a7433f37b218610";
+    
 
-    // Call the searchDoctors function from the custom hook
-    await searchDoctors( date, speciality);
+    const response = await patientService.FilterDoctors(
+      date,
+      speciality
+    );
+
+    setResults(response.data);
+    console.log(response)
+    setSearchPerformed(true);
   };
 
   return (
@@ -37,7 +40,7 @@ function FilterDoctors() {
             placeholder="enter speciality" />
 
             <input
-              type="date"
+              type="datetime"
               className="form-control"
               id="date"
               name="date"
@@ -62,10 +65,10 @@ function FilterDoctors() {
                    Doctor: {result.name}
                 </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Hourly Rate: {result.price}
+                   Hourly Rate: {result.hourlyRate}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                  Speciality: {result.speciality}
+                  Affiliation: {result.affiliation}
                   </h3>
                   <button className = "btn btn-primary">
                       <Link to={`/patient/doctorInfo/${result.id}`} style={{ color: 'white', textDecoration: 'underline' }}>View Details</Link>

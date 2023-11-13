@@ -1,15 +1,15 @@
-const userModel = require('../Models/user.js');
-const { default: mongoose } = require('mongoose');
+const userModel = require("../Models/user.js");
+const { default: mongoose } = require("mongoose");
 const bcrypt = require("bcrypt");
 const { createToken } = require("../utils/auth.js");
 
-const createUser = async(req,res) => {
-   //add a new user to the database with 
-   //Username, Name, Email, Password, DateOfBirth, Type
-   const salt = await bcrypt.genSalt();
-   const hashedPassword = await bcrypt.hash(req.body.password, salt);
+const createUser = async (req, res) => {
+  //add a new user to the database with
+  //Username, Name, Email, Password, DateOfBirth, Type
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-   const newUser= new userModel({
+  const newUser = new userModel({
     Username: req.body.username,
     Name: req.body.name,
     Email: req.body.email,
@@ -22,28 +22,37 @@ const createUser = async(req,res) => {
 }
 
 const getUsers = async (req, res) => {
-   //retrieve all users from the database
-   const users= await userModel.find({});
-   console.log(users);
-   res.status(200).send(users);
-  }
+  //retrieve all users from the database
+  const users = await userModel.find({});
+  console.log(users);
+  res.status(200).send(users);
+};
 
 const updateUser = async (req, res) => {
-   //update a user in the database
-   const salt = await bcrypt.genSalt();
-   const hashedPassword = await bcrypt.hash(req.body.password, salt);
-   var Username= req.body.username;
-   var Name= req.body.name;
-   var Email= req.body.email;
-   var Password= hashedPassword;
-   var DateOfBirth= req.body.dateOfBirth;
-   var Type= req.body.type;
+  //update a user in the database
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  var Username = req.body.username;
+  var Name = req.body.name;
+  var Email = req.body.email;
+  var Password = hashedPassword;
+  var DateOfBirth = req.body.dateOfBirth;
+  var Type = req.body.tyoe;
 
-   userModel.findOneAndUpdate({Username:Username},{Name:Name, Email:Email, Password:Password,
-     DateOfBirth:DateOfBirth, Type:Type }).catch(err=> console.log(err));
-   res.status(200).send("Updated");
-
-  }
+  userModel
+    .findOneAndUpdate(
+      { Username: Username },
+      {
+        Name: Name,
+        Email: Email,
+        Password: Password,
+        DateOfBirth: DateOfBirth,
+        Type: Type,
+      }
+    )
+    .catch((err) => console.log(err));
+  res.status(200).send("Updated");
+};
 
 const deleteUser = async (req, res) => {
    //delete a user from the database
