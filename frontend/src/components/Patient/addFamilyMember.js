@@ -23,7 +23,7 @@ function AddMember() {
     async function addMember2(e) {
         e.preventDefault();
         // no need to console log response data, only for testing
-        MemberService.addMember2(member,"farouhaTe3bet")
+        MemberService.addMember2(member)
           .then((response) => {
             console.log(response.data);
           })

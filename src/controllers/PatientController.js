@@ -103,51 +103,67 @@ const addFamilyMemberByUsername = async (req, res) => {
 
 //working fine and testing fine
 const addFamilyMember = async (req, res) => {
-  const patient = req.query.patient;
-  const patientID = await userModel.findOne({ username: patient });
-  console.log(req.body);
-
-  const member = new familyMemberModel({
-    name: req.body.name,
-    nationalID: req.body.nationalID,
-    age: req.body.age,
-    gender: req.body.gender,
-    relationToPatient: req.body.relationToPatient,
-    patient: patientID._id.valueOf(), //id zy ma heya
-  });
-
-  console.log(`family member is ${member}`);
-  //var patient = member.patient
-  //console.log(`patient is ${patient}`)
-
-  familyMemberModel
-    .find({ patient: member.patient })
-    .exec()
-    .then((document) => {
-      console.log(`family members are ${document}`);
-      familyMemberModel
-        .findOne({ name: member.name })
-        .exec()
-        .then((document2) => {
-          if (document2) {
-            console.log("Family member already exists");
-            res.status(200).send("Family member already exists");
-            return;
-          } else {
-            member.save().catch((err) => console.log(err));
-            console.log("Family member added");
-            res.status(200).send("Family member added");
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        })
-
-        .catch((err) => {
-          console.error(err);
-        });
+  try{
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        id = decodedToken.name;
+      }
     });
-};
+      // const patient = req.query.patient;
+      const patientID = await userModel.findById(id);
+      console.log(req.body);
+
+      const member = new familyMemberModel({
+        name: req.body.name,
+        nationalID: req.body.nationalID,
+        age: req.body.age,
+        gender: req.body.gender,
+        relationToPatient: req.body.relationToPatient,
+        patient: patientID._id.valueOf(), //id zy ma heya
+      });
+      console.log(`family member is ${member}`);
+      //var patient = member.patient
+      //console.log(`patient is ${patient}`)
+    
+      familyMemberModel
+        .find({ patient: member.patient })
+        .exec()
+        .then((document) => {
+          console.log(`family members are ${document}`);
+          familyMemberModel
+            .findOne({ name: member.name })
+            .exec()
+            .then((document2) => {
+              if (document2) {
+                console.log("Family member already exists");
+                res.status(200).send("Family member already exists");
+                return;
+              } else {
+                member.save().catch((err) => console.log(err));
+                console.log("Family member added");
+                res.status(200).send("Family member added");
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+            })
+    
+            .catch((err) => {
+              console.error(err);
+            });
+        });
+    }catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  };
+  
+
+ 
 
 //working fine testing fine
 const viewFamilyMembers = async (req, res) => {
