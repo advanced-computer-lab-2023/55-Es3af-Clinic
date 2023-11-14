@@ -787,22 +787,25 @@ const withdrawFromWallet = async (req, res) => {
 };
 
 const BookAnAppointment = async (req, res) => {
-  const token = req.cookies.jwt;
-    var id;
-    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
-      if (err) {
-        res.status(401).json({message: "You are not logged in."})
-      }
-      else {
-        id = decodedToken.name;
-      }
-    });
-  const name = req.body.name;
+  var id=req.body.id;
+  var name = req.body.name;
   const doctorid = req.body.doctorid;
   const appointmentid = req.body.appointmentid;
 
 
   try {
+    if(id==''){
+      const token = req.cookies.jwt;
+        jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+          if (err) {
+            res.status(401).json({message: "You are not logged in."})
+          }
+          else {
+            id = decodedToken.name;
+          }
+        });
+        name='';
+      }
     const patient = await patientModel.findById(id);
     const doctor = await doctorModel.findById(doctorid);
 
@@ -815,7 +818,7 @@ const BookAnAppointment = async (req, res) => {
     const [endHour, endMinute] = endTime.split(":").map(Number);
 
     const duration = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
-    
+    if(name='') name=patient.name;
     const newAppointment = new appointmentModel({
       patient: id,
       patientName: name, // Replace with the actual patient name
