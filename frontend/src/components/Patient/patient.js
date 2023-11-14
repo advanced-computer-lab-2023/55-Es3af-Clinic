@@ -38,7 +38,7 @@ function PatientPage() {
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
       <Route path='/updatePassword' element = {<UpdatePassword/>} />
       <Route path='/UploadMedicalHistory' element = {<UploadMedicalHistory/>} />
-      <Route path='/:username/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
+      <Route path='/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
       <Route path="/viewSubscribedPackages" element={<ViewSubscribedPackages />} />
       <Route path="/viewAppointments" element={<ViewAppointments />} />
         <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />

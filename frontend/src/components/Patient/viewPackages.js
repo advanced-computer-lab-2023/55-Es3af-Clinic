@@ -9,10 +9,9 @@ import patientService from "../../services/patientService";
 const PkgListP = (props) => {
   const intialBody = {
     packageID:"",
-    patients:["6550f3b6d9aee1af3acedf0a"]
+    patients:[]
   };
   const intialMoney ={
-    patientID:"6550f3b6d9aee1af3acedf0a",
     amount:0,
     disc:0
   };
@@ -65,7 +64,7 @@ const PkgListP = (props) => {
   };
 
   const retrieveMembers = () => {
-    MemberService.getAll("6550f3b6d9aee1af3acedf0a")
+    MemberService.getAll()
         .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data)) {
@@ -83,7 +82,7 @@ const PkgListP = (props) => {
   };
   const [Ppkg,setPpkg]= useState("");
   const retrievePatient =() =>{
-    patientService.getPatient("6550f3b6d9aee1af3acedf0a").then((response) =>{
+    patientService.getPatient().then((response) =>{
       setPpkg(response.data.package);
     })
     .catch((e) => {
@@ -128,7 +127,7 @@ const PkgListP = (props) => {
     var finalAmnt=0;
     console.log(body,money)
     if(body.patients.length>1){
-      for (let i = 0; i < body.patients.length; i++) {
+      for (let i = -1; i < body.patients.length; i++) {
         finalAmnt += money.amount * (1 - money.disc);
       }
       setMoney(async (prevMoney) => {
@@ -168,7 +167,7 @@ const PkgListP = (props) => {
         if(response.data.localeCompare("Amount deducted successfully")==0){
           patientService.subscribeToAHealthPackage(body).then((response1) => {
             alert(response1.data+"\n Amount deducted successfully");
-            history("/patient");
+            history("/patient/viewSubscribedPackages");
           })
           .catch((e) => {
             console.log(e);
@@ -186,9 +185,9 @@ const PkgListP = (props) => {
   }
   async function payWithCredit(e){
     e.preventDefault();
-    var finalAmnt=money.amount;
+    var finalAmnt=0;
     if(body.patients.length>1)
-      for (let i = 1; i < body.patients.length; i++) {
+      for (let i = -1; i < body.patients.length; i++) {
         finalAmnt += money.amount * (1 - money.disc);
       }
     setCBody(async(prevCBody)=>{
@@ -200,9 +199,9 @@ const PkgListP = (props) => {
               product_data: {
                 name: body.packageID,
               },
-              unit_amount: finalAmnt*100/body.patients.length,
+              unit_amount: (finalAmnt*100/(body.patients.length+1)),
             },
-            quantity: body.patients.length,
+            quantity: body.patients.length+1,
           },
         ],
         success_url: "http://localhost:3000/patient/viewSubscribedPackages",

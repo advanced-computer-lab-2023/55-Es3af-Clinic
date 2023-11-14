@@ -168,10 +168,16 @@ const addFamilyMember = async (req, res) => {
 
 //working fine testing fine
 const viewFamilyMembers = async (req, res) => {
-  const neededPatient = req.query.patient;
-  console.log(`Patient is ${neededPatient}`);
-
   try {
+    const token = req.cookies.jwt;
+    var neededPatient;
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        neededPatient = decodedToken.name;
+      }
+    });
     const neededPatientID = await userModel.findById(neededPatient);
 
     if (!neededPatientID) {
@@ -706,7 +712,7 @@ const subscribeToAHealthPackage = async (req, res) => {
       if(patient1.package == packageID &&
         patient1.packageStatus == "Subscribed With Renewal Date"){
           response +=
-            patient1.name + " is already subscribed to this package \n";
+            patient1.name + "'s subscribtion to this package is renewed \n";
         }
         else {
           patient1.package = packageID;
@@ -728,7 +734,7 @@ const subscribeToAHealthPackage = async (req, res) => {
           patient.packageStatus == "Subscribed With Renewal Date"
         ) {
           response +=
-            patient.name + " is already subscribed to this package \n";
+            patient.name + "'s subscribtion to this package is renewed \n";
         } else {
           patient.package = packageID;
           patient.packageRenewalDate = renewalDate;
@@ -753,14 +759,24 @@ const appointmentsForDoc = async (req, res) => {
 };
 
 const withdrawFromWallet = async (req, res) => {
-  const patientID = req.body.patientID;
-  const amountToWithdraw = req.body.amount;
+  const token = req.cookies.jwt;
+  var id;
+  jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+    if (err) {
+      res.status(401).json({message: "You are not logged in."})
+    }
+    else {
+      id = decodedToken.name;
+    }
+  });
+    const amountToWithdraw = req.body.amount;
   try {
-    const patient = await patientModel.findById(patientID).exec();
+    const patient = await patientModel.findById(id).exec();
+    console.log(patient.amountInWallet)
     if (patient.amountInWallet < amountToWithdraw) {
       return res.status(200).send("Not suffecient funds in wallet");
     } else {
-      patient.amountInWallet -= amountToWithdraw;
+      patient.amountInWallet = patient.amountInWallet - amountToWithdraw;
       await patient.save();
       return res.status(200).send("Amount deducted successfully");
     }
@@ -820,11 +836,19 @@ const uploadMedicalHistory = async (req, res) => {
 };
 
 const viewSubscribedHealthPackages = async (req, res) => {
-  const patientUsername = req.params.username;
-
+  const token = req.cookies.jwt;
+  var id;
+  jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+    if (err) {
+      res.status(401).json({message: "You are not logged in."})
+    }
+    else {
+      id = decodedToken.name;
+    }
+  });
   try {
     const patient = await patientModel
-      .findOne({ username: patientUsername })
+      .findById(id)
       .exec();
 
     if (!patient) {
@@ -834,6 +858,9 @@ const viewSubscribedHealthPackages = async (req, res) => {
     const familyMembers = await familyMembersAcc
       .find({ patient: patient._id })
       .exec();
+    const familyMembers2=  await familyMembersAcc
+    .find({ Id: patient._id })
+    .exec();
 
     const packageData = [];
 
@@ -848,6 +875,16 @@ const viewSubscribedHealthPackages = async (req, res) => {
     // Add family members' health package data
     for (const familyMember of familyMembers) {
       const member = await userModel.findById(familyMember.Id).exec();
+
+      packageData.push({
+        patientName: member.name,
+        package: member.package,
+        status: member.packageStatus,
+        renewalDate: member.packageRenewalDate,
+      });
+    }
+    for (const familyMember of familyMembers2) {
+      const member = await userModel.findById(familyMember.patient).exec();
 
       packageData.push({
         patientName: member.name,
@@ -969,17 +1006,17 @@ const cancelHealthPackageSubscription = async (req, res) => {
       return res.status(404).send('Patient not found');
     }
     else{
-      patient1.packageStatus = 'Canceled Until Renewal Date';
+      patient1.packageStatus = "Cancelled With End Date";
       await patient1.save();
-      response+= patient1.name + " health package subscription canceled successfully. \n";
+      response+= patient1.name + "'s health package subscription canceled successfully. \n";
     }
     for (const patientID of patients) {
     // Cancel the patient's health package subscription
     patient= await patientModel.findById(patientID);
-    patient.packageStatus = "Canceled Until Renewal Date";
+    patient.packageStatus = "Cancelled With End Date";
     //patient.packageRenewalDate = null;
     await patient.save();
-    response+= patient.name + " health package subscription canceled successfully. \n";
+    response+= patient.name + "'s health package subscription canceled successfully. \n";
     }
     res.status(200).send(response);
     console.log(response);

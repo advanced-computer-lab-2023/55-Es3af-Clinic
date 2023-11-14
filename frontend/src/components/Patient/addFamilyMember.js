@@ -36,7 +36,7 @@ function AddMember() {
         <div className="App">
           <header className="App-header">
           <div className="top-right-button">
-            <a href= "/patient/farouhaTe3bet/addFamilyMemberByAcc">
+            <a href= "/patient/addFamilyMemberByAcc">
           <button className="btn btn-primary" >Add by Email/Phone number</button>
           </a>
         </div>
