@@ -83,23 +83,31 @@ class DoctorService {
       throw error;
     }
   }
-
-  async scheduleFollowUpAppointment(appointmentData) {
-    try {
-      const response = await http.post(
-        "/doctor/scheduleFollowUpAppointment",
-        appointmentData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+async viewMedicalHistory() {
+  try {
+    const response = await http.get('/doctor/viewMedicalHistory');
+    return response.data;
+  } catch (error) {
+    throw error;
   }
+}
+
+  // async scheduleFollowUpAppointment(appointmentData) {
+  //   try {
+  //     const response = await http.post(
+  //       "/doctor/scheduleFollowUpAppointment",
+  //       appointmentData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //     return response.data;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 }
 
 export default new DoctorService();

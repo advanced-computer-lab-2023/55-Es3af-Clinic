@@ -602,21 +602,9 @@ const uploadPatientHealthRec = async (req, res) => {
 
 const scheduleFollowUpAppointment = async (req, res) => {
   try {
-    const token = req.cookies.jwt;
-    let doctorId;
+    const { doctor, patient, date, followUp } = req.body;
 
-    // Verify the token and extract doctorId
-    jwt.verify(token, "supersecret", (err, decodedToken) => {
-      if (err) {
-        throw new Error("Invalid or expired token");
-      }
-      doctorId = decodedToken.name;
-    });
-
-    // Extract other necessary data from the request body
-    const { patientName, patientId, date } = req.body;
-
-    // Check if the date is in the future
+    // Check if the appointment date is after the current date
     const currentDate = new Date();
     const selectedDate = new Date(date);
 
@@ -661,8 +649,74 @@ const scheduleFollowUpAppointment = async (req, res) => {
     });
   }
 };
+const getAppointmentsWithStatusDone = async (req, res) => {
+  try {
+    const patientsWithDoneAppointments = await Patient.find({
+      'appointments.status': 'done',
+    }).populate({
+      path: 'appointments',
+      match: { status: 'done' },
+    });
+
+    const appointments = patientsWithDoneAppointments.reduce(
+      (allAppointments, patient) => [...allAppointments, ...patient.appointments],
+      []
+    );
+
+    return res.status(200).json({ appointments });
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
 
+const viewMedicalHistory = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        id = decodedToken.name;
+      }
+    });
+    const doctorId = id;    
+    const patientsWithDoneAppointments = await appointmentModel.find({
+      doctor: doctorId,
+      status: 'done',
+    }).distinct('patient');
+
+    const medicalHistories = await patientModel.find({
+      _id: { $in: patientsWithDoneAppointments },
+    }, 'medicalHistory');
+
+    let pdfList = [];
+    let imageList = [];
+
+    medicalHistories.forEach((patient) => {
+      patient.medicalHistory.forEach((history) => {
+        const type = history.contentType;
+        if (type === 'application/pdf') {
+          pdfList.push(history);
+        } else {
+          imageList.push(history);
+        }
+      });
+    });
+
+    let result = {
+      medicalHistoryPDF: pdfList,
+      medicalHistoryImage: imageList,
+    };
+
+    return res.status(200).json({ result, success: true });
+  } catch (error) {
+    console.error('Error getting medical history', error.message);
+    return res.status(500).json({ message: 'Internal Server Error', success: false });
+  }
+};
 
 module.exports = {
   addDoctor,
@@ -682,4 +736,6 @@ module.exports = {
   addTimeSlots,
   uploadPatientHealthRec,
   scheduleFollowUpAppointment,
+  getAppointmentsWithStatusDone,
+  viewMedicalHistory,
 };
