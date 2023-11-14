@@ -17,14 +17,14 @@ class AdminService {
     return http.get("/admin/viewDoctorData");
   }
 
-  updatePassword(id, password){
-    console.log('put is called')
-    return http.put(`/admin/${id}/updatePassword`, {password: password})
-  }
+  // updatePassword(id, password){
+  //   console.log('put is called')
+  //   return http.put(`/admin/${id}/updatePassword`, {password: password})
+  // }
 
-  getPassword(id){
-    return http.get(`/admin/${id}/updatePassword`)
-  }
+  // getPassword(id){
+  //   return http.get(`/admin/${id}/updatePassword`)
+  // }
   acceptDoctorRequest(id) {
     return http.put(`/admin/acceptDoctorRequest/${id}`);
   }

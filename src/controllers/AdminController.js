@@ -72,25 +72,25 @@ const viewDoctorData = async (req, res) => {
   }
 };
 
-const getPassword = async (req, res) => {
+// const getPassword = async (req, res) => {
   
-  const userID = req.params.id;
-  var user = await userModel.findById(userID);
-  res.status(200).send(user.password);
-};
+//   const userID = req.params.id;
+//   var user = await userModel.findById(userID);
+//   res.status(200).send(user.password);
+// };
 
-const changePassword = async (req, res) => {
-  const userID = req.params.id;
-  var newPassword = req.body.password;
-  const salt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hash(newPassword, salt);
-  try {
-    await userModel.findByIdAndUpdate(userID, { password: hashedPassword });
-    res.status(200).send("Password updated successfully");
-  } catch (err) {
-    console.error(err);
-  }
-};
+// const changePassword = async (req, res) => {
+//   const userID = req.params.id;
+//   var newPassword = req.body.password;
+//   const salt = await bcrypt.genSalt();
+//   const hashedPassword = await bcrypt.hash(newPassword, salt);
+//   try {
+//     await userModel.findByIdAndUpdate(userID, { password: hashedPassword });
+//     res.status(200).send("Password updated successfully");
+//   } catch (err) {
+//     console.error(err);
+//   }
+// };
 
 
 const acceptDoctorRequest = async (req, res) => {
@@ -142,8 +142,6 @@ module.exports = {
   deleteUser,
   listUsers,
   viewDoctorData,
-  changePassword,
-  getPassword,
   acceptDoctorRequest,
   rejectDoctorRequest,
 };

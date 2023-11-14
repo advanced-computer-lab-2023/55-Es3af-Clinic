@@ -1,6 +1,7 @@
 const fs = require("fs");
 const express = require("express");
 const doctorController = require("../controllers/DoctorController");
+const userController = require('../controllers/UserController')
 // const authMiddleware = require('../middlewares/authMiddleware');
 
 
@@ -9,8 +10,7 @@ const doctorRouter = express.Router();
 doctorRouter.use(express.json());
 
 doctorRouter.post("/addDoctor", doctorController.addDoctor);
-doctorRouter.put('/updatePassword', doctorController.changePassword)
-doctorRouter.get('/updatePassword', doctorController.getPassword)
+doctorRouter.put('/updatePassword', userController.changePassword)
 doctorRouter.route("/updateDoctor").put(doctorController.updateDoctor);
 doctorRouter.route("/getPatients").get(doctorController.getAllPatients);
 doctorRouter.route("/getAllDoctors").get(doctorController.getAllDoctors);
@@ -34,7 +34,6 @@ doctorRouter
   .route("/filterPatientsByUpcomingPendingAppointments")
   .get(doctorController.filterPatientsByUpcomingPendingAppointments);
 doctorRouter.route("/selectPatient").patch(doctorController.selectPatient);
-doctorRouter.route("/:id/updatePassword").put(doctorController.changePassword);
 doctorRouter.route("/getAmountInWallet").get(doctorController.getAmountInWallet);
 doctorRouter.route("/getTimeSlots").get(doctorController.getTimeSlots);
 doctorRouter.route("/addTimeSlots").post(doctorController.addTimeSlots);
