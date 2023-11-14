@@ -1,4 +1,6 @@
 import http from "./http-common";
+import axios from "axios";
+//import jwt from 'jsonwebtoken'
 
 class PatientService {
   search(name, spec) {
@@ -27,17 +29,17 @@ class PatientService {
   async subscribeToAHealthPackage(info) {
     return http.put("/patient/subscribeToAHealthPackage", info);
   }
-  viewDoctors(patient) {
-    return http.get("/patient/viewDoctors", { params: { patient } });
+  viewDoctors() {
+    return http.get("/patient/viewDoctors");
   }
   viewDocInfo(id) {
     return http.get(`/patient/doctorInfo/${id}`);
   }
-  viewPrescriptions(id) {
-    return http.get(`/patient/viewPrescriptions/${id}`);
+  viewPrescriptions() {
+    return http.get(`/patient/viewPrescriptions`);
   }
 
-  FilteredPrescriptionList(patientid, date, doctor, status) {
+  FilteredPrescriptionList(date, doctor, status) {
     const queryParams = {};
 
     if (date) {
@@ -50,15 +52,12 @@ class PatientService {
       queryParams.status = status;
     }
 
-    return http.get(
-      `/patient/filterprescriptionsbydatestatusdoctor/${patientid}`,
-      {
-        params: queryParams,
-      }
-    );
+    return http.get(`/patient/filterprescriptionsbydatestatusdoctor`, {
+      params: queryParams,
+    });
   }
 
-  FilteredAppointmentsList(patientid, date, status) {
+  FilteredAppointmentsList(date, status) {
     const queryParams = {};
 
     if (date) {
@@ -68,7 +67,7 @@ class PatientService {
       queryParams.status = status;
     }
 
-    return http.get(`/patient/filterAppointmentsByDateAndStatus/${patientid}`, {
+    return http.get(`/patient/filterAppointmentsByDateAndStatus`, {
       params: queryParams,
     });
   }
@@ -104,6 +103,12 @@ class PatientService {
 
   viewPatientsAppointments() {
     return http.get("/patient/viewPatientAppointments");
+  }
+  viewMedicalHistory() {
+    return http.get('/patient/viewMedicalHistory');
+  }
+  async removeMedicalHistory(medicalHistoryId) {
+    return http.delete(`/patient/removeMedicalHistory/${medicalHistoryId}`);
   }
   
 }

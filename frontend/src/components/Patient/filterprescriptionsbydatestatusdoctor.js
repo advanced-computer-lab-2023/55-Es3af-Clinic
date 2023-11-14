@@ -13,11 +13,10 @@ function FilteredPrescriptionList() {
     const date = event.target.date.value;
     const doctor = event.target.doctor.value;
     const status = event.target.status.value;
-    const patientid = "654bed1dbe07a9603f5b4030";
+    //const patientid = "654bed1dbe07a9603f5b4030";
     
 
     const response = await PatientService.FilteredPrescriptionList(
-      patientid,
       date,
       doctor,
       status

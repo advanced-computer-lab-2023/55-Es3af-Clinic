@@ -73,10 +73,10 @@ function FilterDoctors() {
                    Doctor: {result.name}
                 </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Hourly Rate: {result.hourlyRate}
+                   Price: {result.price}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                  Affiliation: {result.affiliation}
+                  Speciality: {result.speciality}
                   </h3>
                   <button className = "btn btn-primary">
                       <Link to={`/patient/doctorInfo/${result.id}`} style={{ color: 'white', textDecoration: 'underline' }}>View Details</Link>
