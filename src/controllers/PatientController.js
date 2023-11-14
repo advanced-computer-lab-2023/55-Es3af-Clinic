@@ -886,26 +886,28 @@ const BookAnAppointment = async (req, res) => {
     });
     
     // Save the appointment to the database
-    newAppointment.save((err, result) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(result);
-      }});
+    try {
+      const result = await newAppointment.save();
+      console.log(result);
+    } catch (err) {
+      console.error(err);
+    }
+    
       
-      doctorModel.updateOne(
-        { _id: doctorid },
-        { $pull: { availableTimeSlots: { _id: appointmentid } },
-          $set: { amountInWallet: amount }
-        },
-        (err, result) => {
-          if (err) {
-            console.error(err);
-          } else {
-            console.log(result);
-          }
-        }
-      );    
+    doctorModel.updateOne(
+      { _id: doctorid },
+      {
+        $pull: { availableTimeSlots: { _id: appointmentid } },
+        $set: { amountInWallet: amount }
+      }
+    )
+      .then(result => {
+        console.log(result);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+        
 
     res.status(200).send("Appointment was booked successfully");
   } catch (error) {
