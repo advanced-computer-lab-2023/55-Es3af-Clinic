@@ -17,17 +17,18 @@ function ViewSubscribedPackagesPage() {
     fetchData();
   }, []);
 
-  const handleCancelPackage = async (packageId) => {
+  const handleCancelPackage = async (patientId) => {
     try {
-      // Assuming you have a service method to cancel a health package
-      await PatientService.cancelHealthPackage(packageId);
+      // Assuming you have a service method to cancel the health package for a patient
+      await PatientService.cancelHealthPackageForPatient(patientId);
       // Refresh the package list after cancellation
-      const response = await PatientService.viewSubscribedHealthPackages('SaraWasfy');
+      const response = await PatientService.viewSubscribedHealthPackages('SaraWasfy'); //I think this should be the patient ID instead of the username
       setPackages(response.data);
     } catch (error) {
       console.error(error);
     }
   };
+  
 
   return (
     <div>
@@ -40,7 +41,7 @@ function ViewSubscribedPackagesPage() {
               <p>Package: {pkg.package}</p>
               <p>Status: {pkg.status}</p>
               <p>Renewal Date: {pkg.renewalDate}</p>
-              <button className="btn btn-primary" onClick={() => handleCancelPackage(pkg.packageId)}>
+              <button className="btn btn-primary" onClick={() => handleCancelPackage(pkg.patientId)}>
                 Cancel Health Package
               </button>
             </li>

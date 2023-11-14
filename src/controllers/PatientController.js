@@ -935,8 +935,8 @@ const cancelHealthPackageSubscription = async (req, res) => {
     }
 
     // Cancel the patient's health package subscription
-    patient.packageStatus = 'Canceled';
-    patient.packageRenewalDate = null;
+    patient.packageStatus = 'Canceled Until Renewal Date';
+    //patient.packageRenewalDate = null;
     await patient.save();
 
     // Find and cancel health package subscriptions for family members
@@ -946,18 +946,23 @@ const cancelHealthPackageSubscription = async (req, res) => {
       const member = await userModel.findById(familyMember.Id);
 
       if (member) {
-        member.packageStatus = 'Canceled';
-        member.packageRenewalDate = null;
+        member.packageStatus = 'Canceled Until Renewal Date'; 
+        //member.packageRenewalDate = null;
         await member.save();
       }
     }
 
     res.status(200).send('Health package subscription canceled successfully.');
+    console.log('Health package subscription canceled successfully.');
+
   } catch (error) {
+
     console.error(error);
     res.status(500).send('An error occurred while canceling the health package subscription.');
+    console.log('An error occurred while canceling the health package subscription.');
   }
 };
+
 const viewAvailableAppointments = async (req, res) => {
   const doctorId  = req.body.id;
   console.log(doctorId);

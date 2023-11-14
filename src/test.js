@@ -40,7 +40,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/login"  ,userController.login);
 //app.post('/forgetPassword', userController.forgetPassword);
-app.use(auth);
+//app.use(auth);
 
 
 app.use("/", router);
