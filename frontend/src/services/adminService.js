@@ -17,21 +17,12 @@ class AdminService {
     return http.get("/admin/viewDoctorData");
   }
 
-  updatePassword(password){
-    console.log('put is called')
-    return http.put("/admin/updatePassword", {password: password})
-  }
-
-  getPassword(){
-    return http.get("/admin/updatePassword")
-  }
   acceptDoctorRequest(id) {
     return http.put(`/admin/acceptDoctorRequest/${id}`);
   }
   rejectDoctorRequest(id) {
     return http.put(`/admin/rejectDoctorRequest/${id}`);
   }
-    
 }
 
 export default new AdminService();

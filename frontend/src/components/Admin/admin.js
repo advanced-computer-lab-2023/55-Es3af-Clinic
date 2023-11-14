@@ -6,7 +6,7 @@ import UsersList from "./listUsers";
 //import AdminService from "../services/adminService";
 import DeleteUser from "./deleteUser";
 import ViewDoctorRequests from "./viewDoctorRequests";
-import UpdatePassword from '../Admin/updatePassword';
+import UpdatePassword from '../updatePassword';
 import Packages from "./packages";
 import packageService from "../../services/packageService";
 import UpdatePackage from "../updatePackage";
