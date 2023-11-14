@@ -74,10 +74,10 @@ class PatientService {
   FilterDoctors(date, speciality) {
     const queryParams = {};
 
-    if (date) {
+    if (date!='') {
       queryParams.date = date;
     }
-    if (speciality) {
+    if (speciality!='') {
       queryParams.speciality = speciality;
     }
 
@@ -90,8 +90,8 @@ class PatientService {
   //   return http.get('/patient')
   // }
 
-  BookAnAppointment(id) {
-    return http.post(`/patient/BookAnAppointment/${id}`);
+  BookAnAppointment(body) {
+    return http.post("/patient/BookAnAppointment/",body);
   }
   viewSubscribedHealthPackages() {
     return http.get("/patient/viewSubscribedHealthPackages");
@@ -103,6 +103,12 @@ class PatientService {
 
   viewPatientsAppointments() {
     return http.get("/patient/viewPatientAppointments");
+  }
+  viewMedicalHistory() {
+    return http.get('/patient/viewMedicalHistory');
+  }
+  async removeMedicalHistory(medicalHistoryId) {
+    return http.delete(`/patient/removeMedicalHistory/${medicalHistoryId}`);
   }
   
 }
