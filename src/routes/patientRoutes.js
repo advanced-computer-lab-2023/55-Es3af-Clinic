@@ -1,5 +1,6 @@
 const Router = require('express')
 const patientController = require('../controllers/PatientController')
+const userController = require('../controllers/UserController')
 
 
 const patientRoutes = new Router();
@@ -7,11 +8,10 @@ patientRoutes.get('/viewAvailableAppoinments', patientController.viewAvailableAp
 
 patientRoutes.get('/getAmountInWallet', patientController.getAmountInWallet)
 patientRoutes.post("/createSession",patientController.checkoutSession)
-patientRoutes.put('/:id/updatePassword', patientController.changePassword)
+patientRoutes.put('/updatePassword', userController.changePassword)
 patientRoutes.get("/searchBySpecDate", patientController.searchBySpecDate)
 patientRoutes.put('/withdrawFromWallet',patientController.withdrawFromWallet)
 patientRoutes.post('/:id/addFamilyMemberByAcc',patientController.addFamilyMemberByUsername)
-patientRoutes.get('/:id/updatePassword', patientController.getPassword)
 patientRoutes.get('/search', patientController.searchByNameSpec)
 patientRoutes.get('/familyMembers', patientController.viewFamilyMembers)
 patientRoutes.get('/viewDoctors',patientController.viewDoctors)
