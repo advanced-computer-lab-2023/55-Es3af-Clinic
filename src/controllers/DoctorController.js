@@ -649,6 +649,26 @@ const scheduleFollowUpAppointment = async (req, res) => {
     });
   }
 };
+const getAppointmentsWithStatusDone = async (req, res) => {
+  try {
+    const patientsWithDoneAppointments = await Patient.find({
+      'appointments.status': 'done',
+    }).populate({
+      path: 'appointments',
+      match: { status: 'done' },
+    });
+
+    const appointments = patientsWithDoneAppointments.reduce(
+      (allAppointments, patient) => [...allAppointments, ...patient.appointments],
+      []
+    );
+
+    return res.status(200).json({ appointments });
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
 
 const viewMedicalHistory = async (req, res) => {
