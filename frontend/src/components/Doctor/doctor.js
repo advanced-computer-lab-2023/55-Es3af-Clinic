@@ -9,7 +9,7 @@ import EditDoctor from "./updateDoctor2";
 import FilteredAppointments from "./filterAppointmentsByDateAndStatus.js";
 import SearchPatient from "./searchForPatientByName.js";
 import FilteredPatientsByAppointments from "./filterPatientByAppointment";
-import UpdatePassword from '../Doctor/updatePassword';
+import UpdatePassword from '../updatePassword.js';
 import doctorService from "../../services/doctorService.js";
 import AddTimeSlots from './addTimeSlots';
 import UploadPatientHealthRecords from './uploadPatientHealthRecords';
@@ -79,7 +79,7 @@ function DoctorHome() {
           <a href="/doctor/filterPatientsByUpcomingPendingAppointments" rel="noopener noreferrer">
             <button className="btn btn-primary"> Filter Patients by Upcoming Appointments </button>
           </a>
-          <a href={"/doctor/updatePassword/"} rel="noopener noreferrer">
+          <a href={"/doctor/updatePassword"} rel="noopener noreferrer">
             <button className="btn btn-primary"> Update my Password </button>
           </a>
           <a href="/doctor/addTimeSlots" rel="noopener noreferrer">

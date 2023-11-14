@@ -12,7 +12,7 @@ import FilteredPrescriptionList from "./filterprescriptionsbydatestatusdoctor";
 import FilteredAppointmentsList from "./filterAppointmentsByDateAndStatuspatient"; 
 import FilterDoctors from "./Filterdoctors";
 import PkgListP from "./viewPackages";
-import UpdatePassword from './updatePassword';
+import UpdatePassword from '../updatePassword';
 import UploadMedicalHistory from './UploadMedicalHistory';
 import AddMemberAcc from "./addMemberByAcc";
 import BookAnAppointment  from "./BookAnAppointment";
@@ -36,7 +36,7 @@ function PatientPage() {
       <Route path="/viewPrescriptions" element={<PrescriptionList />} />
       <Route path="/filterprescriptionsbydatestatusdoctor" element={<FilteredPrescriptionList />} />
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
-      <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
+      <Route path='/updatePassword' element = {<UpdatePassword/>} />
       <Route path='/UploadMedicalHistory' element = {<UploadMedicalHistory/>} />
       <Route path='/:username/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
       <Route path="/viewSubscribedPackages" element={<ViewSubscribedPackages />} />
@@ -49,7 +49,7 @@ function PatientPage() {
 }
 
 function PatientHome() {
-  var id = '6550f3b6d9aee1af3acedf0a'
+  //var id = '6550f3b6d9aee1af3acedf0a'
   const [result, setResult] = useState("");
   useEffect(() => {
     const fetchData = async () => {
