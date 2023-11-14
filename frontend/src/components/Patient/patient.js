@@ -19,6 +19,7 @@ import BookAnAppointment  from "./BookAnAppointment";
 import patientService from "../../services/patientService";
 import ViewSubscribedPackages from './viewSubscribedPackages';
 import ViewAppointments from "./viewAppointment";
+import AvailableAppointments from "./viewAvailableAppointments";
 import Navbar from "../navbar";
 
 
@@ -38,11 +39,13 @@ function PatientPage() {
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
       <Route path='/updatePassword' element = {<UpdatePassword/>} />
       <Route path='/UploadMedicalHistory' element = {<UploadMedicalHistory/>} />
-      <Route path='/:username/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
+      <Route path='/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
       <Route path="/viewSubscribedPackages" element={<ViewSubscribedPackages />} />
       <Route path="/viewAppointments" element={<ViewAppointments />} />
         <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />
         <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
+        <Route path="/viewAvailableAppointments" element= {<AvailableAppointments />} />
+        
 
     </Routes>
   );

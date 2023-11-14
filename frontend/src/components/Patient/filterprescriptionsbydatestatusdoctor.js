@@ -55,7 +55,7 @@ function FilteredPrescriptionList() {
             placeholder="enter status" />
 
             <input
-            type="string"
+            type="date"
             className="form-control"
             id="date"
             name="date"
@@ -79,7 +79,7 @@ function FilteredPrescriptionList() {
                       Medicine: {result.medicine}
                     </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Doctor: {result.doctor.name}
+                   Doctor: {result.doctor}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
                    Status: {result.status}

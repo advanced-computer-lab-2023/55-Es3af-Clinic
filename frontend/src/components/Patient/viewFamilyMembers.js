@@ -11,7 +11,7 @@ const MembersList = (props) => {
   }, []);
 
   const retrieveMembers = () => {
-    MemberService.getAll("6550f3b6d9aee1af3acedf0a")
+    MemberService.getAll()
         .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data)) {

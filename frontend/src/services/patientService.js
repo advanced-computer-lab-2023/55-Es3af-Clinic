@@ -9,11 +9,14 @@ class PatientService {
       `http://localhost:8000/patient/search?name=${name}&speciality=${spec}`
     );
   }
-  getPatient(id) {
-    return http.get(`/patient/${id}`);
+  getPatient() {
+    return http.get("/patient/getPatient");
   }
   async createSession(body) {
     return http.post("/patient/createSession", body);
+  }
+  AvailableAppointments(id) {
+    return http.get(`patient/viewAvailableAppointments/${id}`);
   }
 
   //de btshtaghal b ID 3ady bas ana mesameyah username
@@ -21,7 +24,7 @@ class PatientService {
     return http.get("/patient/getAmountInWallet");
   }
   async withdrawFromWallet(body) {
-    return http.put("/patient/widrawFromWallet", body);
+    return http.put("/patient/withdrawFromWallet", body);
   }
   async subscribeToAHealthPackage(info) {
     return http.put("/patient/subscribeToAHealthPackage", info);
@@ -49,15 +52,12 @@ class PatientService {
       queryParams.status = status;
     }
 
-    return http.get(
-      `/patient/filterprescriptionsbydatestatusdoctor`,
-      {
-        params: queryParams,
-      }
-    );
+    return http.get(`/patient/filterprescriptionsbydatestatusdoctor`, {
+      params: queryParams,
+    });
   }
 
-  FilteredAppointmentsList( date, status) {
+  FilteredAppointmentsList(date, status) {
     const queryParams = {};
 
     if (date) {
@@ -93,48 +93,30 @@ class PatientService {
   BookAnAppointment(id) {
     return http.post(`/patient/BookAnAppointment/${id}`);
   }
-  viewSubscribedHealthPackages(id) {
-    return http.get(`/patient/viewSubscribedHealthPackages/${id}`);
+  viewSubscribedHealthPackages() {
+    return http.get("/patient/viewSubscribedHealthPackages");
   }
 
-  // cancelPackageSubscirption(id) {
-  //   return http.put(`/patient/viewSubscribedHealthPackages/${id}`);
-  // }
+  cancelPackageSubscirption(body) {
+    return http.put(`/patient/cancelHealthPackageSubscription`, body);
+  }
 
   viewPatientsAppointments() {
     return http.get("/patient/viewPatientAppointments");
   }
 
-  // uploadMedicalHistory(formData){
-  //   console.log('service')
-
-
-
-  //   return axios.post('http://localhost:8000/patient/uploadMedicalHistory', formData, {
-  //     headers: {
-  //       'Content-Type': 'multipart/form-data',
-  //       'Authorization': `Bearer ${authToken}`
-  //     },
-  //   })
-    //http.put('/patient/uploadMedicalHistory', formData)
-  //}
-
-        //   await axios.put('http://localhost:8000/patient/uploadMedicalHistory', formData, {
+  uploadMedicalHistory = (formData) => {
+    console.log(document.cookie);
+    return axios
+      .post(
+        "http://localhost:8000/patient/uploadMedicalHistory",
+        formData
+        //{
         //   headers: {
         //     'Content-Type': 'multipart/form-data',
+        //     'Authorization': `Bearer ${authToken}`, // Include the token in the Authorization header
         //   },
-        // });
-
-
-    uploadMedicalHistory = (formData) => {
-      console.log(document.cookie)
-      return axios.post('http://localhost:8000/patient/uploadMedicalHistory', formData
-      //{
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //     'Authorization': `Bearer ${authToken}`, // Include the token in the Authorization header
-      //   },
-      // }
+        // }
       )
       .then((response) => {
         // Handle successful response

@@ -1,10 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import patientService from '../../services/patientService';
 
 function UploadMedicalHistory() {
   const [username, setUsername] = useState('');
   const [files, setFiles] = useState([]);
+
+  const [patient, setPatient] = useState(null);
+
+  useEffect(() => {
+    const fetchPatient = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8000/patient/${username}`);
+        setPatient(response.data); // Assuming the data contains the patient details
+      } catch (error) {
+        console.error('Error fetching patient:', error);
+      }
+    };
+
+    fetchPatient();
+  }, [username]); 
+
+  const arrayBufferToBase64 = (buffer) => {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  };
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -56,6 +81,10 @@ function UploadMedicalHistory() {
               onChange={handleUsernameChange}
             />
           </div>
+          
+          <div>
+          <iframe src={`data:application/pdf;base64,${arrayBufferToBase64(patient.UploadMedicalHistory)}`}  width="800" height="600"></iframe>
+                </div>
 
           <div className="form-group">
             <label htmlFor="InputImage">Upload Medical History Files</label>
@@ -70,6 +99,9 @@ function UploadMedicalHistory() {
           </div>
           <button type="submit" className="btn btn-primary">
             Upload Medical History
+          </button>
+          <button type="submit" className="btn btn-primary">
+            View Medical History
           </button>
         </form>
       </header>

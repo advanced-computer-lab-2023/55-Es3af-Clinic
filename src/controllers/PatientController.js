@@ -42,15 +42,7 @@ const getPatient = async (req, res) => {
   }
 };
 const addFamilyMemberByUsername = async (req, res) => {
-  const token = req.cookies.jwt;
-  var patientID;
-  jwt.verify(token, "supersecret", (err, decodedToken) => {
-    if (err) {
-      res.status(401).json({ message: "You are not logged in." });
-    } else {
-      patientID = decodedToken.name;
-    }
-  });
+  
   // const patient = req.params.username;
   // const patientID = await userModel.findOne({ username: patient });
 
@@ -64,6 +56,15 @@ const addFamilyMemberByUsername = async (req, res) => {
   const mobile = req.body.mobile;
   var familyMemberUserID = null;
   try {
+    const token = req.cookies.jwt;
+  var patientID;
+  jwt.verify(token, "supersecret", (err, decodedToken) => {
+    if (err) {
+      res.status(401).json({ message: "You are not logged in." });
+    } else {
+      patientID = decodedToken.name;
+    }
+  });
     if (email != "")
       familyMemberUserID = await patientModel.findOne({ email: email }).exec();
     else if (mobile != "")
@@ -73,7 +74,7 @@ const addFamilyMemberByUsername = async (req, res) => {
     if (familyMemberUserID == null || familyMemberUserID.__t != "patient") {
       res
         .status(404)
-        .send("There's no account with the corresponding username");
+        .send("There's no account with the corresponding email/phone");
       return;
     } else {
       if (
@@ -103,58 +104,80 @@ const addFamilyMemberByUsername = async (req, res) => {
 
 //working fine and testing fine
 const addFamilyMember = async (req, res) => {
-  const patient = req.query.patient;
-  const patientID = await userModel.findOne({ username: patient });
-  console.log(req.body);
-
-  const member = new familyMemberModel({
-    name: req.body.name,
-    nationalID: req.body.nationalID,
-    age: req.body.age,
-    gender: req.body.gender,
-    relationToPatient: req.body.relationToPatient,
-    patient: patientID._id.valueOf(), //id zy ma heya
-  });
-
-  console.log(`family member is ${member}`);
-  //var patient = member.patient
-  //console.log(`patient is ${patient}`)
-
-  familyMemberModel
-    .find({ patient: member.patient })
-    .exec()
-    .then((document) => {
-      console.log(`family members are ${document}`);
-      familyMemberModel
-        .findOne({ name: member.name })
-        .exec()
-        .then((document2) => {
-          if (document2) {
-            console.log("Family member already exists");
-            res.status(200).send("Family member already exists");
-            return;
-          } else {
-            member.save().catch((err) => console.log(err));
-            console.log("Family member added");
-            res.status(200).send("Family member added");
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        })
-
-        .catch((err) => {
-          console.error(err);
-        });
+  try{
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        id = decodedToken.name;
+      }
     });
-};
+      // const patient = req.query.patient;
+      const patientID = await userModel.findById(id);
+      console.log(req.body);
+
+      const member = new familyMemberModel({
+        name: req.body.name,
+        nationalID: req.body.nationalID,
+        age: req.body.age,
+        gender: req.body.gender,
+        relationToPatient: req.body.relationToPatient,
+        patient: patientID._id.valueOf(), //id zy ma heya
+      });
+      console.log(`family member is ${member}`);
+      //var patient = member.patient
+      //console.log(`patient is ${patient}`)
+    
+      familyMemberModel
+        .find({ patient: member.patient })
+        .exec()
+        .then((document) => {
+          console.log(`family members are ${document}`);
+          familyMemberModel
+            .findOne({ name: member.name })
+            .exec()
+            .then((document2) => {
+              if (document2) {
+                console.log("Family member already exists");
+                res.status(200).send("Family member already exists");
+                return;
+              } else {
+                member.save().catch((err) => console.log(err));
+                console.log("Family member added");
+                res.status(200).send("Family member added");
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+            })
+    
+            .catch((err) => {
+              console.error(err);
+            });
+        });
+    }catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  };
+  
+
+ 
 
 //working fine testing fine
 const viewFamilyMembers = async (req, res) => {
-  const neededPatient = req.query.patient;
-  console.log(`Patient is ${neededPatient}`);
-
   try {
+    const token = req.cookies.jwt;
+    var neededPatient;
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        neededPatient = decodedToken.name;
+      }
+    });
     const neededPatientID = await userModel.findById(neededPatient);
 
     if (!neededPatientID) {
@@ -745,7 +768,7 @@ const subscribeToAHealthPackage = async (req, res) => {
       if(patient1.package == packageID &&
         patient1.packageStatus == "Subscribed With Renewal Date"){
           response +=
-            patient1.name + " is already subscribed to this package \n";
+            patient1.name + "'s subscribtion to this package is renewed \n";
         }
         else {
           patient1.package = packageID;
@@ -767,7 +790,7 @@ const subscribeToAHealthPackage = async (req, res) => {
           patient.packageStatus == "Subscribed With Renewal Date"
         ) {
           response +=
-            patient.name + " is already subscribed to this package \n";
+            patient.name + "'s subscribtion to this package is renewed \n";
         } else {
           patient.package = packageID;
           patient.packageRenewalDate = renewalDate;
@@ -792,14 +815,24 @@ const appointmentsForDoc = async (req, res) => {
 };
 //farah
 const withdrawFromWallet = async (req, res) => {
-  const patientID = req.body.patientID;
-  const amountToWithdraw = req.body.amount;
+  const token = req.cookies.jwt;
+  var id;
+  jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+    if (err) {
+      res.status(401).json({message: "You are not logged in."})
+    }
+    else {
+      id = decodedToken.name;
+    }
+  });
+    const amountToWithdraw = req.body.amount;
   try {
-    const patient = await patientModel.findById(patientID).exec();
+    const patient = await patientModel.findById(id).exec();
+    console.log(patient.amountInWallet)
     if (patient.amountInWallet < amountToWithdraw) {
       return res.status(200).send("Not suffecient funds in wallet");
     } else {
-      patient.amountInWallet -= amountToWithdraw;
+      patient.amountInWallet = patient.amountInWallet - amountToWithdraw;
       await patient.save();
       return res.status(200).send("Amount deducted successfully");
     }
@@ -810,12 +843,63 @@ const withdrawFromWallet = async (req, res) => {
 };
 
 const BookAnAppointment = async (req, res) => {
-  const patientid = req.params.id;
+  const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+  const name = req.body.name;
+  const doctorid = req.body.doctorid;
+  const appointmentid = req.body.appointmentid;
+
 
   try {
-    const patient = await patientModel.findById(patientid);
+    const patient = await patientModel.findById(id);
+    const doctor = await doctorModel.findById(doctorid);
 
-    //await viewFamilyMembers(req, res);
+    const matchingTimeSlot = doctor.availableTimeSlots.find(slot => slot._id == appointmentid);
+    const startTime = matchingTimeSlot.startTime;
+    const endTime = matchingTimeSlot.endTime;
+
+   
+    const [startHour, startMinute] = startTime.split(":").map(Number);
+    const [endHour, endMinute] = endTime.split(":").map(Number);
+
+    const duration = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
+    
+    const newAppointment = new appointmentModel({
+      patient: id,
+      patientName: name, // Replace with the actual patient name
+      doctor: doctorid,   // Replace with the actual doctor ID
+      date: matchingTimeSlot.date, // Replace with the actual date
+      duration: duration // Replace with the actual duration
+      // Status will default to 'pending' if not provided
+    });
+    
+    // Save the appointment to the database
+    newAppointment.save((err, result) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log(result);
+      }});
+      
+    doctorModel.updateOne(
+      { _id: doctorid },
+      { $pull: { availableTimeSlots: { _id: appointmentid } } },
+      (err, result) => {
+        if (err) {
+          console.error(err);
+        } else {
+          console.log(result);
+        }
+      });
+    
 
     res.status(200).send("Appointment was booked successfully");
   } catch (error) {
@@ -858,12 +942,94 @@ const uploadMedicalHistory = async (req, res) => {
   });
 };
 
-const viewSubscribedHealthPackages = async (req, res) => {
-  const patientUsername = req.params.username;
+const viewMedicalHistory = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const patient = await patientModel.findById(id);
+    if (!patient) {
+      return res.status(400).json({ message: "Patient not found", success: false })
+  }
+    const medicalHistory = patient.medicalHistory;
+    let pdfList = [];
+    let imageList = [];
 
+    for (let history of medicalHistory) {
+      const type = history.contentType;
+      if (type === 'application/pdf') {
+        pdfList.push(history);
+      } else {
+        imageList.push(history);
+      }
+    }
+
+    let result = {
+      medicalHistoryPDF: pdfList,
+      medicalHistoryImage: imageList
+    };
+
+    return res.status(200).json({ result: result, success: true });
+  } catch (error) {
+    console.error('Error getting medical history', error.message);
+    return res.status(500).json({ message: 'Internal Server Error', success: false });
+  }
+};
+
+const removeMedicalHistory = async (req, res) => {
+try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const patient = await patientModel.findById(id);
+    if (!patient) {
+      return res.status(400).json({ message: "Patient not found", success: false })
+  }
+      for (let i = 0; i < patient.HealthHistory.length; i++) {
+          if (patient.HealthHistory[i]._id == req.params.medicalHistoryId) {
+              patient.HealthHistory.splice(i, 1)
+          }
+      }
+      await patient.save();
+      return res.status(200).json({ Result: patient, message: "Delete successfully", success: true });
+  }
+  catch (error) {
+      console.error('Error getting health history', error.message);
+  }
+};
+
+
+
+
+
+const viewSubscribedHealthPackages = async (req, res) => {
+  const token = req.cookies.jwt;
+  var id;
+  jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+    if (err) {
+      res.status(401).json({message: "You are not logged in."})
+    }
+    else {
+      id = decodedToken.name;
+    }
+  });
   try {
     const patient = await patientModel
-      .findOne({ username: patientUsername })
+      .findById(id)
       .exec();
 
     if (!patient) {
@@ -873,6 +1039,9 @@ const viewSubscribedHealthPackages = async (req, res) => {
     const familyMembers = await familyMembersAcc
       .find({ patient: patient._id })
       .exec();
+    const familyMembers2=  await familyMembersAcc
+    .find({ Id: patient._id })
+    .exec();
 
     const packageData = [];
 
@@ -887,6 +1056,16 @@ const viewSubscribedHealthPackages = async (req, res) => {
     // Add family members' health package data
     for (const familyMember of familyMembers) {
       const member = await userModel.findById(familyMember.Id).exec();
+
+      packageData.push({
+        patientName: member.name,
+        package: member.package,
+        status: member.packageStatus,
+        renewalDate: member.packageRenewalDate,
+      });
+    }
+    for (const familyMember of familyMembers2) {
+      const member = await userModel.findById(familyMember.patient).exec();
 
       packageData.push({
         patientName: member.name,
@@ -987,36 +1166,42 @@ const checkoutSession = async (req, res) => {
 };
 
 const cancelHealthPackageSubscription = async (req, res) => {
-  const patientId = req.params.id;
+  const patients = req.body.patients;
+  var response = "";
 
   try {
     // Find the patient
-    const patient = await patientModel.findById(patientId);
-
-    if (!patient) {
-      return res.status(404).send("Patient not found");
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const patient1 = await patientModel.findById(id);
+    var patient;
+    if (!patient1) {
+      return res.status(404).send('Patient not found');
     }
-
+    else{
+      patient1.packageStatus = "Cancelled With End Date";
+      await patient1.save();
+      response+= patient1.name + "'s health package subscription canceled successfully. \n";
+    }
+    for (const patientID of patients) {
     // Cancel the patient's health package subscription
-    patient.packageStatus = "Canceled Until Renewal Date";
+    patient= await patientModel.findById(patientID);
+    patient.packageStatus = "Cancelled With End Date";
     //patient.packageRenewalDate = null;
     await patient.save();
-
-    // Find and cancel health package subscriptions for family members
-    const familyMembers = await familyMembersAcc.find({ patient: patientId });
-
-    for (const familyMember of familyMembers) {
-      const member = await userModel.findById(familyMember.Id);
-
-      if (member) {
-        member.packageStatus = "Canceled Until Renewal Date";
-        //member.packageRenewalDate = null;
-        await member.save();
-      }
+    response+= patient.name + "'s health package subscription canceled successfully. \n";
     }
+    res.status(200).send(response);
+    console.log(response);
 
-    res.status(200).send("Health package subscription canceled successfully.");
-    console.log("Health package subscription canceled successfully.");
   } catch (error) {
     console.error(error);
     res
@@ -1031,11 +1216,11 @@ const cancelHealthPackageSubscription = async (req, res) => {
 };
 
 const viewAvailableAppointments = async (req, res) => {
-  const doctorId = req.body.id;
-  console.log(doctorId);
+  const id  = req.params.id;
+  console.log(id);
   try {
     // Get the doctor's information, including available time slots
-    const doctor = await doctorModel.findById(doctorId);
+    const doctor = await doctorModel.findById(id);
 
     if (!doctor) {
       return res.status(404).json({ error: "Doctor not found" });
@@ -1102,4 +1287,6 @@ module.exports = {
   viewPatientAppointments,
   cancelHealthPackageSubscription,
   viewAvailableAppointments,
+  viewMedicalHistory,
+  removeMedicalHistory,
 };

@@ -4,14 +4,15 @@ const userController = require('../controllers/UserController')
 
 
 const patientRoutes = new Router();
-patientRoutes.get('/viewAvailableAppoinments', patientController.viewAvailableAppointments);
+patientRoutes.get('/viewAvailableAppointments/:id', patientController.viewAvailableAppointments);
 
 patientRoutes.get('/getAmountInWallet', patientController.getAmountInWallet)
 patientRoutes.post("/createSession",patientController.checkoutSession)
 patientRoutes.put('/updatePassword', userController.changePassword)
 patientRoutes.get("/searchBySpecDate", patientController.searchBySpecDate)
 patientRoutes.put('/withdrawFromWallet',patientController.withdrawFromWallet)
-patientRoutes.post('/:id/addFamilyMemberByAcc',patientController.addFamilyMemberByUsername)
+patientRoutes.post('/addFamilyMemberByAcc',patientController.addFamilyMemberByUsername)
+//patientRoutes.get('/:id/updatePassword', patientController.getPassword)
 patientRoutes.get('/search', patientController.searchByNameSpec)
 patientRoutes.get('/familyMembers', patientController.viewFamilyMembers)
 patientRoutes.get('/viewDoctors',patientController.viewDoctors)
@@ -30,5 +31,7 @@ patientRoutes.post('/uploadMedicalHistory', patientController.uploadMedicalHisto
 patientRoutes.post("/BookAnAppointment/:id", patientController.BookAnAppointment);
 patientRoutes.get('/viewSubscribedHealthPackages/:username', patientController.viewSubscribedHealthPackages);
 patientRoutes.put('/cancelHealthPackageSubscription/:id', patientController.cancelHealthPackageSubscription);
+patientRoutes.get('/viewMedicalHistory', patientController.viewMedicalHistory);
+patientRoutes.delete('/removeMedicalHistory/:medicalHistoryId', patientController.removeMedicalHistory);
 
 module.exports = {patientRoutes}
