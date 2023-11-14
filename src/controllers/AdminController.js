@@ -3,19 +3,11 @@ const Doctor = require("../Models/Doctor.js");
 const { default: mongoose } = require("mongoose");
 const DoctorRequest = require("../Models/RequestDoctor");
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
+
 
 const addAdmin = async (req, res) => {
   try {
-    // const token = req.cookies.jwt;
-  //   var id;
-  //   jwt.verify(token, 'supersecret', (err ,decodedToken) => {
-  //     if (err) {
-  //       res.status(401).json({message: "You are not logged in."})
-  //     }
-  //     else {
-  //       id = decodedToken.name;
-  //     }
-  //   });
     const { username, password } = req.body;
 
     const salt = await bcrypt.genSalt();
@@ -31,16 +23,6 @@ const addAdmin = async (req, res) => {
 
 const listUsers = async (req, res) => {
   try {
-    // const token = req.cookies.jwt;
-  //   var id;
-  //   jwt.verify(token, 'supersecret', (err ,decodedToken) => {
-  //     if (err) {
-  //       res.status(401).json({message: "You are not logged in."})
-  //     }
-  //     else {
-  //       id = decodedToken.name;
-  //     }
-  //   });
     const users = await userModel.find().lean(); // Use lean() to get plain JavaScript objects instead of Mongoose Documents
     const cleanedUsers = users.map(user => ({
       ...user,
@@ -56,12 +38,19 @@ const listUsers = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    await userModel.findByIdAndDelete(req.params.id);
+    const userName = req.params.username;
+    const deletedUser = await userModel.findOneAndDelete({ username: userName });
+
+    if (!deletedUser) {
+      return res.status(404).json({ status: "fail", message: "User not found" });
+    }
+
     res.status(204).json({ status: "success", data: null });
   } catch (e) {
-    res.status(400).json({ status: fail, message: e });
+    res.status(500).json({ status: "error", message: e.message });
   }
 };
+
 
 const viewDoctorData = async (req, res) => {
   try {
@@ -73,26 +62,49 @@ const viewDoctorData = async (req, res) => {
 };
 
 const getPassword = async (req, res) => {
-  
-  const userID = req.params.id;
-  var user = await userModel.findById(userID);
-  res.status(200).send(user.password);
-};
-
-const changePassword = async (req, res) => {
-  const userID = req.params.id;
-  var newPassword = req.body.password;
-  const salt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hash(newPassword, salt);
-  try {
-    await userModel.findByIdAndUpdate(userID, { password: hashedPassword });
-    res.status(200).send("Password updated successfully");
-  } catch (err) {
-    console.error(err);
+  try{
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+  const userId = id;
+  var user = await userModel.findById(userId);
+  res.status(200).send(user.password)
+  }catch (err) {
+      res.status(400).json({
+        message:err.message,
+      });
   }
 };
 
-
+const changePassword = async (req, res) => {
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  var newPassword = hashedPassword;
+  
+  try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const userID = id;
+    await userModel.findByIdAndUpdate(userID, { password: newPassword })
+    res.status(200).send('Password updated successfully')
+  }
+  catch (err) { console.error(err) }
+};
 const acceptDoctorRequest = async (req, res) => {
   try {
     const doctorRequestId = req.params.id;
@@ -101,7 +113,6 @@ const acceptDoctorRequest = async (req, res) => {
     if (!doctorRequest) {
       return res.status(404).json({ message: 'Doctor request not found' });
     }
-    
 
     const newDoctor = new Doctor({
       username: doctorRequest.username,
@@ -113,6 +124,7 @@ const acceptDoctorRequest = async (req, res) => {
       affiliation: doctorRequest.affiliation,
       educationBackground: doctorRequest.educationBackground,
       speciality: doctorRequest.speciality,
+      type: 'doctor',
     });
 
     await newDoctor.save();
@@ -121,9 +133,10 @@ const acceptDoctorRequest = async (req, res) => {
     res.status(200).json({ status: 'success', message: 'Doctor request accepted' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: 'error', message: 'Internal server error' });
+    res.status(500).json({ status: 'error', message: 'Internal server error', error: error.message });
   }
 };
+
 const rejectDoctorRequest = async (req, res) => {
   try {
     const doctorRequestId = req.params.id;

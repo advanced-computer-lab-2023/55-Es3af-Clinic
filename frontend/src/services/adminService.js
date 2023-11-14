@@ -17,13 +17,13 @@ class AdminService {
     return http.get("/admin/viewDoctorData");
   }
 
-  updatePassword(id, password){
+  updatePassword(password){
     console.log('put is called')
-    return http.put(`/admin/${id}/updatePassword`, {password: password})
+    return http.put("/admin/updatePassword", {password: password})
   }
 
-  getPassword(id){
-    return http.get(`/admin/${id}/updatePassword`)
+  getPassword(){
+    return http.get("/admin/updatePassword")
   }
   acceptDoctorRequest(id) {
     return http.put(`/admin/acceptDoctorRequest/${id}`);

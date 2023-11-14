@@ -108,8 +108,8 @@ class PatientService {
   //   return http.put(`/patient/viewSubscribedHealthPackages/${id}`);
   // }
 
-  viewPatientsAppointments(id) {
-    return http.get(`/patient/viewPatientAppointments/${id}`);
+  viewPatientsAppointments() {
+    return http.get("/patient/viewPatientAppointments");
   }
 }
 

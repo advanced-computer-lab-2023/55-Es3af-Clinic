@@ -859,17 +859,17 @@ const viewSubscribedHealthPackages = async (req, res) => {
 //   }
 // }
 const viewPatientAppointments = async (req, res) => {
-  // const token = req.cookies.jwt;
-  //   var id;
-  //   jwt.verify(token, 'supersecret', (err ,decodedToken) => {
-  //     if (err) {
-  //       res.status(401).json({message: "You are not logged in."})
-  //     }
-  //     else {
-  //       id = decodedToken.name;
-  //     }
-  //   });
-  const patientId = req.params.id;
+    const token = req.cookies.jwt;
+      var id;
+      jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+        if (err) {
+          res.status(401).json({message: "You are not logged in."})
+        }
+        else {
+          id = decodedToken.name;
+        }
+      });
+  const patientId = id;
   try {
 
       const patient = await patientModel.findById(patientId);
