@@ -9,11 +9,14 @@ class PatientService {
       `http://localhost:8000/patient/search?name=${name}&speciality=${spec}`
     );
   }
-  getPatient() {
-    return http.get("/patient/getPatient");
+  getPatient(id) {
+    return http.get(`/patient/${id}`);
   }
-  async createSession(body) {
-    return http.post("/patient/createSession", body);
+  async createSession(body){
+    return http.post("/patient/createSession", body)
+  }
+  AvailableAppointments(id) {
+    return http.get(`patient/viewAvailableAppointments/${id}`);
   }
   AvailableAppointments(id) {
     return http.get(`patient/viewAvailableAppointments/${id}`);
@@ -97,36 +100,13 @@ class PatientService {
     return http.get("/patient/viewSubscribedHealthPackages");
   }
 
-  cancelPackageSubscirption(body) {
-    return http.put(`/patient/cancelHealthPackageSubscription`, body);
-  }
+  // cancelPackageSubscirption(id) {
+  //   return http.put(`/patient/viewSubscribedHealthPackages/${id}`);
+  // }
 
   viewPatientsAppointments() {
     return http.get("/patient/viewPatientAppointments");
   }
-
-  uploadMedicalHistory = (formData) => {
-    console.log(document.cookie);
-    return axios
-      .post(
-        "http://localhost:8000/patient/uploadMedicalHistory",
-        formData
-        //{
-        //   headers: {
-        //     'Content-Type': 'multipart/form-data',
-        //     'Authorization': `Bearer ${authToken}`, // Include the token in the Authorization header
-        //   },
-        // }
-      )
-      .then((response) => {
-        // Handle successful response
-        return response.data;
-      })
-      .catch((error) => {
-        // Handle errors
-        throw error;
-      });
-  };
 }
 
 export default new PatientService();
