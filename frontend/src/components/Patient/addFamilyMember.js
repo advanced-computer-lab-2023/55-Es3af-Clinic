@@ -26,6 +26,7 @@ function AddMember() {
         MemberService.addMember2(member)
           .then((response) => {
             console.log(response.data);
+            alert(response.data)
           })
           .catch((e) => {
             console.log(e);
