@@ -600,65 +600,69 @@ const uploadPatientHealthRec = async (req, res) => {
   });
 };
 
-const followupAppointment = async (req, res) => {
+const scheduleFollowUpAppointment = async (req, res) => {
   try {
-    const { doctor, patient, date, followUp } = req.body;
+    const token = req.cookies.jwt;
+    let doctorId;
 
-    // Check if the appointment date is after the current date
-    const currentDate = new Date();
-    if (new Date(date) <= currentDate) {
-      return res.status(400).json({
-        status: "fail",
-        message:
-          "Invalid appointment date. Date must be after the current date.",
-      });
-    }
-
-    // Check if the doctor and patient exist
-    const doctorDetails = await doctorModel.findById(doctor);
-    const patientDetails = await patientModel.findById(patient);
-
-    if (!doctorDetails || !patientDetails) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Doctor or patient not found.",
-      });
-    }
-
-    // Check if the selected time slot is available for the doctor
-    if (!doctorDetails.availableTimeSlots.includes(date)) {
-      return res.status(400).json({
-        status: "fail",
-        message: "Selected time slot is not available for the doctor.",
-      });
-    }
-
-    // Remove the scheduled time slot from the doctor's availableTimeSlots
-    doctorDetails.availableTimeSlots = doctorDetails.availableTimeSlots.filter(
-      (slot) => slot !== date
-    );
-
-    const newAppointment = await appointment.create({
-      doctor: doctorDetails._id,
-      patient: patientDetails._id,
-      date: date,
-      status: "pending",
-      duration: 30,
+    // Verify the token and extract doctorId
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
+      if (err) {
+        throw new Error("Invalid or expired token");
+      }
+      doctorId = decodedToken.name;
     });
 
+    // Extract other necessary data from the request body
+    const { patientName, patientId, date } = req.body;
+
+    // Check if the date is in the future
+    const currentDate = new Date();
+    const selectedDate = new Date(date);
+
+    if (selectedDate <= currentDate) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Appointment date must be in the future.",
+      });
+    }
+
+    // Create the follow-up appointment
+    const newAppointment = await appointment.create({
+      doctor: doctorId,
+      patient: patientId, 
+      patientName: patientName,
+      date: selectedDate,
+      status: "scheduled", // Initial status for the appointment
+      // Other appointment details as needed
+    });
+
+    // Update doctor's availableTimeSlots - Removing the scheduled slot
+    const updatedDoctor = await doctorModel.findByIdAndUpdate(
+      doctorId,
+      {
+        $pull: { availableTimeSlots: selectedDate },
+      },
+      { new: true }
+    );
+
+    // Sending success response with appointment details and updated doctor info
     res.status(201).json({
       status: "success",
       data: {
         appointment: newAppointment,
+        updatedDoctor,
       },
     });
   } catch (err) {
     res.status(400).json({
       status: "fail",
-      message: "Invalid data sent",
+      message: err.message || "Invalid data sent or internal server error.",
     });
   }
 };
+
+
 
 module.exports = {
   addDoctor,
@@ -677,5 +681,5 @@ module.exports = {
   getTimeSlots,
   addTimeSlots,
   uploadPatientHealthRec,
-  followupAppointment,
+  scheduleFollowUpAppointment,
 };
