@@ -478,7 +478,7 @@ const searchBySpecDate = async (req, res) => {
       if (doctor.length > 0) {
         for (var d of doctor) {
           var details = await viewDoctorDetails(d, id);
-          console.log(details);
+          //console.log(details);
           doctors.push(details);
         }
         res.status(200).send(doctors);
@@ -524,7 +524,7 @@ const searchBySpecDate = async (req, res) => {
         }
       }
       console.log(`else if date`);
-      console.log(doctors);
+      //console.log(doctors);
     }
     console.log(`finished else if date`);
 
@@ -578,7 +578,7 @@ const viewDocInfo = async (req, res) => {
         speciality: info.speciality,
         price: price,
       };
-      console.log(docInfo);
+      //console.log(docInfo);
       res.status(200).send(docInfo);
     })
     .catch((err) => {
@@ -722,7 +722,7 @@ const filterprescriptionsbydatestatusdoctor = async (req, res) => {
 const getPatients = async (req, res) => {
   //retrieve all patients from the database
   const patients = await patientModel.find({});
-  console.log(patients);
+  //console.log(patients);
   res.status(200).send(patients);
 };
 
@@ -847,6 +847,7 @@ const BookAnAppointment = async (req, res) => {
   var name = req.body.name;
   const doctorid = req.body.doctorid;
   const appointmentid = req.body.appointmentid;
+  const amount =req.body.amount;
 
 
   try {
@@ -874,7 +875,7 @@ const BookAnAppointment = async (req, res) => {
     const [endHour, endMinute] = endTime.split(":").map(Number);
 
     const duration = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
-    if(name='') name=patient.name;
+    if(name=='') name=patient.name;
     const newAppointment = new appointmentModel({
       patient: id,
       patientName: name, // Replace with the actual patient name
@@ -892,17 +893,19 @@ const BookAnAppointment = async (req, res) => {
         console.log(result);
       }});
       
-    doctorModel.updateOne(
-      { _id: doctorid },
-      { $pull: { availableTimeSlots: { _id: appointmentid } } },
-      (err, result) => {
-        if (err) {
-          console.error(err);
-        } else {
-          console.log(result);
+      doctorModel.updateOne(
+        { _id: doctorid },
+        { $pull: { availableTimeSlots: { _id: appointmentid } },
+          $set: { amountInWallet: amount }
+        },
+        (err, result) => {
+          if (err) {
+            console.error(err);
+          } else {
+            console.log(result);
+          }
         }
-      });
-    
+      );    
 
     res.status(200).send("Appointment was booked successfully");
   } catch (error) {

@@ -11,7 +11,22 @@ function BookAnAppointment() {
     doctorid:"",
     appointmentid:"",
     amount:0,
-    disc:0
+  };
+  const intialItems={
+    lineItems:[
+      {
+        quantity:1,
+        price_data:{
+          currency:"egp",
+          product_data:{
+            name:""
+          },
+          unit_amount:0
+        },
+      }
+    ],
+    success_url:"",
+    cancel_url:"",
   };
   const [results, setResults] = useState([]);
   const [members, setMembers] = useState([]);
@@ -20,6 +35,8 @@ function BookAnAppointment() {
   const [appointments, setAppointments] = useState([]);
   const [appointmentBanner, setAppointmentBanner] = useState(false);
   const [doctorHasAppointments, setDoctorHasAppointments] = useState(false);
+  const [cBody,setCBody]=useState(intialItems);
+
 
   useEffect(() => {
     retrieveMembers();
@@ -49,14 +66,15 @@ function BookAnAppointment() {
         console.log(e);
       });
   };
-  const handleBookAppointment = async (doctorId) => {
+  const handleBookAppointment = async (doctorId, amnt) => {
     try {
       setAppointmentBanner(true);
       setBody((prevBody)=>{
         const updatedBody = {
           ...prevBody,
           doctorid:doctorId,
-        };
+          amount:amnt
+          };
         return updatedBody;
       })
       const response = await patientService.AvailableAppointments(doctorId);
@@ -95,13 +113,11 @@ function BookAnAppointment() {
   };
   const handleMemberSelection = (selectedMemberId, selectedMemberName) => {
     // Check if the selected member has a package attribute
-    const selectedMember = members.find((member) => member.id === selectedMemberId);
-    const hasPackage = selectedMember && selectedMember.package;
   
     // Conditionally set the id and name in the body
     setBody((prevBody) => ({
       ...prevBody,
-      id: hasPackage ? selectedMemberId : '',
+      id: selectedMemberId ,
       name: selectedMemberName ,
     }));
     console.log(body);
@@ -110,7 +126,7 @@ function BookAnAppointment() {
     e.preventDefault();
     console.log(body)
       try {
-        const response = await patientService.withdrawFromWallet(body.amount);
+        const response = await patientService.withdrawFromWallet(body);
         if(response.data.localeCompare("Amount deducted successfully")==0){
           patientService.BookAnAppointment(body).then((response1) => {
             alert(response1.data+"\n Amount deducted successfully");
@@ -126,6 +142,58 @@ function BookAnAppointment() {
       } catch (e) {
         console.log(e);
       }
+  };
+  async function payWithCredit(e){
+    e.preventDefault();
+    setCBody(async(prevCBody)=>{
+      const updatedCBody = {
+        lineItems: [
+          {
+            price_data: {
+              currency: "egp",
+              product_data: {
+                name: "Appointment",
+              },
+              unit_amount: ((body.amount).toFixed(0)*100),
+            },
+            quantity: 1,
+          },
+        ],
+        success_url: "http://localhost:3000/patient",
+        cancel_url: "http://localhost:3000/patient",
+      };
+      console.log(updatedCBody);
+        try{
+          const response = await fetch("http://localhost:8000/patient/createSession", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedCBody),
+          });
+      
+          if (!response.ok) {
+            const errorResponse = await response.json();
+            console.error(errorResponse); // Log the error details
+            return;
+          }
+      
+          const jsonResponse = await response.json();
+          const { url } = jsonResponse;
+          window.location = url;
+          patientService.BookAnAppointment(body).then((response1) => {
+            alert(response1.data+"\n Amount deducted successfully");
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+
+       }
+        catch (e) {
+        console.log(e);
+        }
+      return updatedCBody;
+    })
   }
   return (
     <div className="App">
@@ -174,7 +242,7 @@ function BookAnAppointment() {
                     className="btn btn-primary"
                     onClick={() => {
                       console.log('Clicked Doctor ID:', result.id);
-                      handleBookAppointment(result.id);
+                      handleBookAppointment(result.id, result.price);
                     }}
                   >
                     Book This Doctor
@@ -246,17 +314,38 @@ function BookAnAppointment() {
         <div className="member-banner">
             <div>
           {members.map((member) => (
-            <label key={member.id} style={{ display: "block" }}>
-              <input type="radio" value={member.name}onChange={() => handleMemberSelection(member.name,member.id)} /> {member.name}
-              <input type="radio" 
-              onChange={() => handleMemberSelection('','')} /> {"Myself"}
-
+            <div key={member.id}>
+            <label style={{ display: "block" }}>
+              <input
+                type="radio"
+                id={`member_${member.id}`}
+                name="memberSelection"
+                value={member.name}
+                onChange={() =>
+                  member.package
+                    ? handleMemberSelection(member._id, member.name)
+                    : handleMemberSelection("", member.name)
+                }
+              />{" "}
+              {member.name}
             </label>
+          </div>
           ))}
+          <div key="myself">
+  <label style={{ display: "block" }}>
+    <input
+      type="radio"
+      id="myself"
+      name="memberSelection"
+      onChange={() => handleMemberSelection("", "")}
+    />{" "}
+    Myself
+  </label>
+</div>
           </div>
           <div className="payment-buttons">
             <button className="btn btn-primary"onClick={subscribe} >Pay Using Wallet</button>
-            <button className="btn btn-primary">Pay Using Credit Card</button>
+            <button className="btn btn-primary" onClick={payWithCredit}>Pay Using Credit Card</button>
           </div>
         </div>
       )}
