@@ -41,10 +41,8 @@ const listUsers = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const userName = req.params.username;
-    const deletedUser = await userModel.findOneAndDelete({
-      username: userName,
-    });
+    const id = req.params.id;
+    const deletedUser = await userModel.findByIdAndDelete(id);
 
     if (!deletedUser) {
       return res

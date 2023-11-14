@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import patientService from '../../services/patientService';
 
 function UploadMedicalHistory() {
   const [username, setUsername] = useState('');
@@ -48,12 +49,14 @@ function UploadMedicalHistory() {
         formData.append('medicalHistory', files[i]);
       }
       try {
-        await axios.post('http://localhost:8000/patient/uploadMedicalHistory', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        alert('Medical history uploaded successfully');
+        // await axios.post('http://localhost:8000/patient/uploadMedicalHistory', formData, {
+        //   headers: {
+        //     'Content-Type': 'multipart/form-data',
+        //   },
+        // });
+        patientService.uploadMedicalHistory(formData)
+        .then((result) => {alert('Medical history uploaded successfully')})
+        ;
       } catch (error) {
         alert('Error uploading medical history');
       }

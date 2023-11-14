@@ -258,7 +258,21 @@ const viewFamilyMembers = async (req, res) => {
 
 //working fine testing fine
 const viewDoctors = async (req, res) => {
-  var patient = req.query.patient; //username
+  //var patient = req.query.patient; //username
+
+  const token = req.cookies.jwt;
+  var id = '' //patient id
+  jwt.verify(token, "supersecret", (err, decodedToken) => {
+    if (err) {
+      console.log('You are not logged in.');
+      // res send status 401 you are not logged in
+      res.status(401).json({ message: "You are not logged in." });
+      // res.redirect('/login');
+    } else {
+      id = decodedToken.name;
+      console.log('got the id')
+    }
+  });
 
   doctorModel
     .find({})
@@ -274,7 +288,7 @@ const viewDoctors = async (req, res) => {
           var price;
           try {
             console.log(`doctor is ${doctor}`);
-            price = await doctorPrice(patient, doctor.username);
+            price = await doctorPrice(id, doctor.username);
             console.log(`returned price from function is ${price}`);
             docPrice.push(price);
           } catch (err) {
@@ -291,67 +305,6 @@ const viewDoctors = async (req, res) => {
           };
           docInfo.push(info);
         }
-        //var discount = 0
-
-        // patientModel.findOne({username : patient})
-        //     .exec()
-        //     .then((patientResult) => {
-        //         console.log(`patient is ${patientResult}`)
-        //         if(patientResult.package !== 'none'){
-        //             console.log('has package')
-        //             packageModel.findOne({type: patientResult.package})
-        //                 .exec()
-        //                 .then((packageResult) => {
-        //                     console.log(`package is ${packageResult}`)
-        //                     discount = packageResult.sessionDiscount
-
-        //                     console.log(`doctor is ${docArr} and discount is ${discount} and hourly rate is ${docResult.hourlyRate}`)
-        //                     const docPrices = []
-        //                     docResult.forEach((result) => docPrices.push((result.hourlyRate * 1.1) * (1 - discount)))
-        //                     const docInfo = []
-        //                     for(let i = 0; i < docArr.length; i++){
-        //                         let info = {
-        //                             name: docArr[i].name,
-        //                             speciality: docArr[i].speciality,
-        //                             price: docPrices[i]
-        //                         }
-        //                         docInfo.push(info)
-        //                     }
-        //                     res.status(200).send(docInfo)
-        //                 })
-        //                 .catch((err) => {console.error(err)})
-        //         }
-        //         else{
-        //             const docPrices = []
-        //             docResult.forEach((result) => docPrices.push(result.hourlyRate * 1.1))
-        //             const docInfo = []
-        //             for(let i = 0; i < docArr.length; i++){
-        //                 let info = {
-        //                     name: docArr[i].name,
-        //                     speciality: docArr[i].speciality,
-        //                     price: docPrices[i]
-        //                 }
-        //                 docInfo.push(info)
-        //             }
-        //             res.status(200).send(docInfo)
-        //         }
-
-        //     })
-        //     .catch((err) => {console.error(err)})
-
-        // var docInfo = {
-        //     name: docResult.name,
-        //     speciality: docResult.speciality,
-        //     price : docPrice
-        // }
-        //res.status(200).send(docInfo)
-        // userModel.findById(docResult.user)
-        //     .exec()
-        //     .then((docUserResult) => {
-        //         console.log(`user is ${docUserResult}`)
-
-        //     })
-        //     .catch((err) => {console.error(err)})
         res.status(200).send(docInfo);
       }
     })
@@ -361,13 +314,13 @@ const viewDoctors = async (req, res) => {
 };
 
 //working fine
-async function doctorPrice(patientUsername, doctorUsername) {
+async function doctorPrice(patientID, doctorUsername) {
   let sessionPrice;
   const doctor = await doctorModel.findOne({ username: doctorUsername });
   console.log(`doctor in function is ${doctor}`);
   sessionPrice = doctor.hourlyRate * 1.1;
-  console.log(`patient username in function ${patientUsername}`);
-  const patient = await patientModel.findOne({ username: patientUsername });
+  console.log(`patient ID in function ${patientID}`);
+  const patient = await patientModel.findById(patientID);
   console.log(`patient in function is ${patient}`);
   if (patient.package !== "none") {
     const package = await packageModel.findOne({ type: patient.package });
@@ -419,13 +372,13 @@ async function doctorPrice(patientUsername, doctorUsername) {
 //         .catch((err) => {console.error(err)})
 // }
 
-async function viewDoctorDetails(doctor, patientUsername) {
+async function viewDoctorDetails(doctor, patientID) {
   //const patient = patientModel.findOneAndDelete({username: patientUsername})
   var details = {
     id: doctor._id.valueOf(),
     name: doctor.name,
     speciality: doctor.speciality,
-    price: await doctorPrice(patientUsername, doctor.username),
+    price: await doctorPrice(patientID, doctor.username),
   };
   console.log(`details ${details}`);
   return details;
@@ -435,7 +388,22 @@ async function viewDoctorDetails(doctor, patientUsername) {
 const searchByNameSpec = async (req, res) => {
   const name = req.query.name;
   const spec = req.query.speciality;
-  const patientUsername = "farouhaTe3bet";
+
+  const token = req.cookies.jwt;
+  var id = ''
+  jwt.verify(token, "supersecret", (err, decodedToken) => {
+    if (err) {
+      console.log('You are not logged in.');
+      // res send status 401 you are not logged in
+      res.status(401).json({ message: "You are not logged in." });
+      // res.redirect('/login');
+    } else {
+      id = decodedToken.name;
+      console.log('got the id')
+    }
+  });
+
+  //const patientUsername = "farouhaTe3bet";
   console.log(`name ${name} spec ${spec}`);
   var search = {};
   if (name) {
@@ -454,7 +422,7 @@ const searchByNameSpec = async (req, res) => {
     } else {
       const info = [];
       for (var doc of doctor) {
-        info.push(await viewDoctorDetails(doc, patientUsername));
+        info.push(await viewDoctorDetails(doc, id));
       }
       console.log(`all info ${info}`);
       res.status(200).send(info);
@@ -474,8 +442,23 @@ const getAllSpecialities = async (req, res) => {
 
 const searchBySpecDate = async (req, res) => {
   const { date, speciality } = req.query;
+
+  const token = req.cookies.jwt;
+  var id = ''
+  jwt.verify(token, "supersecret", (err, decodedToken) => {
+    if (err) {
+      console.log('You are not logged in.');
+      // res send status 401 you are not logged in
+      res.status(401).json({ message: "You are not logged in." });
+      // res.redirect('/login');
+    } else {
+      id = decodedToken.name;
+      console.log('got the id')
+    }
+  });
+
   //const patientID = req.params.id
-  console.log(speciality);
+  console.log(`spec: ${speciality}`);
   if (date) {
     var date2 = new Date(date);
     date2.setHours(date2.getHours() + 2);
@@ -494,7 +477,7 @@ const searchBySpecDate = async (req, res) => {
       var doctor = await doctorModel.find({ speciality: speciality });
       if (doctor.length > 0) {
         for (var d of doctor) {
-          var details = await viewDoctorDetails(d, "farouhaTe3bet");
+          var details = await viewDoctorDetails(d, id);
           console.log(details);
           doctors.push(details);
         }
@@ -566,12 +549,27 @@ const searchBySpecDate = async (req, res) => {
 //working fine testing fine
 const viewDocInfo = async (req, res) => {
   const doctorID = req.params.id; //need to work on this
-  const patient = "farouhaTe3bet";
+  //const patient = "farouhaTe3bet"; //username need to change to id
+
+  const token = req.cookies.jwt;
+  var id = ''
+  jwt.verify(token, "supersecret", (err, decodedToken) => {
+    if (err) {
+      console.log('You are not logged in.');
+      // res send status 401 you are not logged in
+      res.status(401).json({ message: "You are not logged in." });
+      // res.redirect('/login');
+    } else {
+      id = decodedToken.name;
+      console.log('got the id')
+    }
+  });
+
   doctorModel
     .findById(doctorID)
     .exec()
     .then(async (info) => {
-      var price = await doctorPrice(patient, info.username);
+      var price = await doctorPrice(id, info.username);
 
       var docInfo = {
         name: info.name,
@@ -588,27 +586,54 @@ const viewDocInfo = async (req, res) => {
     });
 };
 
-//working and testing fine
+//not working dk why
 const filterAppointmentsByDateAndStatus = async (req, res) => {
   const { date, status } = req.query;
-  const patientID = req.params.id;
+  //const patientID = req.params.id;
   let currentDate = new Date();
 
+  const token = req.cookies.jwt;
+  var id = ''
+  jwt.verify(token, "supersecret", (err, decodedToken) => {
+    if (err) {
+      console.log('You are not logged in.');
+      // res send status 401 you are not logged in
+      res.status(401).json({ message: "You are not logged in." });
+      // res.redirect('/login');
+    } else {
+      id = decodedToken.name;
+      console.log('got the id')
+    }
+  });
+
   try {
-    let filter = { patient: patientID, date: { $gte: currentDate } };
+    let filter = { patient: id, date: { $gte: currentDate } };
+    console.log(filter)
     if (date) {
       filter.date = { $gte: date };
     }
     if (status) {
       filter.status = status;
     }
+    console.log(`filter: ${filter.date} and ${filter.status}`)
+    const appointments = await appointmentModel.find(filter)
+    .populate("doctor", "name -_id -__t");
+    console.log(`appointments: ${appointments}`);
 
-    const appointments = await appointmentModel.find(filter);
-    //.populate("doctor", "name -_id -__t");
-    console.log(appointments);
+    var allApps = []
 
     if (appointments) {
-      res.status(200).send(appointments);
+      for(var app of appointments){
+        const doctor = await doctorModel.findById(app.doctor)
+        var result = {
+          name: doctor.name,
+          duration: app.duration,
+          status: app.status,
+          date: app.date
+        }
+        allApps.push(result)
+      }
+      res.status(200).send(allApps);
     } else {
       res.status(200).send("no results");
     }
@@ -620,9 +645,24 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 };
 
 const viewPrescriptions = async (req, res) => {
-  const neededPatient = req.params.id;
-  console.log(`Patient is ${neededPatient}`);
-  PrescriptionsModel.find({ patient: neededPatient })
+  //const neededPatient = req.params.id;
+
+  const token = req.cookies.jwt;
+  var id = ''
+  jwt.verify(token, "supersecret", (err, decodedToken) => {
+    if (err) {
+      console.log('You are not logged in.');
+      // res send status 401 you are not logged in
+      res.status(401).json({ message: "You are not logged in." });
+      // res.redirect('/login');
+    } else {
+      id = decodedToken.name;
+      console.log('got the id')
+    }
+  });
+
+  console.log(`Patient is ${id}`);
+  PrescriptionsModel.findById( id )
     .populate("doctor", "name -_id -__t")
     .exec()
     .then((result) => {
@@ -639,9 +679,24 @@ const viewPrescriptions = async (req, res) => {
 
 const filterprescriptionsbydatestatusdoctor = async (req, res) => {
   const { date, doctor, status } = req.query;
-  const patientid = req.params.id;
+
+  const token = req.cookies.jwt;
+  var id = ''
+  jwt.verify(token, "supersecret", (err, decodedToken) => {
+    if (err) {
+      console.log('You are not logged in.');
+      // res send status 401 you are not logged in
+      res.status(401).json({ message: "You are not logged in." });
+      // res.redirect('/login');
+    } else {
+      id = decodedToken.name;
+      console.log('got the id')
+    }
+  });
+
+  //const patientid = req.params.id;
   try {
-    let filter = { patient: patientid };
+    let filter = { patient: id };
     if (date) {
       filter.date = date;
     }
@@ -670,6 +725,7 @@ const getPatients = async (req, res) => {
   console.log(patients);
   res.status(200).send(patients);
 };
+
 
 const getAmountInWallet = async (req, res) => {
   try {
@@ -757,7 +813,7 @@ const appointmentsForDoc = async (req, res) => {
   const doctor = await doctorModel.findById(doctorID);
   const appointments = await appointmentModel.find({ doctor: doctor });
 };
-
+//farah
 const withdrawFromWallet = async (req, res) => {
   const token = req.cookies.jwt;
   var id;

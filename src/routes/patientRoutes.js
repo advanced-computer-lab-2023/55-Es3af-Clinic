@@ -19,11 +19,11 @@ patientRoutes.get('/viewDoctors',patientController.viewDoctors)
 patientRoutes.get('/getPatient', patientController.getPatient)
 patientRoutes.post('/addFamilyMember', patientController.addFamilyMember)
 patientRoutes.get('/doctorInfo/:id',patientController.viewDocInfo);
-patientRoutes.get("/viewPrescriptions/:id",patientController.viewPrescriptions)
-patientRoutes.get("/filterPrescriptions/:id", patientController.filterprescriptionsbydatestatusdoctor)
+patientRoutes.get("/viewPrescriptions",patientController.viewPrescriptions)
+//patientRoutes.get("/filterPrescriptions/:id", patientController.filterprescriptionsbydatestatusdoctor)
 patientRoutes.put('/subscribeToAHealthPackage', patientController.subscribeToAHealthPackage)
-patientRoutes.get("/filterprescriptionsbydatestatusdoctor/:id", patientController.filterprescriptionsbydatestatusdoctor)
-patientRoutes.get("/filterAppointmentsByDateAndStatus/:id", patientController.filterAppointmentsByDateAndStatus)
+patientRoutes.get("/filterprescriptionsbydatestatusdoctor", patientController.filterprescriptionsbydatestatusdoctor)
+patientRoutes.get("/filterAppointmentsByDateAndStatus", patientController.filterAppointmentsByDateAndStatus)
 //patientRoutes.get("/viewAvailableAppoinments/:id", patientController.viewAvailableAppointments);
 //patientRoutes.get('/', patientController.getAllSpecialities)
 patientRoutes.get('/viewPatientAppointments', patientController.viewPatientAppointments);
