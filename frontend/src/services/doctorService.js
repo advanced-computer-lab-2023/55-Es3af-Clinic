@@ -6,21 +6,21 @@ class DoctorService {
   }
   async updateDoctor(doctor) {
     try {
-      const token = localStorage.getItem('token');
-    const response = await http.put("/doctor/updateDoctor", doctor, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+      const token = localStorage.getItem("token");
+      const response = await http.put("/doctor/updateDoctor", doctor, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    return response.data;
-  } catch (error) {
-    throw error;
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
-  }
-  async getAmountInWallet(){
-    return http.get("/doctor/getAmountInWallet")
+  async getAmountInWallet() {
+    return http.get("/doctor/getAmountInWallet");
   }
 
   // selectPatient(doctorId, patientId) {
@@ -54,14 +54,14 @@ class DoctorService {
     );
   }
 
-  updatePassword(password){
-    console.log('put is called')
-    return http.put("/doctor/updatePassword", {password: password})
-  }
+  // updatePassword(password){
+  //   console.log('put is called')
+  //   return http.put("/doctor/updatePassword", {password: password})
+  // }
 
-  getPassword(){
-    return http.get(`/doctor/updatePassword`)
-  }
+  // getPassword(){
+  //   return http.get(`/doctor/updatePassword`)
+  // }
   async getTimeSlots() {
     try {
       const response = await http.get("/doctor/getTimeSlots");
@@ -70,12 +70,12 @@ class DoctorService {
       throw error;
     }
   }
-  
+
   async addTimeSlots(timeSlotsData) {
     try {
       const response = await http.post("/doctor/addTimeSlots", timeSlotsData, {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
       return response.data;

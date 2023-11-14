@@ -72,8 +72,11 @@ function Login(props) {
           </div>
 
           <button className="btn btn-primary" type="submit">
-            Submit
+            Log In
           </button>
+          <a href="/forgetPassword" rel="noopener noreferrer">
+            Forgot your password?
+          </a>
           <a href="/requestDoctor" rel="noopener noreferrer">
             Request as a Doctor
           </a>

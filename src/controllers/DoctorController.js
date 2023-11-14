@@ -7,7 +7,7 @@ const appointment = require("../Models/Appointments.js");
 const healthRecord = require("../Models/HealthRecord.js");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const upload = multer({ dest: "uploads/" });
 // const Patient = JSON.parse(fs.readFileSync('./data/patient.json'));
 // const Doctors = JSON.parse(fs.readFileSync('./data/doctor.json'));
@@ -20,7 +20,8 @@ const addDoctor = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-    res.send(await userModel.create({
+    res.send(
+      await userModel.create({
         username: req.body.username,
         password: hashedPassword,
         name: req.body.name,
@@ -30,9 +31,9 @@ const addDoctor = async (req, res) => {
         affiliation: req.body.affiliation,
         educationBackground: req.body.educationBackground,
         speciality: req.body.speciality,
-    }));
+      })
+    );
   } catch (e) {
-    
     res.status(400).send(e);
   }
 };
@@ -110,14 +111,13 @@ const createHealthRecords = async (req, res) => {
   }
 };
 
-
 //edit/ update my email, hourly rate or affiliation (hospital):
 const updateDoctor = async (req, res) => {
   try {
     const token = req.cookies.jwt;
     let id;
-    
-    jwt.verify(token, 'supersecret', (err, decodedToken) => {
+
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
       if (err) {
         console.log("alo");
         res.status(401).json({ message: "You are not logged in." });
@@ -157,23 +157,21 @@ const performUpdate = async (req, res, id) => {
   }
 };
 
-
 //view information and health records of patient registered with me:
 const viewHealthRecords = async (req, res) => {
   const patientId = req.query.patientId; // Patient's ID
 
   try {
     const token = req.cookies.jwt;
-      var id;
-      jwt.verify(token, 'supersecret', (err ,decodedToken) => {
-        if (err) {
-          res.status(401).json({message: "You are not logged in."})
-        }
-        else {
-          id = decodedToken.name;
-        }
-      });
-    const doctorId = id; 
+    var id;
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        id = decodedToken.name;
+      }
+    });
+    const doctorId = id;
     const doctor = await doctorModel.findById(doctorId);
     if (!doctor) {
       return res.status(404).json({
@@ -233,7 +231,7 @@ const getAllMyPatients = async (req, res) => {
     let id;
 
     try {
-      const decodedToken = await jwt.verify(token, 'supersecret');
+      const decodedToken = await jwt.verify(token, "supersecret");
       id = decodedToken.name;
     } catch (err) {
       res.status(401).json({ message: "You are not logged in." });
@@ -269,22 +267,20 @@ const getAllMyPatients = async (req, res) => {
   }
 };
 
-
 //Search for a patient by name:
 
 const searchPatientByName = async (req, res) => {
   const { name } = req.query;
   try {
     const token = req.cookies.jwt;
-      var id;
-      jwt.verify(token, 'supersecret', (err ,decodedToken) => {
-        if (err) {
-          res.status(401).json({message: "You are not logged in."})
-        }
-        else {
-          id = decodedToken.name;
-        }
-      });
+    var id;
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        id = decodedToken.name;
+      }
+    });
     const doctorId = id;
     const appointments = await appointment.find({ doctor: doctorId });
     const patientIds = appointments.map((appointment) => appointment.patient);
@@ -306,21 +302,19 @@ const searchPatientByName = async (req, res) => {
   }
 };
 
-
 //filter appointments by date/status:
 
 const filterAppointmentsByDateAndStatus = async (req, res) => {
   const { date, status } = req.query;
-  const currentDate = new Date()
+  const currentDate = new Date();
 
   try {
     const token = req.cookies.jwt;
     var id;
-    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
       if (err) {
-        res.status(401).json({message: "You are not logged in."})
-      }
-      else {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
         id = decodedToken.name;
       }
     });
@@ -337,8 +331,7 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
       filter.status = status;
     }
 
-    const appointments = await appointment
-      .find(filter)
+    const appointments = await appointment.find(filter);
     //.populate("patient", "name -_id -__t");
     res.status(200).send(appointments);
   } catch (err) {
@@ -355,11 +348,10 @@ const filterPatientsByUpcomingPendingAppointments = async (req, res) => {
   try {
     const token = req.cookies.jwt;
     var id;
-    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
       if (err) {
-        res.status(401).json({message: "You are not logged in."})
-      }
-      else {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
         id = decodedToken.name;
       }
     });
@@ -396,15 +388,14 @@ const selectPatient = async (req, res) => {
   // console.log("Patient ID:" + patientId);
   try {
     const token = req.cookies.jwt;
-      var id;
-      jwt.verify(token, 'supersecret', (err ,decodedToken) => {
-        if (err) {
-          res.status(401).json({message: "You are not logged in."})
-        }
-        else {
-          id = decodedToken.name;
-        }
-      });
+    var id;
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        id = decodedToken.name;
+      }
+    });
     const doctorId = id;
     const patient = await patientModel.findById(patientId);
 
@@ -428,54 +419,54 @@ const selectPatient = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       message: err.message,
-   });
+    });
   }
 };
 
-const getPassword = async (req, res) => {
-  try{
-    const token = req.cookies.jwt;
-    var id;
-    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
-      if (err) {
-        res.status(401).json({message: "You are not logged in."})
-      }
-      else {
-        id = decodedToken.name;
-      }
-    });
-  const userId = id;
-  var user = await doctorModel.findById(userId);
-  res.status(200).send(user.password)
-  }catch (err) {
-      res.status(400).json({
-        message:err.message,
-      });
-  }
-}
+// const getPassword = async (req, res) => {
+//   try{
+//     const token = req.cookies.jwt;
+//     var id;
+//     jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+//       if (err) {
+//         res.status(401).json({message: "You are not logged in."})
+//       }
+//       else {
+//         id = decodedToken.name;
+//       }
+//     });
+//   const userId = id;
+//   var user = await doctorModel.findById(userId);
+//   res.status(200).send(user.password)
+//   }catch (err) {
+//       res.status(400).json({
+//         message:err.message,
+//       });
+//   }
+// }
 
-const changePassword = async (req, res) => {
-  const salt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hash(req.body.password, salt);
-  var newPassword = hashedPassword;
-  
-  try {
-    const token = req.cookies.jwt;
-    var id;
-    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
-      if (err) {
-        res.status(401).json({message: "You are not logged in."})
-      }
-      else {
-        id = decodedToken.name;
-      }
-    });
-    const userID = id;
-    await doctorModel.findByIdAndUpdate(userID, { password: newPassword })
-    res.status(200).send('Password updated successfully')
-  }
-  catch (err) { console.error(err) }
-}
+// const changePassword = async (req, res) => {
+//   const salt = await bcrypt.genSalt();
+//   const hashedPassword = await bcrypt.hash(req.body.password, salt);
+//   var newPassword = hashedPassword;
+
+//   try {
+//     const token = req.cookies.jwt;
+//     var id;
+//     jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+//       if (err) {
+//         res.status(401).json({message: "You are not logged in."})
+//       }
+//       else {
+//         id = decodedToken.name;
+//       }
+//     });
+//     const userID = id;
+//     await doctorModel.findByIdAndUpdate(userID, { password: newPassword })
+//     res.status(200).send('Password updated successfully')
+//   }
+//   catch (err) { console.error(err) }
+// }
 
 const getAmountInWallet = async (req, res) => {
   try {
@@ -485,28 +476,28 @@ const getAmountInWallet = async (req, res) => {
       return res.status(401).json({ message: "You are not logged in." });
     }
 
-    const decodedToken = jwt.verify(token, 'supersecret');
+    const decodedToken = jwt.verify(token, "supersecret");
     const userId = decodedToken.name;
 
-    const doctor = await doctorModel.findById(userId );
+    const doctor = await doctorModel.findById(userId);
 
-    return res.status(200).send((doctor.amountInWallet).toString() + " EGP");
+    return res.status(200).send(doctor.amountInWallet.toString() + " EGP");
   } catch (error) {
     console.error(error);
-    return res.status(401).json({ message: "Invalid token or you are not logged in." });
+    return res
+      .status(401)
+      .json({ message: "Invalid token or you are not logged in." });
   }
 };
-
 
 const getTimeSlots = async (req, res) => {
   try {
     const token = req.cookies.jwt;
     var id;
-    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
       if (err) {
-        res.status(401).json({message: "You are not logged in."})
-      }
-      else {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
         id = decodedToken.name;
       }
     });
@@ -514,14 +505,14 @@ const getTimeSlots = async (req, res) => {
     const doctor = await doctorModel.findById(doctorId);
 
     if (!doctor) {
-      return res.status(404).json({ message: 'Doctor not found' });
+      return res.status(404).json({ message: "Doctor not found" });
     }
 
     const existingTimeSlots = doctor.availableTimeSlots || [];
     res.status(200).json(existingTimeSlots);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -529,7 +520,7 @@ const addTimeSlots = async (req, res) => {
   try {
     const token = req.cookies.jwt;
 
-    jwt.verify(token, 'supersecret', async (err, decodedToken) => {
+    jwt.verify(token, "supersecret", async (err, decodedToken) => {
       if (err) {
         res.status(401).json({ message: "You are not logged in." });
       } else {
@@ -543,32 +534,32 @@ const addTimeSlots = async (req, res) => {
             {
               $push: { availableTimeSlots: { $each: availableTimeSlots } },
             },
-            { new: true } 
+            { new: true }
           );
 
           if (!updatedDoctor) {
-            return res.status(404).json({ message: 'Doctor not found' });
+            return res.status(404).json({ message: "Doctor not found" });
           }
 
           res.status(200).json({
-            status: 'success',
-            message: 'Available time slots added successfully',
+            status: "success",
+            message: "Available time slots added successfully",
           });
         } catch (error) {
-          console.error('Error adding time slots:', error.message);
-          res.status(500).json({ status: 'error', message: 'Internal server error' });
+          console.error("Error adding time slots:", error.message);
+          res
+            .status(500)
+            .json({ status: "error", message: "Internal server error" });
         }
       }
     });
   } catch (error) {
-    res.status(500).json({ status: 'error', message: 'Internal server error' });
+    res.status(500).json({ status: "error", message: "Internal server error" });
   }
 };
 
-
-
 const uploadPatientHealthRec = async (req, res) => {
-  upload.array('medicalHistory', 5)(req, res, function (err) {
+  upload.array("medicalHistory", 5)(req, res, function (err) {
     if (err instanceof multer.MulterError) {
       return res.status(500).json(err);
     } else if (err) {
@@ -576,7 +567,7 @@ const uploadPatientHealthRec = async (req, res) => {
     }
 
     const username = req.body.username;
-    const newMedicalHistory = req.files.map(file => {
+    const newMedicalHistory = req.files.map((file) => {
       return {
         name: file.originalname,
         data: fs.readFileSync(file.path),
@@ -584,21 +575,82 @@ const uploadPatientHealthRec = async (req, res) => {
       };
     });
 
-    patientModel.findOneAndUpdate(
-      { username: username },
-      { $push: { medicalHistory: { $each: newMedicalHistory } } },
-      { new: true }
-    )
-      .then(doc => {
-        return res.status(200).send(`Health record file uploaded for ${username}`);
+    patientModel
+      .findOneAndUpdate(
+        { username: username },
+        { $push: { medicalHistory: { $each: newMedicalHistory } } },
+        { new: true }
+      )
+      .then((doc) => {
+        return res
+          .status(200)
+          .send(`Health record file uploaded for ${username}`);
       })
-      .catch(err => {
+      .catch((err) => {
         return res.status(500).json(err);
       });
   });
 };
 
+const followupAppointment = async (req, res) => {
+  try {
+    const { doctor, patient, date, followUp } = req.body;
 
+    // Check if the appointment date is after the current date
+    const currentDate = new Date();
+    if (new Date(date) <= currentDate) {
+      return res.status(400).json({
+        status: "fail",
+        message:
+          "Invalid appointment date. Date must be after the current date.",
+      });
+    }
+
+    // Check if the doctor and patient exist
+    const doctorDetails = await doctorModel.findById(doctor);
+    const patientDetails = await patientModel.findById(patient);
+
+    if (!doctorDetails || !patientDetails) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Doctor or patient not found.",
+      });
+    }
+
+    // Check if the selected time slot is available for the doctor
+    if (!doctorDetails.availableTimeSlots.includes(date)) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Selected time slot is not available for the doctor.",
+      });
+    }
+
+    // Remove the scheduled time slot from the doctor's availableTimeSlots
+    doctorDetails.availableTimeSlots = doctorDetails.availableTimeSlots.filter(
+      (slot) => slot !== date
+    );
+
+    const newAppointment = await appointment.create({
+      doctor: doctorDetails._id,
+      patient: patientDetails._id,
+      date: date,
+      status: "pending",
+      duration: 30,
+    });
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        appointment: newAppointment,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: "Invalid data sent",
+    });
+  }
+};
 
 module.exports = {
   addDoctor,
@@ -613,10 +665,9 @@ module.exports = {
   filterAppointmentsByDateAndStatus,
   filterPatientsByUpcomingPendingAppointments,
   selectPatient,
-  changePassword,
-  getPassword,
   getAmountInWallet,
   getTimeSlots,
   addTimeSlots,
   uploadPatientHealthRec,
+  followupAppointment,
 };
