@@ -928,33 +928,43 @@ const viewMedicalHistory = async (req, res) => {
 };
 
 const removeMedicalHistory = async (req, res) => {
-try {
+  try {
     const token = req.cookies.jwt;
     var id;
-    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+    jwt.verify(token, 'supersecret', (err, decodedToken) => {
       if (err) {
-        res.status(401).json({message: "You are not logged in."})
-      }
-      else {
+        return res.status(401).json({ message: "You are not logged in.", success: false });
+      } else {
         id = decodedToken.name;
       }
     });
+
     const patient = await patientModel.findById(id);
     if (!patient) {
-      return res.status(400).json({ message: "Patient not found", success: false })
-  }
-      for (let i = 0; i < patient.HealthHistory.length; i++) {
-          if (patient.HealthHistory[i]._id == req.params.medicalHistoryId) {
-              patient.HealthHistory.splice(i, 1)
-          }
-      }
-      await patient.save();
-      return res.status(200).json({ Result: patient, message: "Delete successfully", success: true });
-  }
-  catch (error) {
-      console.error('Error getting health history', error.message);
+      return res.status(400).json({ message: "Patient not found", success: false });
+    }
+
+    const medicalHistoryIdToRemove = req.params.medicalHistoryId;
+
+    const historyIndex = patient.medicalHistory.findIndex(
+      (history) => history._id.toString() === medicalHistoryIdToRemove
+    );
+
+    if (historyIndex === -1) {
+      return res.status(404).json({ message: "Medical history not found", success: false });
+    }
+
+    patient.medicalHistory.splice(historyIndex, 1);
+
+    await patient.save();
+
+    return res.status(200).json({ message: "Medical history removed successfully", success: true });
+  } catch (error) {
+    console.error('Error removing medical history', error.message);
+    return res.status(500).json({ message: 'Internal Server Error', success: false });
   }
 };
+
 
 
 

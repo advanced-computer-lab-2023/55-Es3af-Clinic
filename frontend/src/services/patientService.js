@@ -105,6 +105,12 @@ class PatientService {
   viewPatientsAppointments() {
     return http.get("/patient/viewPatientAppointments");
   }
+  viewMedicalHistory() {
+    return http.get('/patient/viewMedicalHistory');
+  }
+  async removeMedicalHistory(medicalHistoryId) {
+    return http.delete(`/patient/removeMedicalHistory/${medicalHistoryId}`);
+  }
   
 }
 

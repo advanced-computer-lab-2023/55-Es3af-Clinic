@@ -20,6 +20,7 @@ import patientService from "../../services/patientService";
 import ViewSubscribedPackages from './viewSubscribedPackages';
 import ViewAppointments from "./viewAppointment";
 import AvailableAppointments from "./viewAvailableAppointments";
+import ViewMedicalHistory from './viewMedicalHistory';
 import Navbar from "../navbar";
 
 
@@ -42,11 +43,10 @@ function PatientPage() {
       <Route path='/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
       <Route path="/viewSubscribedPackages" element={<ViewSubscribedPackages />} />
       <Route path="/viewAppointments" element={<ViewAppointments />} />
-        <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />
-        <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
-        <Route path="/viewAvailableAppointments" element= {<AvailableAppointments />} />
-        
-
+      <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />
+      <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
+      <Route path="/viewAvailableAppointments" element= {<AvailableAppointments />} />
+      <Route path="/viewMedicalHistory" element={<ViewMedicalHistory />} /> 
     </Routes>
   );
 }
@@ -54,6 +54,18 @@ function PatientPage() {
 function PatientHome() {
   //var id = '6550f3b6d9aee1af3acedf0a'
   const [result, setResult] = useState("");
+  const [showMedicalHistory, setShowMedicalHistory] = useState(false);
+  const [medicalHistory, setMedicalHistory] = useState([]);
+  const fetchMedicalHistory = async () => {
+    try {
+      const response = await patientService.viewMedicalHistory();
+      const medicalHistoryData = response.data.result;
+      setMedicalHistory(medicalHistoryData);
+    } catch (error) {
+      console.error('Error fetching medical history:', error.message);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -62,11 +74,29 @@ function PatientHome() {
         setResult(amountInWalletResult);
       } catch (error) {
         console.error(error);
-        setResult("Error"); 
+        setResult("Error");
       }
     };
-    fetchData(); 
-  });
+    fetchData();
+  }, []);
+
+  const handleViewMedicalHistory = async () => {
+    try {
+      await fetchMedicalHistory();
+      setShowMedicalHistory(true);
+    } catch (error) {
+      console.error('Error fetching medical history:', error.message);
+    }
+  };
+
+  const handleRemoveMedicalHistory = async (medicalHistoryId) => {
+    try {
+      await patientService.removeMedicalHistory(medicalHistoryId);
+      await fetchMedicalHistory();
+    } catch (error) {
+      console.error('Error removing medical history:', error.message);
+    }
+  };
 
   return (
     <div className="App">
@@ -86,7 +116,6 @@ function PatientHome() {
           <a href = '/patient/viewAppointments' rel="noopener noreferrer">
           <button className="btn btn-primary"> View Appointments </button>
           </a>
-          
           <a href="/patient/viewPrescriptions/" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Prescriptions </button>
           </a>
@@ -108,6 +137,20 @@ function PatientHome() {
           <a href={`/patient/UploadMedicalHistory/`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Upload Medical History </button>
           </a>
+          <a href="/patient/viewMedicalHistory" rel="noopener noreferrer">
+          <button
+            className="btn btn-primary" // You can adjust this class based on your styling
+            onClick={handleViewMedicalHistory}
+          >
+            View Medical History
+          </button>
+          </a>
+          {showMedicalHistory && (
+            <ViewMedicalHistory
+              medicalHistory={medicalHistory}
+              removeMedicalHistory={handleRemoveMedicalHistory}
+            />
+          )}
           <a href={`/patient/BookAnAppointment/`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Book An Appointment </button>
           </a>
