@@ -29,6 +29,6 @@ patientRoutes.get('/viewPatientAppointments/:id', patientController.viewPatientA
 patientRoutes.post('/uploadMedicalHistory', patientController.uploadMedicalHistory);
 patientRoutes.post("/BookAnAppointment/:id", patientController.BookAnAppointment);
 patientRoutes.get('/viewSubscribedHealthPackages/:username', patientController.viewSubscribedHealthPackages);
-patientRoutes.put('/cancelHealthPackageSubscription/:id', patientController.cancelHealthPackageSubscription); 
+patientRoutes.put('/cancelHealthPackageSubscription/:id', patientController.cancelHealthPackageSubscription);
 
 module.exports = {patientRoutes}

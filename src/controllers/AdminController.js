@@ -6,6 +6,16 @@ const bcrypt = require("bcrypt");
 
 const addAdmin = async (req, res) => {
   try {
+    // const token = req.cookies.jwt;
+  //   var id;
+  //   jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+  //     if (err) {
+  //       res.status(401).json({message: "You are not logged in."})
+  //     }
+  //     else {
+  //       id = decodedToken.name;
+  //     }
+  //   });
     const { username, password } = req.body;
 
     const salt = await bcrypt.genSalt();
@@ -21,6 +31,16 @@ const addAdmin = async (req, res) => {
 
 const listUsers = async (req, res) => {
   try {
+    // const token = req.cookies.jwt;
+  //   var id;
+  //   jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+  //     if (err) {
+  //       res.status(401).json({message: "You are not logged in."})
+  //     }
+  //     else {
+  //       id = decodedToken.name;
+  //     }
+  //   });
     const users = await userModel.find().lean(); // Use lean() to get plain JavaScript objects instead of Mongoose Documents
     const cleanedUsers = users.map(user => ({
       ...user,
