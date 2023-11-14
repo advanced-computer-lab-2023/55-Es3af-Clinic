@@ -731,12 +731,63 @@ const withdrawFromWallet = async (req, res) => {
 };
 
 const BookAnAppointment = async (req, res) => {
-  const patientid = req.params.id;
+  const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+  const name = req.body.name;
+  const doctorid = req.body.doctorid;
+  const appointmentid = req.body.appointmentid;
+
 
   try {
-    const patient = await patientModel.findById(patientid);
+    const patient = await patientModel.findById(id);
+    const doctor = await doctorModel.findById(doctorid);
 
-    //await viewFamilyMembers(req, res);
+    const matchingTimeSlot = doctor.availableTimeSlots.find(slot => slot._id == appointmentid);
+    const startTime = matchingTimeSlot.startTime;
+    const endTime = matchingTimeSlot.endTime;
+
+   
+    const [startHour, startMinute] = startTime.split(":").map(Number);
+    const [endHour, endMinute] = endTime.split(":").map(Number);
+
+    const duration = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
+    
+    const newAppointment = new appointmentModel({
+      patient: id,
+      patientName: name, // Replace with the actual patient name
+      doctor: doctorid,   // Replace with the actual doctor ID
+      date: matchingTimeSlot.date, // Replace with the actual date
+      duration: duration // Replace with the actual duration
+      // Status will default to 'pending' if not provided
+    });
+    
+    // Save the appointment to the database
+    newAppointment.save((err, result) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log(result);
+      }});
+      
+    doctorModel.updateOne(
+      { _id: doctorid },
+      { $pull: { availableTimeSlots: { _id: appointmentid } } },
+      (err, result) => {
+        if (err) {
+          console.error(err);
+        } else {
+          console.log(result);
+        }
+      });
+    
 
     res.status(200).send("Appointment was booked successfully");
   } catch (error) {

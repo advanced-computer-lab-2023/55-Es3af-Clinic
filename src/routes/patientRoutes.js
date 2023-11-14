@@ -27,7 +27,7 @@ patientRoutes.get("/filterAppointmentsByDateAndStatus/:id", patientController.fi
 //patientRoutes.get('/', patientController.getAllSpecialities)
 patientRoutes.get('/viewPatientAppointments/:id', patientController.viewPatientAppointments);
 patientRoutes.post('/uploadMedicalHistory', patientController.uploadMedicalHistory);
-patientRoutes.post("/BookAnAppointment/:id", patientController.BookAnAppointment);
+patientRoutes.post("/BookAnAppointment", patientController.BookAnAppointment);
 patientRoutes.get('/viewSubscribedHealthPackages/:username', patientController.viewSubscribedHealthPackages);
 patientRoutes.put('/cancelHealthPackageSubscription/:id', patientController.cancelHealthPackageSubscription); 
 
