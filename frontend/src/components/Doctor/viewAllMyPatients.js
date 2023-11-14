@@ -26,6 +26,7 @@ const MyPatientList = (props) => {
       });
   };
 
+
   const formatDateOfBirth = (dateOfBirth) => {
     const date = new Date(dateOfBirth);
     const day = date.getDate();
@@ -33,6 +34,8 @@ const MyPatientList = (props) => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
+
+  
 
   const viewDets = (patient) => {
     const contentContainer = document.getElementById('contentContainer');
@@ -79,6 +82,62 @@ const MyPatientList = (props) => {
     `;
   };
 
+  // const scheduleFollowUpAppointment = async () => {
+  //   try {
+  //     const patientName = document.getElementById('patientName').value;
+  //     const selectedDate = document.getElementById('selectedDate').value;
+
+  
+  //     // Check if both fields are filled
+  //     if (!patientName || !selectedDate) {
+  //       alert('Please enter both the patient name and select a date.');
+  //       return;
+  //     }
+  
+  //     // Call the DoctorService function to schedule the follow-up appointment
+  //     const response = await DoctorService.scheduleFollowUpAppointment({
+  //       patientName,
+  //       date: selectedDate,
+  //       // Other necessary data can be added here if required
+  //     });
+  
+  //     // Handle the response as needed (e.g., display success message)
+  //     console.log(response); // Log the response or perform actions based on the response
+  
+  //     // Clear the input fields or perform other actions after scheduling the appointment
+  //     document.getElementById('patientName').value = '';
+  //     document.getElementById('selectedDate').value = '';
+  //   } catch (error) {
+  //     // Handle errors, e.g., display an error message
+  //     console.error('Error scheduling follow-up appointment:', error.message);
+  //     // Display an error message or perform other error handling
+  //   }
+  // };
+
+  // const nameAndDate = (patient) => {
+  //   const contentContainer = document.getElementById('contentContainer');
+  //   contentContainer.innerHTML = `
+  //     <div>
+  //       <div className="App-header">
+  //         <div className="card" style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}>
+  //           <div className="card-body">
+  //             <h3 className="card-title" style={{ color: "white" }}>Enter Patient Name:</h3>
+  //             <input type="text" id="patientName" placeholder="Patient Name" style={{ marginBottom: "10px" }}>
+              
+  //             <h3 className="card-title" style={{ color: "white" }}>Select Date:</h3>
+  //             <input type="date" id="selectedDate" style={{ marginBottom: "10px" }}>
+              
+  //             <button onClick={scheduleFollowUpAppointment} style={{ backgroundColor: "green", color: "white", padding: "8px 12px" }}>Schedule Follow-up Appointment</button>
+
+  //         </div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   `;
+  // };
+
+  
   const viewMedicalHistory = (patientId) => {
     console.log(`View Medical History for patient with ID: ${patientId}`);
   };

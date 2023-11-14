@@ -38,6 +38,8 @@ doctorRouter.route("/getAmountInWallet").get(doctorController.getAmountInWallet)
 doctorRouter.route("/getTimeSlots").get(doctorController.getTimeSlots);
 doctorRouter.route("/addTimeSlots").post(doctorController.addTimeSlots);
 doctorRouter.route("/uploadHealthRec").post(doctorController.uploadPatientHealthRec);
+doctorRouter.route("/scheduleFollowUpAppointment").post(doctorController.scheduleFollowUpAppointment);
+
 doctorRouter.route("/followupAppointment").post(doctorController.followupAppointment); 
 doctorRouter.route('/getAppointmentsWithStatusDone').get(doctorController.getAppointmentsWithStatusDone);
 doctorRouter.route('/viewMedicalHistory').get(doctorController.viewMedicalHistory);

@@ -91,6 +91,23 @@ async viewMedicalHistory() {
     throw error;
   }
 }
+
+  // async scheduleFollowUpAppointment(appointmentData) {
+  //   try {
+  //     const response = await http.post(
+  //       "/doctor/scheduleFollowUpAppointment",
+  //       appointmentData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //     return response.data;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 }
 
 export default new DoctorService();
