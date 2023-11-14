@@ -1,4 +1,6 @@
 import http from "./http-common";
+import axios from "axios";
+//import jwt from 'jsonwebtoken'
 
 class PatientService {
   search(name, spec) {
@@ -24,17 +26,17 @@ class PatientService {
   async subscribeToAHealthPackage(info) {
     return http.put("/patient/subscribeToAHealthPackage", info);
   }
-  viewDoctors(patient) {
-    return http.get("/patient/viewDoctors", { params: { patient } });
+  viewDoctors() {
+    return http.get("/patient/viewDoctors");
   }
   viewDocInfo(id) {
     return http.get(`/patient/doctorInfo/${id}`);
   }
-  viewPrescriptions(id) {
-    return http.get(`/patient/viewPrescriptions/${id}`);
+  viewPrescriptions() {
+    return http.get(`/patient/viewPrescriptions`);
   }
 
-  FilteredPrescriptionList(patientid, date, doctor, status) {
+  FilteredPrescriptionList(date, doctor, status) {
     const queryParams = {};
 
     if (date) {
@@ -48,14 +50,14 @@ class PatientService {
     }
 
     return http.get(
-      `/patient/filterprescriptionsbydatestatusdoctor/${patientid}`,
+      `/patient/filterprescriptionsbydatestatusdoctor`,
       {
         params: queryParams,
       }
     );
   }
 
-  FilteredAppointmentsList(patientid, date, status) {
+  FilteredAppointmentsList( date, status) {
     const queryParams = {};
 
     if (date) {
@@ -65,7 +67,7 @@ class PatientService {
       queryParams.status = status;
     }
 
-    return http.get(`/patient/filterAppointmentsByDateAndStatus/${patientid}`, {
+    return http.get(`/patient/filterAppointmentsByDateAndStatus`, {
       params: queryParams,
     });
   }
@@ -102,6 +104,47 @@ class PatientService {
   viewPatientsAppointments() {
     return http.get("/patient/viewPatientAppointments");
   }
+
+  // uploadMedicalHistory(formData){
+  //   console.log('service')
+
+
+
+  //   return axios.post('http://localhost:8000/patient/uploadMedicalHistory', formData, {
+  //     headers: {
+  //       'Content-Type': 'multipart/form-data',
+  //       'Authorization': `Bearer ${authToken}`
+  //     },
+  //   })
+    //http.put('/patient/uploadMedicalHistory', formData)
+  //}
+
+        //   await axios.put('http://localhost:8000/patient/uploadMedicalHistory', formData, {
+        //   headers: {
+        //     'Content-Type': 'multipart/form-data',
+        //   },
+        // });
+
+
+    uploadMedicalHistory = (formData) => {
+      console.log(document.cookie)
+      return axios.post('http://localhost:8000/patient/uploadMedicalHistory', formData
+      //{
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data',
+      //     'Authorization': `Bearer ${authToken}`, // Include the token in the Authorization header
+      //   },
+      // }
+      )
+      .then((response) => {
+        // Handle successful response
+        return response.data;
+      })
+      .catch((error) => {
+        // Handle errors
+        throw error;
+      });
+  };
 }
 
 export default new PatientService();

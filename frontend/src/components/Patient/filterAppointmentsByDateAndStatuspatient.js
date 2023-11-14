@@ -13,9 +13,8 @@ function FilteredAppointmentsList() {
     const date = event.target.date.value
     const status = event.target.statusDD.value;
     console.log(status)
-    const patientid = "654bf53e8757fbb845d64ea1";
+    //const patientid = "654bf53e8757fbb845d64ea1";
     const response = await patientService.FilteredAppointmentsList(
-      patientid,
       date,
       status
     );
@@ -79,7 +78,7 @@ function FilteredAppointmentsList() {
               >
                 <div className="card-body">
                 <h3 className="card-title" style={{ color: "white" }}>
-                   Doctor: {result.doctor.name}
+                   Doctor: {result.name}
                 </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
                    Duration: {result.duration}

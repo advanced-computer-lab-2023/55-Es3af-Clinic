@@ -11,7 +11,7 @@ const PrescriptionList = (props) => {
     }, []);
   
     const retrieveMembers = () => {
-      PatientService.viewPrescriptions("654bed1dbe07a9603f5b4030")
+      PatientService.viewPrescriptions()
           .then((response) => {
           console.log(response.data);
           if (Array.isArray(response.data)) {

@@ -11,7 +11,7 @@ const DoctorsList = (props) => {
   }, []);
 
   const retrieveMembers = () => {
-    PatientService.viewDoctors("farouhaTe3bet")
+    PatientService.viewDoctors()
         .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data)) {
