@@ -38,7 +38,8 @@ doctorRouter.route("/getAmountInWallet").get(doctorController.getAmountInWallet)
 doctorRouter.route("/getTimeSlots").get(doctorController.getTimeSlots);
 doctorRouter.route("/addTimeSlots").post(doctorController.addTimeSlots);
 doctorRouter.route("/uploadHealthRec").post(doctorController.uploadPatientHealthRec);
-doctorRouter.post("/followupAppointment", doctorController.followupAppointment); // Updated route name
+doctorRouter.route("/scheduleFollowUpAppointment").post(doctorController.scheduleFollowUpAppointment);
+
 
 // router.route('/getDoctors').get(doctorController.getAllDoctors);
 // router.route('/getDoctor/:id').patch(doctorController.updateEmail);
