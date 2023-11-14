@@ -18,7 +18,8 @@ const { createToken } = require("../utils/auth.js");
             mobile: req.body.mobile,
             emergencyContactName: req.body.emergencyContactName,
             emergencyContactMobile: req.body.emergencyContactMobile,
-            package: req.body.package
+            package: req.body.package,
+            type: 'patient'
         });
 
         newPatient.save().catch(err => console.log(err));
