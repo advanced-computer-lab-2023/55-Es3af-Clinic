@@ -10,8 +10,11 @@ class PatientService {
   getPatient(id) {
     return http.get(`/patient/${id}`);
   }
-  async createSession(body) {
-    return http.post("/patient/createSession", body);
+  async createSession(body){
+    return http.post("/patient/createSession", body)
+  }
+  AvailableAppointments(id) {
+    return http.get(`patient/viewAvailableAppointments/${id}`);
   }
 
   //de btshtaghal b ID 3ady bas ana mesameyah username
@@ -102,6 +105,7 @@ class PatientService {
   viewPatientsAppointments() {
     return http.get("/patient/viewPatientAppointments");
   }
+  
 }
 
 export default new PatientService();

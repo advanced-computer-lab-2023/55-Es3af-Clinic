@@ -1,20 +1,48 @@
 import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import patientService from "../../services/patientService";
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+
 
 function BookAnAppointment() {
 
   const [results, setResults] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
-  
+  const navigate = useNavigate();
+
+  // const handleBookAppointment = async (doctorId) => {
+  //   try {
+  //     await patientService.AvailableAppointments(doctorId);
+  //     console.log("Booking successful");
+  //   } catch (error) {
+  //     console.error("Error booking appointment:", error);
+  //     // Handle the error as needed
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   let timeout;
+  //   if (searchPerformed) {
+  //     timeout = setTimeout(() => {
+  //       console.log("Navigating...");
+  //       navigate('/patient/viewAvailableAppointments');
+  //     }, 10000); // 10000 milliseconds = 10 seconds
+  //   }
+
+  //   return () => {
+  //     clearTimeout(timeout);
+  //   };
+  // }, [searchPerformed, navigate]);
+
+
     const search = async (event) => {
       event.preventDefault();
   
       const date = event.target.date.value;
       const speciality = event.target.speciality.value;
+      
   
       const response = await patientService.FilterDoctors(date, speciality);
       // Do something with the response if needed
@@ -23,6 +51,8 @@ function BookAnAppointment() {
       setResults(response.data);
       console.log(response)
       setSearchPerformed(true);
+
+      
     };
   
     return (
@@ -40,7 +70,7 @@ function BookAnAppointment() {
                 placeholder="enter speciality" />
                 <label htmlFor="InputUsername">Choose by date</label>
                 <input
-                  type="datetime"
+                  type="date"
                   className="form-control"
                   id="date"
                   name="date"
@@ -72,8 +102,13 @@ function BookAnAppointment() {
                       Speciality: {result.speciality}
                       </h3>
                       
-                  <button className = "btn btn-primary"
-                                    >Book This Doctor</button>
+                      <a
+                    href={`/patient/viewAvailableAppointments/${result.id}`}
+                    className="btn btn-primary"
+                    
+                  >
+                    Book This Doctor
+                  </a>
                       </div>
                   </div>
                 );
