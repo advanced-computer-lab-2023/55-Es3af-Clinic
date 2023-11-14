@@ -24,6 +24,14 @@ function FilterDoctors() {
     setResults(response.data);
     console.log(response)
     setSearchPerformed(true);
+
+    const formatDateOfBirth = (dateOfBirth) => {
+      const date = new Date(dateOfBirth);
+      const day = date.getDate();
+      const month = date.getMonth() + 1; // Month is zero-indexed
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
   };
 
   return (
@@ -40,7 +48,7 @@ function FilterDoctors() {
             placeholder="enter speciality" />
 
             <input
-              type="datetime"
+              type="date"
               className="form-control"
               id="date"
               name="date"

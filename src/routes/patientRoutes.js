@@ -3,7 +3,7 @@ const patientController = require('../controllers/PatientController')
 
 
 const patientRoutes = new Router();
-patientRoutes.get('/viewAvailableAppoinments', patientController.viewAvailableAppointments);
+patientRoutes.get('/viewAvailableAppointments/:id', patientController.viewAvailableAppointments);
 
 patientRoutes.get('/getAmountInWallet', patientController.getAmountInWallet)
 patientRoutes.post("/createSession",patientController.checkoutSession)

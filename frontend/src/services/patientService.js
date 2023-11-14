@@ -13,6 +13,9 @@ class PatientService {
   async createSession(body){
     return http.post("/patient/createSession", body)
   }
+  AvailableAppointments(id) {
+    return http.get(`patient/viewAvailableAppointments/${id}`);
+  }
 
   //de btshtaghal b ID 3ady bas ana mesameyah username
   async getAmountInWallet(){
@@ -96,9 +99,9 @@ class PatientService {
   getPassword(id){
     return http.get(`/patient/${id}/updatePassword`)
   }
-  BookAnAppointment(id){
+  BookAnAppointment(body){
 
-    return http.post(`/patient/BookAnAppointment/${id}`)
+    return http.post("/patient/BookAnAppointment",body)
   }
   viewSubscribedHealthPackages(id) {
     return http.get(`/patient/viewSubscribedHealthPackages/${id}`);
@@ -106,6 +109,7 @@ class PatientService {
   viewPatientsAppointments(id) {
     return http.get(`/patient/viewPatientAppointments/${id}`);
   }
+  
 }
 
 export default new PatientService();

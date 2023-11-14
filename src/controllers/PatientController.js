@@ -1010,11 +1010,11 @@ const cancelHealthPackageSubscription = async (req, res) => {
   }
 };
 const viewAvailableAppointments = async (req, res) => {
-  const doctorId  = req.body.id;
-  console.log(doctorId);
+  const id  = req.params.id;
+  console.log(id);
   try {
     // Get the doctor's information, including available time slots
-    const doctor = await doctorModel.findById(doctorId);
+    const doctor = await doctorModel.findById(id);
 
     if (!doctor) {
       return res.status(404).json({ error: 'Doctor not found' });
