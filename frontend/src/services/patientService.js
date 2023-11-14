@@ -103,6 +103,11 @@ class PatientService {
   viewSubscribedHealthPackages(id) {
     return http.get(`/patient/viewSubscribedHealthPackages/${id}`);
   }
+
+  // cancelPackageSubscirption(id) {
+  //   return http.put(`/patient/viewSubscribedHealthPackages/${id}`);
+  // }
+
   viewPatientsAppointments(id) {
     return http.get(`/patient/viewPatientAppointments/${id}`);
   }
