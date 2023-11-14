@@ -694,6 +694,35 @@ const subscribeToAHealthPackage = async (req, res) => {
   renewalDate.setMonth(renewalDate.getMonth() + 1);
   var response = "";
   try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const patient1=await patientModel.findById(id);
+    if(patient1){
+      if(patient1.package == packageID &&
+        patient1.packageStatus == "Subscribed With Renewal Date"){
+          response +=
+            patient1.name + " is already subscribed to this package \n";
+        }
+        else {
+          patient1.package = packageID;
+          patient1.packageRenewalDate = renewalDate;
+          patient1.packageStatus = "Subscribed With Renewal Date";
+          await patient1.save();
+          response +=
+            patient1.name + " is subscribed to package successfully \n";
+        }
+    }
+    else{
+      return res.status(404).send("Patient Not Found");
+    }
     for (const patientID of patients) {
       const patient = await patientModel.findOne({ _id: patientID });
       if (patient) {
