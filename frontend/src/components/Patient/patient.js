@@ -49,7 +49,7 @@ function PatientPage() {
 }
 
 function PatientHome() {
-  var id = '6550f3b6d9aee1af3acedf0a'
+  //var id = '6550f3b6d9aee1af3acedf0a'
   const [result, setResult] = useState("");
   useEffect(() => {
     const fetchData = async () => {
