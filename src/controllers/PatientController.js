@@ -669,9 +669,23 @@ const changePassword = async (req, res) => {
   }
 };
 const getAmountInWallet = async (req, res) => {
-  const id = req.params.id;
-  const patient = await patientModel.findById( id);
-  res.status(200).send(patient.amountInWallet.toString() + " EGP");
+  try {
+    const token = req.cookies.jwt;
+
+    if (!token) {
+      return res.status(401).json({ message: "You are not logged in." });
+    }
+
+    const decodedToken = jwt.verify(token, 'supersecret');
+    const userId = decodedToken.name;
+    const patient = await patientModel.findById( userId);
+    return  res.status(200).send(patient.amountInWallet.toString() + " EGP");
+  } catch (error) {
+    console.error(error);
+    return res.status(401).json({ message: "Invalid token or you are not logged in." });
+  }
+
+
 };
 const subscribeToAHealthPackage = async (req, res) => {
   const packageID = req.body.packageID;
@@ -896,9 +910,19 @@ const viewSubscribedHealthPackages = async (req, res) => {
 //   }
 // }
 const viewPatientAppointments = async (req, res) => {
+  // const token = req.cookies.jwt;
+  //   var id;
+  //   jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+  //     if (err) {
+  //       res.status(401).json({message: "You are not logged in."})
+  //     }
+  //     else {
+  //       id = decodedToken.name;
+  //     }
+  //   });
   const patientId = req.params.id;
-
   try {
+
       const patient = await patientModel.findById(patientId);
 
       if (!patient) {

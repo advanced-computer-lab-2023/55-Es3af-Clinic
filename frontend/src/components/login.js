@@ -24,8 +24,6 @@ function Login(props) {
 
     UserService.login(user)
       .then((response) => {
-        console.log(response.data); 
-
         
         switch (response.data.__t) {
           
@@ -75,17 +73,13 @@ function Login(props) {
 
           <button className="btn btn-primary" type="submit">
             Submit
-          </button> 
-         <a href="/forgetPassword" rel="noopener noreferrer">
-            Forgot your password?
-          </a>
+          </button>
           <a href="/requestDoctor" rel="noopener noreferrer">
-            Register as  Doctor
+            Request as a Doctor
           </a>
           <a href="/register" rel="noopener noreferrer">
             Register as Patient
           </a>
-
         </form>
       </div>
     </div>

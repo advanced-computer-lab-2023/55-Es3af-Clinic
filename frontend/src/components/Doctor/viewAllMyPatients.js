@@ -11,7 +11,7 @@ const MyPatientList = (props) => {
   }, []);
 
   const retrievePatients = () => {
-    DoctorService.getAllMyPatients("doc1")
+    DoctorService.getAllMyPatients()
       .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data.data.patients)) {

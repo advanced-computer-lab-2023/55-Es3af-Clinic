@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import doctorService from '../../services/doctorService';
 
 const AddTimeSlots = () => {
-  const doctorId = "6525afac114367999aba79df";
+  // const doctorId = "6525afac114367999aba79df";
   const [day, setDay] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
@@ -10,7 +10,7 @@ const AddTimeSlots = () => {
 
   const handleAddTimeSlot = async () => {
     try {
-      const existingTimeSlots = await doctorService.getTimeSlots(doctorId);
+      const existingTimeSlots = await doctorService.getTimeSlots();
   
       const isTimeSlotExist = existingTimeSlots.some(
         (slot) => slot.day === day && slot.startTime === startTime && slot.endTime === endTime
@@ -19,7 +19,7 @@ const AddTimeSlots = () => {
       if (isTimeSlotExist) {
         setMessage('Time slot already added');
       } else {
-        const response = await doctorService.addTimeSlots(doctorId, {
+        const response = await doctorService.addTimeSlots({
           availableTimeSlots: [{ day, startTime, endTime }],
         });
   

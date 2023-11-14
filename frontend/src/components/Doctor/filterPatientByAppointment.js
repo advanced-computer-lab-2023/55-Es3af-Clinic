@@ -11,11 +11,11 @@ function FilteredPatientsByAppointments() {
       event.preventDefault();
   
       const date = event.target.date.value;
-      const doctorId = "6525afac114367999aba79df"; // Set the doctorId
+      // const doctorId = "6525afac114367999aba79df"; // Set the doctorId
   
       // Call the filterPatient function and pass doctorId and date as parameters
       try {
-        const response = await DoctorService.filterPatient(doctorId, date);
+        const response = await DoctorService.filterPatient(date);
         setResults(response.data.data.patients);
         setSearchPerformed(true);
       } catch (error) {
