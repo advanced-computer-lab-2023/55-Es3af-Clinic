@@ -819,6 +819,80 @@ const uploadMedicalHistory = async (req, res) => {
   });
 };
 
+const viewMedicalHistory = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const patient = await patientModel.findById(id);
+    if (!patient) {
+      return res.status(400).json({ message: "Patient not found", success: false })
+  }
+    const medicalHistory = patient.medicalHistory;
+    let pdfList = [];
+    let imageList = [];
+
+    for (let history of medicalHistory) {
+      const type = history.contentType;
+      if (type === 'application/pdf') {
+        pdfList.push(history);
+      } else {
+        imageList.push(history);
+      }
+    }
+
+    let result = {
+      medicalHistoryPDF: pdfList,
+      medicalHistoryImage: imageList
+    };
+
+    return res.status(200).json({ result: result, success: true });
+  } catch (error) {
+    console.error('Error getting medical history', error.message);
+    return res.status(500).json({ message: 'Internal Server Error', success: false });
+  }
+};
+
+const removeMedicalHistory = async (req, res) => {
+try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const patient = await patientModel.findById(id);
+    if (!patient) {
+      return res.status(400).json({ message: "Patient not found", success: false })
+  }
+      for (let i = 0; i < patient.HealthHistory.length; i++) {
+          if (patient.HealthHistory[i]._id == req.params.medicalHistoryId) {
+              patient.HealthHistory.splice(i, 1)
+          }
+      }
+      await patient.save();
+      return res.status(200).json({ Result: patient, message: "Delete successfully", success: true });
+  }
+  catch (error) {
+      console.error('Error getting health history', error.message);
+  }
+};
+
+
+
+
+
 const viewSubscribedHealthPackages = async (req, res) => {
   const patientUsername = req.params.username;
 
@@ -1069,4 +1143,6 @@ module.exports = {
   viewPatientAppointments,
   cancelHealthPackageSubscription,
   viewAvailableAppointments,
+  viewMedicalHistory,
+  removeMedicalHistory,
 };
