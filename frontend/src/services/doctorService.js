@@ -83,6 +83,14 @@ class DoctorService {
       throw error;
     }
   }
+async viewMedicalHistory() {
+  try {
+    const response = await http.get('/doctor/viewMedicalHistory');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
 }
 
 export default new DoctorService();

@@ -599,6 +599,27 @@ const uploadPatientHealthRec = async (req, res) => {
       });
   });
 };
+const getAppointmentsWithStatusDone = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+
+    if (!token) {
+      return res.status(401).json({ message: "You are not logged in." });
+    }
+
+    const decodedToken = jwt.verify(token, "supersecret");
+    const doctorId = decodedToken.name;
+
+    const appointmentsWithStatusDone = await appointment
+      .find({ doctor: doctorId, status: 'done' })
+      .populate('patient', 'name'); 
+
+    return res.status(200).json({ appointments: appointmentsWithStatusDone });
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
 const followupAppointment = async (req, res) => {
   try {
@@ -659,6 +680,52 @@ const followupAppointment = async (req, res) => {
     });
   }
 };
+const viewMedicalHistory = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        id = decodedToken.name;
+      }
+    });
+    const doctorId = id;    
+    const patientsWithDoneAppointments = await appointmentModel.find({
+      doctor: doctorId,
+      status: 'done',
+    }).distinct('patient');
+
+    const medicalHistories = await patientModel.find({
+      _id: { $in: patientsWithDoneAppointments },
+    }, 'medicalHistory');
+
+    let pdfList = [];
+    let imageList = [];
+
+    medicalHistories.forEach((patient) => {
+      patient.medicalHistory.forEach((history) => {
+        const type = history.contentType;
+        if (type === 'application/pdf') {
+          pdfList.push(history);
+        } else {
+          imageList.push(history);
+        }
+      });
+    });
+
+    let result = {
+      medicalHistoryPDF: pdfList,
+      medicalHistoryImage: imageList,
+    };
+
+    return res.status(200).json({ result, success: true });
+  } catch (error) {
+    console.error('Error getting medical history', error.message);
+    return res.status(500).json({ message: 'Internal Server Error', success: false });
+  }
+};
 
 module.exports = {
   addDoctor,
@@ -678,4 +745,6 @@ module.exports = {
   addTimeSlots,
   uploadPatientHealthRec,
   followupAppointment,
+  getAppointmentsWithStatusDone,
+  viewMedicalHistory,
 };
