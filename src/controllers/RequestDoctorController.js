@@ -4,12 +4,11 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
-
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const docReq = require('../Models/RequestDoctor.js')
-
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
 const { createToken } = require("../utils/auth.js");
 
 const requestDoctor = async (req, res) => {

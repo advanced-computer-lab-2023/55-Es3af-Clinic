@@ -42,15 +42,7 @@ const getPatient = async (req, res) => {
   }
 };
 const addFamilyMemberByUsername = async (req, res) => {
-  const token = req.cookies.jwt;
-  var patientID;
-  jwt.verify(token, "supersecret", (err, decodedToken) => {
-    if (err) {
-      res.status(401).json({ message: "You are not logged in." });
-    } else {
-      patientID = decodedToken.name;
-    }
-  });
+  
   // const patient = req.params.username;
   // const patientID = await userModel.findOne({ username: patient });
 
@@ -64,6 +56,15 @@ const addFamilyMemberByUsername = async (req, res) => {
   const mobile = req.body.mobile;
   var familyMemberUserID = null;
   try {
+    const token = req.cookies.jwt;
+  var patientID;
+  jwt.verify(token, "supersecret", (err, decodedToken) => {
+    if (err) {
+      res.status(401).json({ message: "You are not logged in." });
+    } else {
+      patientID = decodedToken.name;
+    }
+  });
     if (email != "")
       familyMemberUserID = await patientModel.findOne({ email: email }).exec();
     else if (mobile != "")
@@ -73,7 +74,7 @@ const addFamilyMemberByUsername = async (req, res) => {
     if (familyMemberUserID == null || familyMemberUserID.__t != "patient") {
       res
         .status(404)
-        .send("There's no account with the corresponding username");
+        .send("There's no account with the corresponding email/phone");
       return;
     } else {
       if (
@@ -947,36 +948,42 @@ const checkoutSession = async (req, res) => {
 };
 
 const cancelHealthPackageSubscription = async (req, res) => {
-  const patientId = req.params.id;
+  const patients = req.body.patients;
+  var response = "";
 
   try {
     // Find the patient
-    const patient = await patientModel.findById(patientId);
-
-    if (!patient) {
-      return res.status(404).send("Patient not found");
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const patient1 = await patientModel.findById(id);
+    var patient;
+    if (!patient1) {
+      return res.status(404).send('Patient not found');
     }
-
+    else{
+      patient1.packageStatus = 'Canceled Until Renewal Date';
+      await patient1.save();
+      response+= patient1.name + " health package subscription canceled successfully. \n";
+    }
+    for (const patientID of patients) {
     // Cancel the patient's health package subscription
+    patient= await patientModel.findById(patientID);
     patient.packageStatus = "Canceled Until Renewal Date";
     //patient.packageRenewalDate = null;
     await patient.save();
-
-    // Find and cancel health package subscriptions for family members
-    const familyMembers = await familyMembersAcc.find({ patient: patientId });
-
-    for (const familyMember of familyMembers) {
-      const member = await userModel.findById(familyMember.Id);
-
-      if (member) {
-        member.packageStatus = "Canceled Until Renewal Date";
-        //member.packageRenewalDate = null;
-        await member.save();
-      }
+    response+= patient.name + " health package subscription canceled successfully. \n";
     }
+    res.status(200).send(response);
+    console.log(response);
 
-    res.status(200).send("Health package subscription canceled successfully.");
-    console.log("Health package subscription canceled successfully.");
   } catch (error) {
     console.error(error);
     res
