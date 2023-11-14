@@ -28,7 +28,7 @@ function UpdatePassword() {
     //console.log(parts)
     var userType = parts[3]
     console.log(userType)
-    if(userType == 'admin') userType = 'user'
+    //if(userType == 'admin') userType = 'user'
 
     const [currPassword, setCurrPassword] = useState('')
     const [password,setPassword] = useState('')

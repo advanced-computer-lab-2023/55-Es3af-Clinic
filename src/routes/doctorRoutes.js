@@ -1,6 +1,7 @@
 const fs = require("fs");
 const express = require("express");
 const doctorController = require("../controllers/DoctorController");
+const userController = require('../controllers/UserController')
 // const authMiddleware = require('../middlewares/authMiddleware');
 
 
@@ -9,9 +10,7 @@ const doctorRouter = express.Router();
 doctorRouter.use(express.json());
 
 doctorRouter.post("/addDoctor", doctorController.addDoctor);
-// doctorRouter.route("/updatePassword").put(doctorController.changePassword);
-doctorRouter.put('/updatePassword', doctorController.changePassword)
-doctorRouter.get('/updatePassword', doctorController.getPassword)
+doctorRouter.put('/updatePassword', userController.changePassword)
 doctorRouter.route("/updateDoctor").put(doctorController.updateDoctor);
 doctorRouter.route("/getPatients").get(doctorController.getAllPatients);
 doctorRouter.route("/getAllDoctors").get(doctorController.getAllDoctors);
