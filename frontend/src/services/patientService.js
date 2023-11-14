@@ -9,14 +9,11 @@ class PatientService {
       `http://localhost:8000/patient/search?name=${name}&speciality=${spec}`
     );
   }
-  getPatient(id) {
-    return http.get(`/patient/${id}`);
+  getPatient() {
+    return http.get('/patient/getPatient');
   }
   async createSession(body){
     return http.post("/patient/createSession", body)
-  }
-  AvailableAppointments(id) {
-    return http.get(`patient/viewAvailableAppointments/${id}`);
   }
   AvailableAppointments(id) {
     return http.get(`patient/viewAvailableAppointments/${id}`);
@@ -100,13 +97,14 @@ class PatientService {
     return http.get("/patient/viewSubscribedHealthPackages");
   }
 
-  // cancelPackageSubscirption(id) {
-  //   return http.put(`/patient/viewSubscribedHealthPackages/${id}`);
-  // }
+  cancelPackageSubscirption(body) {
+     return http.put(`/patient/cancelHealthPackageSubscription`,body);
+   }
 
   viewPatientsAppointments() {
     return http.get("/patient/viewPatientAppointments");
   }
+  
 }
 
 export default new PatientService();
