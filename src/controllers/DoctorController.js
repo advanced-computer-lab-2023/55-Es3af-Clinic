@@ -598,6 +598,65 @@ const uploadPatientHealthRec = async (req, res) => {
   });
 };
 
+const followupAppointment = async (req, res) => {
+  try {
+    const { doctor, patient, date, followUp } = req.body;
+
+    // Check if the appointment date is after the current date
+    const currentDate = new Date();
+    if (new Date(date) <= currentDate) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid appointment date. Date must be after the current date.",
+      });
+    }
+
+    // Check if the doctor and patient exist
+    const doctorDetails = await doctorModel.findById(doctor);
+    const patientDetails = await patientModel.findById(patient);
+
+    if (!doctorDetails || !patientDetails) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Doctor or patient not found.",
+      });
+    }
+
+    // Check if the selected time slot is available for the doctor
+    if (!doctorDetails.availableTimeSlots.includes(date)) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Selected time slot is not available for the doctor.",
+      });
+    }
+
+    // Remove the scheduled time slot from the doctor's availableTimeSlots
+    doctorDetails.availableTimeSlots = doctorDetails.availableTimeSlots.filter(
+      (slot) => slot !== date
+    );
+
+    const newAppointment = await appointment.create({
+      doctor: doctorDetails._id,
+      patient: patientDetails._id,
+      date: date,
+      status: "pending",
+      duration: 30,
+    });
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        appointment: newAppointment,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: "Invalid data sent",
+    });
+  }
+};
+
 
 
 module.exports = {
@@ -619,4 +678,5 @@ module.exports = {
   getTimeSlots,
   addTimeSlots,
   uploadPatientHealthRec,
+  followupAppointment,
 };
