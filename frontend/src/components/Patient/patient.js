@@ -19,6 +19,7 @@ import BookAnAppointment  from "./BookAnAppointment";
 import patientService from "../../services/patientService";
 import ViewSubscribedPackages from './viewSubscribedPackages';
 import ViewAppointments from "./viewAppointment";
+import AvailableAppointments from "./viewAvailableAppointments";
 import Navbar from "../navbar";
 
 
@@ -43,6 +44,8 @@ function PatientPage() {
       <Route path="/viewAppointments" element={<ViewAppointments />} />
         <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />
         <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
+        <Route path="/viewAvailableAppointments" element= {<AvailableAppointments />} />
+        
 
     </Routes>
   );
