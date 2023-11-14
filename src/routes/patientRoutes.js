@@ -33,5 +33,4 @@ patientRoutes.get('/viewSubscribedHealthPackages/:username', patientController.v
 patientRoutes.put('/cancelHealthPackageSubscription/:id', patientController.cancelHealthPackageSubscription);
 patientRoutes.get('/viewMedicalHistory', patientController.viewMedicalHistory);
 patientRoutes.delete('/removeMedicalHistory/:medicalHistoryId', patientController.removeMedicalHistory);
-
 module.exports = {patientRoutes}
