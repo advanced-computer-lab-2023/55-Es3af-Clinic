@@ -30,7 +30,7 @@ class DoctorService {
   async getAllPatients() {
     return http.get("/doctor/getPatients");
   }
-  async FilteredAppointments(doctorid, date, status) {
+  async FilteredAppointments(date, status) {
     const queryParams = {};
 
     if (date) {
@@ -40,7 +40,7 @@ class DoctorService {
       queryParams.status = status;
     }
 
-    return http.get(`/doctor/filterAppointmentsByDateAndStatus/${doctorid}`, {
+    return http.get("/doctor/filterAppointmentsByDateAndStatus", {
       params: queryParams,
     });
   }
@@ -48,32 +48,32 @@ class DoctorService {
     return http.get(`/doctor/searchPatientByName?name=${name}`);
   }
 
-  filterPatient(doctorId, inputDate) {
+  filterPatient(inputDate) {
     return http.get(
-      `/doctor/filterPatientsByUpcomingPendingAppointments?Id=${doctorId}&date=${inputDate}`
+      `/doctor/filterPatientsByUpcomingPendingAppointments?date=${inputDate}`
     );
   }
 
-  updatePassword(id, password){
+  updatePassword(password){
     console.log('put is called')
-    return http.put(`/doctor/${id}/updatePassword`, {password: password})
+    return http.put("/doctor/updatePassword", {password: password})
   }
 
-  getPassword(id){
-    return http.get(`/doctor/${id}/updatePassword`)
+  getPassword(){
+    return http.get(`/doctor/updatePassword`)
   }
-  async getTimeSlots(doctorId) {
+  async getTimeSlots() {
     try {
-      const response = await http.get(`/doctor/getTimeSlots/${doctorId}`);
+      const response = await http.get("/doctor/getTimeSlots");
       return response.data;
     } catch (error) {
       throw error;
     }
   }
   
-  async addTimeSlots(id, timeSlotsData) {
+  async addTimeSlots(timeSlotsData) {
     try {
-      const response = await http.post(`/doctor/addTimeSlots/${id}`, timeSlotsData, {
+      const response = await http.post("/doctor/addTimeSlots", timeSlotsData, {
         headers: {
           'Content-Type': 'application/json',
         },

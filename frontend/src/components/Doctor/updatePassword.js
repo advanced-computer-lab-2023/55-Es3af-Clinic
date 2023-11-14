@@ -6,10 +6,10 @@ import { useParams } from "react-router-dom";
 
 function UpdatePassword() {
     //const temp = {password: ''};
-    const { id } = useParams()
+    // const { id } = useParams()
 
     var oldPassword = ''
-    DoctorService.getPassword(id)
+    DoctorService.getPassword()
     .then((res) => {
         oldPassword = res.data
         console.log(oldPassword)
@@ -51,7 +51,7 @@ function UpdatePassword() {
     const updatePassword = () => {
         if(currPassword === '' || password === ''){
             setMessage('current password or new password are empty')
-        } else {DoctorService.updatePassword(id, password)}
+        } else {DoctorService.updatePassword(password)}
     };
 
     return (

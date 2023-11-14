@@ -300,9 +300,9 @@ const searchPatientByName = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    // res.status(400).json({
-    //   message: err.message,
-    // });
+    res.status(400).json({
+      message: err.message,
+    });
   }
 };
 
@@ -311,11 +311,21 @@ const searchPatientByName = async (req, res) => {
 
 const filterAppointmentsByDateAndStatus = async (req, res) => {
   const { date, status } = req.query;
-  const doctorid = req.params.id;
   const currentDate = new Date()
 
   try {
-    let filter = { doctor: doctorid, date: { $gte: currentDate } };
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const doctorId = id;
+    let filter = { doctor: doctorId, date: { $gte: currentDate } };
 
     // Check if date is provided
     if (date) {
@@ -340,10 +350,20 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 
 //filter patients based on upcoming appointments:
 const filterPatientsByUpcomingPendingAppointments = async (req, res) => {
-  const doctorId = req.query.Id;
   const inputDate = req.query.date;
-  console.log("doctorID " + doctorId + "    date " + inputDate);
+  // console.log("doctorID " + doctorId + "    date " + inputDate);
   try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const doctorId = id;
     const upcomingPendingAppointments = await appointment.find({
       doctor: doctorId,
       date: { $gte: new Date(inputDate) }, // Filter for future appointments
@@ -406,29 +426,55 @@ const selectPatient = async (req, res) => {
       },
     });
   } catch (err) {
-    //res.status(400).json({
-      //message: err.message,
-   // });
+    res.status(400).json({
+      message: err.message,
+   });
   }
 };
 
 const getPassword = async (req, res) => {
-  const userID = req.params.id
-  var user = await doctorModel.findById(userID);
+  try{
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+  const userId = id;
+  var user = await doctorModel.findById(userId);
   res.status(200).send(user.password)
+  }catch (err) {
+      res.status(400).json({
+        message:err.message,
+      });
+  }
 }
+
 const changePassword = async (req, res) => {
-  const userID = req.params.id
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
   var newPassword = hashedPassword;
   
   try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const userID = id;
     await doctorModel.findByIdAndUpdate(userID, { password: newPassword })
     res.status(200).send('Password updated successfully')
   }
   catch (err) { console.error(err) }
-
 }
 
 const getAmountInWallet = async (req, res) => {
@@ -454,7 +500,17 @@ const getAmountInWallet = async (req, res) => {
 
 const getTimeSlots = async (req, res) => {
   try {
-    const doctorId = req.params.id;
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const doctorId = id;
     const doctor = await doctorModel.findById(doctorId);
 
     if (!doctor) {
@@ -469,39 +525,47 @@ const getTimeSlots = async (req, res) => {
   }
 };
 
-
-
 const addTimeSlots = async (req, res) => {
   try {
     const token = req.cookies.jwt;
-    var id;
-    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+
+    jwt.verify(token, 'supersecret', async (err, decodedToken) => {
       if (err) {
-        res.status(401).json({message: "You are not logged in."})
-      }
-      else {
-        id = decodedToken.name;
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        try {
+          const doctorId = decodedToken.name;
+
+          const { availableTimeSlots } = req.body;
+
+          const updatedDoctor = await doctorModel.findByIdAndUpdate(
+            doctorId,
+            {
+              $push: { availableTimeSlots: { $each: availableTimeSlots } },
+            },
+            { new: true } 
+          );
+
+          if (!updatedDoctor) {
+            return res.status(404).json({ message: 'Doctor not found' });
+          }
+
+          res.status(200).json({
+            status: 'success',
+            message: 'Available time slots added successfully',
+          });
+        } catch (error) {
+          console.error('Error adding time slots:', error.message);
+          res.status(500).json({ status: 'error', message: 'Internal server error' });
+        }
       }
     });
-    // const doctorId = req.params.id;
-    const { availableTimeSlots } = req.body;
-
-    const doctor = await doctorModel.findById(id);
-
-    if (!doctor) {
-      return res.status(404).json({ message: 'Doctor not found' });
-    }
-
-    doctor.availableTimeSlots = doctor.availableTimeSlots || [];
-    doctor.availableTimeSlots.push(...availableTimeSlots);
-    await doctor.save();
-
-    res.status(200).json({ status: 'success', message: 'Available time slots added successfully' });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ status: 'error', message: 'Internal server error' });
   }
 };
+
+
 
 const uploadPatientHealthRec = async (req, res) => {
   upload.array('medicalHistory', 5)(req, res, function (err) {
