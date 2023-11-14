@@ -31,46 +31,49 @@ const MyPatientList = (props) => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
-  const viewDets =(patient) =>{
+  const viewDets = (patient) => {
     const contentContainer = document.getElementById('contentContainer');
-    contentContainer.innerHTML =`
-    <div>
-      <div className="App-header">
-        <div
-                className="card"
-                key={patient._id}
-                style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
-              >
-                <div className="card-body">
-                <h3 className="card-title" style={{ color: "white" }}>
-                    Name: ${patient.name}
-                  </h3>
-                   <h3 className="card-title" style={{ color: "white" }}>
-                    Email: ${patient.email}
-                  </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                    Date Of Birth: ${formatDateOfBirth(patient.dateOfBirth)}
-                  </h3> 
-                  <h3 className="card-title" style={{ color: "white" }}>
-                    Gender: ${patient.gender}
-                  </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                    Mobile: ${patient.mobile}
-                  </h3>
-                  ${patient.emergencyContact ? `
-                  <h3 className="card-title" style="color: white;">
+    contentContainer.innerHTML = `
+      <div>
+        <div className="App-header">
+          <div
+            className="card"
+            key=${patient._id}
+            style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
+          >
+            <div className="card-body">
+              <h3 className="card-title" style={{ color: "white" }}>
+                Name: ${patient.name}
+              </h3>
+              <h3 className="card-title" style={{ color: "white" }}>
+                Email: ${patient.email}
+              </h3>
+              <h3 className="card-title" style={{ color: "white" }}>
+                Date Of Birth: ${formatDateOfBirth(patient.dateOfBirth)}
+              </h3> 
+              <h3 className="card-title" style={{ color: "white" }}>
+                Gender: ${patient.gender}
+              </h3>
+              <h3 className="card-title" style={{ color: "white" }}>
+                Mobile: ${patient.mobile}
+              </h3>
+              ${
+                patient.emergencyContact
+                  ? `
+                    <h3 className="card-title" style={{ color: "white" }}>
                       Emergency Contact: ${patient.emergencyContactName} - ${patient.emergencyContactMobile}
-                  </h3>
-              ` : ''}
-                  <h3 className="card-title" style={{ color: "white" }}>
-                    Package: ${patient.package}
-                  </h3> 
-                </div>
-                </div>
+                    </h3>
+                  `
+                  : ''
+              }
+              <h3 className="card-title" style={{ color: "white" }}>
+                Package: ${patient.package}
+              </h3> 
+            </div>
+          </div>
+        </div>
       </div>
-    </div>`;
-
-  
+    `;
   };
 
   return (
@@ -85,11 +88,7 @@ const MyPatientList = (props) => {
                 style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
               >
                 <div className="card-body">
-                <button
-                  style={{backgroundColor:"#2a5923"}}
-                  id="updateButton"
-                  onClick={()=> viewDets(patient)}
-                  >
+                
                   <h3 className="card-title" style={{ color: "white" }}>
                     Name: {patient.name}
                   </h3>
@@ -99,6 +98,12 @@ const MyPatientList = (props) => {
                   <h3 className="card-title" style={{ color: "white" }}>
                     Mobile: {patient.mobile}
                   </h3>
+                  <button
+                  style={{width:200, height: 50, backgroundColor:"#2a5923"}}
+                  id="updateButton"
+                  onClick={()=> viewDets(patient)}
+                  >
+                    View Details
                   </button>
                 </div>
               </div>
