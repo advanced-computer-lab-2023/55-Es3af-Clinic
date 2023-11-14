@@ -78,6 +78,7 @@ const deleteUser = async (req, res) => {
 
       const token = createToken(user._id);
       const maxAge = 3 * 24 * 60 * 60;
+      
   
       res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
       
@@ -91,7 +92,52 @@ const deleteUser = async (req, res) => {
     res.clearCookie("jwt"); 
     res.status(200).json({ message: "Logged out successfully" });
   };
+  const forgetPassword = async (req, res) => {
+    const { username, email } = req.body;
+    console.log("backend etnada");
+  
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash("55Es3afACL", salt);
+    var newPassword = hashedPassword;
+  
+    //res.status(200).send('test')
+  
+    //  const transporter = nodemailer.createTransport({
+    //    service: "gmail",
+    //    auth: {
+    //      user: "55es3afclinicpharmacy@gmail.com",
+    //      pass: "55Es3afACL",
+    //    },
+    //  });
+  
+    //  const mailOptions = {
+    //    from: "55es3afclinicpharmacy@gmail.com",
+    //    to: "zeinaayman666@gmail.com",
+    //    subject: "Password restoration",
+    //    text: "Your new password is: 55Es3afACL",
+    //  };
+  
+    //  transporter.sendMail(mailOptions, (error, info) => {
+    //    if (error) {
+    //      console.error(error);
+    //    } else {
+    //      console.log("Email sent: " + info.response);
+    //      res.status.send("done");
+    //    }
+    //  });
+  
+    const user = await userModel.findOne({ username: username, email: email });
+    console.log(`username: ${username}, email: ${email}`);
+    //console.log(user)
+  
+    if (!user) res.status(200).send("username or email is wrong");
+    else {
+      await userModel.findByIdAndUpdate(user._id.valueOf(), { password: newPassword });
+      console.log("updated");
+      res.status(200).send("updated");
+    }
+  };
   
 
 
-module.exports = {createUser, getUsers, updateUser, deleteUser, login, logout};
+module.exports = {createUser, getUsers, updateUser, deleteUser, login, logout, forgetPassword};

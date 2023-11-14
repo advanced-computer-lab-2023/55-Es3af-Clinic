@@ -110,31 +110,46 @@ const createHealthRecords = async (req, res) => {
   }
 };
 
+
 //edit/ update my email, hourly rate or affiliation (hospital):
 const updateDoctor = async (req, res) => {
   try {
     const token = req.cookies.jwt;
-
-    jwt.verify(token, 'supersecret', async (err, decodedToken) => {
+    let id;
+    
+    jwt.verify(token, 'supersecret', (err, decodedToken) => {
       if (err) {
-        return res.status(401).json({ message: "You are not logged in." });
+        console.log("alo");
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        id = decodedToken.name;
+        console.log(id);
+
+        // Perform the update operation here
+        performUpdate(req, res, id);
       }
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
-      const doctorId = decodedToken.name;
-      const { email, hourlyRate, affiliation } = req.body;
+const performUpdate = async (req, res, id) => {
+  const { email, hourlyRate, affiliation } = req.body;
 
-      const updatedDoctor = await doctorModel.findByIdAndUpdate(
-        doctorId,
-        { email: email, hourlyRate: hourlyRate, affiliation: affiliation },
-        { new: true }
-      );
+  try {
+    const updatedDoctor = await doctorModel.findByIdAndUpdate(
+      id,
+      { email: email, hourlyRate: hourlyRate, affiliation: affiliation },
+      { new: true }
+    );
 
-      return res.status(200).json({
-        status: "success",
-        data: {
-          updatedDoctor,
-        },
-      });
+    return res.status(200).json({
+      status: "success",
+      data: {
+        updatedDoctor,
+      },
     });
   } catch (err) {
     console.log(err);
@@ -285,9 +300,9 @@ const searchPatientByName = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    // res.status(400).json({
-    //   message: err.message,
-    // });
+    res.status(400).json({
+      message: err.message,
+    });
   }
 };
 
@@ -296,11 +311,21 @@ const searchPatientByName = async (req, res) => {
 
 const filterAppointmentsByDateAndStatus = async (req, res) => {
   const { date, status } = req.query;
-  const doctorid = req.params.id;
   const currentDate = new Date()
 
   try {
-    let filter = { doctor: doctorid, date: { $gte: currentDate } };
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const doctorId = id;
+    let filter = { doctor: doctorId, date: { $gte: currentDate } };
 
     // Check if date is provided
     if (date) {
@@ -325,10 +350,20 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 
 //filter patients based on upcoming appointments:
 const filterPatientsByUpcomingPendingAppointments = async (req, res) => {
-  const doctorId = req.query.Id;
   const inputDate = req.query.date;
-  console.log("doctorID " + doctorId + "    date " + inputDate);
+  // console.log("doctorID " + doctorId + "    date " + inputDate);
   try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const doctorId = id;
     const upcomingPendingAppointments = await appointment.find({
       doctor: doctorId,
       date: { $gte: new Date(inputDate) }, // Filter for future appointments
@@ -391,29 +426,55 @@ const selectPatient = async (req, res) => {
       },
     });
   } catch (err) {
-    //res.status(400).json({
-      //message: err.message,
-   // });
+    res.status(400).json({
+      message: err.message,
+   });
   }
 };
 
 const getPassword = async (req, res) => {
-  const userID = req.params.id
-  var user = await doctorModel.findById(userID);
+  try{
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+  const userId = id;
+  var user = await doctorModel.findById(userId);
   res.status(200).send(user.password)
+  }catch (err) {
+      res.status(400).json({
+        message:err.message,
+      });
+  }
 }
+
 const changePassword = async (req, res) => {
-  const userID = req.params.id
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
   var newPassword = hashedPassword;
   
   try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const userID = id;
     await doctorModel.findByIdAndUpdate(userID, { password: newPassword })
     res.status(200).send('Password updated successfully')
   }
   catch (err) { console.error(err) }
-
 }
 
 const getAmountInWallet = async (req, res) => {
@@ -427,7 +488,7 @@ const getAmountInWallet = async (req, res) => {
     const decodedToken = jwt.verify(token, 'supersecret');
     const userId = decodedToken.name;
 
-    const doctor = await doctorModel.findOne({ id: userId });
+    const doctor = await doctorModel.findById(userId );
 
     return res.status(200).send((doctor.amountInWallet).toString() + " EGP");
   } catch (error) {
@@ -439,7 +500,17 @@ const getAmountInWallet = async (req, res) => {
 
 const getTimeSlots = async (req, res) => {
   try {
-    const doctorId = req.params.id;
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        id = decodedToken.name;
+      }
+    });
+    const doctorId = id;
     const doctor = await doctorModel.findById(doctorId);
 
     if (!doctor) {
@@ -454,39 +525,47 @@ const getTimeSlots = async (req, res) => {
   }
 };
 
-
-
 const addTimeSlots = async (req, res) => {
   try {
     const token = req.cookies.jwt;
-    var id;
-    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+
+    jwt.verify(token, 'supersecret', async (err, decodedToken) => {
       if (err) {
-        res.status(401).json({message: "You are not logged in."})
-      }
-      else {
-        id = decodedToken.name;
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        try {
+          const doctorId = decodedToken.name;
+
+          const { availableTimeSlots } = req.body;
+
+          const updatedDoctor = await doctorModel.findByIdAndUpdate(
+            doctorId,
+            {
+              $push: { availableTimeSlots: { $each: availableTimeSlots } },
+            },
+            { new: true } 
+          );
+
+          if (!updatedDoctor) {
+            return res.status(404).json({ message: 'Doctor not found' });
+          }
+
+          res.status(200).json({
+            status: 'success',
+            message: 'Available time slots added successfully',
+          });
+        } catch (error) {
+          console.error('Error adding time slots:', error.message);
+          res.status(500).json({ status: 'error', message: 'Internal server error' });
+        }
       }
     });
-    // const doctorId = req.params.id;
-    const { availableTimeSlots } = req.body;
-
-    const doctor = await doctorModel.findById(id);
-
-    if (!doctor) {
-      return res.status(404).json({ message: 'Doctor not found' });
-    }
-
-    doctor.availableTimeSlots = doctor.availableTimeSlots || [];
-    doctor.availableTimeSlots.push(...availableTimeSlots);
-    await doctor.save();
-
-    res.status(200).json({ status: 'success', message: 'Available time slots added successfully' });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ status: 'error', message: 'Internal server error' });
   }
 };
+
+
 
 const uploadPatientHealthRec = async (req, res) => {
   upload.array('medicalHistory', 5)(req, res, function (err) {
@@ -519,6 +598,65 @@ const uploadPatientHealthRec = async (req, res) => {
   });
 };
 
+const followupAppointment = async (req, res) => {
+  try {
+    const { doctor, patient, date, followUp } = req.body;
+
+    // Check if the appointment date is after the current date
+    const currentDate = new Date();
+    if (new Date(date) <= currentDate) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid appointment date. Date must be after the current date.",
+      });
+    }
+
+    // Check if the doctor and patient exist
+    const doctorDetails = await doctorModel.findById(doctor);
+    const patientDetails = await patientModel.findById(patient);
+
+    if (!doctorDetails || !patientDetails) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Doctor or patient not found.",
+      });
+    }
+
+    // Check if the selected time slot is available for the doctor
+    if (!doctorDetails.availableTimeSlots.includes(date)) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Selected time slot is not available for the doctor.",
+      });
+    }
+
+    // Remove the scheduled time slot from the doctor's availableTimeSlots
+    doctorDetails.availableTimeSlots = doctorDetails.availableTimeSlots.filter(
+      (slot) => slot !== date
+    );
+
+    const newAppointment = await appointment.create({
+      doctor: doctorDetails._id,
+      patient: patientDetails._id,
+      date: date,
+      status: "pending",
+      duration: 30,
+    });
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        appointment: newAppointment,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: "Invalid data sent",
+    });
+  }
+};
+
 
 
 module.exports = {
@@ -540,4 +678,5 @@ module.exports = {
   getTimeSlots,
   addTimeSlots,
   uploadPatientHealthRec,
+  followupAppointment,
 };

@@ -669,9 +669,23 @@ const changePassword = async (req, res) => {
   }
 };
 const getAmountInWallet = async (req, res) => {
-  const id = req.params.id;
-  const patient = await patientModel.findById( id);
-  res.status(200).send(patient.amountInWallet.toString() + " EGP");
+  try {
+    const token = req.cookies.jwt;
+
+    if (!token) {
+      return res.status(401).json({ message: "You are not logged in." });
+    }
+
+    const decodedToken = jwt.verify(token, 'supersecret');
+    const userId = decodedToken.name;
+    const patient = await patientModel.findById( userId);
+    return  res.status(200).send(patient.amountInWallet.toString() + " EGP");
+  } catch (error) {
+    console.error(error);
+    return res.status(401).json({ message: "Invalid token or you are not logged in." });
+  }
+
+
 };
 const subscribeToAHealthPackage = async (req, res) => {
   const packageID = req.body.packageID;
@@ -845,9 +859,19 @@ const viewSubscribedHealthPackages = async (req, res) => {
 //   }
 // }
 const viewPatientAppointments = async (req, res) => {
+  // const token = req.cookies.jwt;
+  //   var id;
+  //   jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+  //     if (err) {
+  //       res.status(401).json({message: "You are not logged in."})
+  //     }
+  //     else {
+  //       id = decodedToken.name;
+  //     }
+  //   });
   const patientId = req.params.id;
-
   try {
+
       const patient = await patientModel.findById(patientId);
 
       if (!patient) {
@@ -911,8 +935,8 @@ const cancelHealthPackageSubscription = async (req, res) => {
     }
 
     // Cancel the patient's health package subscription
-    patient.packageStatus = 'Canceled';
-    patient.packageRenewalDate = null;
+    patient.packageStatus = 'Canceled Until Renewal Date';
+    //patient.packageRenewalDate = null;
     await patient.save();
 
     // Find and cancel health package subscriptions for family members
@@ -922,18 +946,23 @@ const cancelHealthPackageSubscription = async (req, res) => {
       const member = await userModel.findById(familyMember.Id);
 
       if (member) {
-        member.packageStatus = 'Canceled';
-        member.packageRenewalDate = null;
+        member.packageStatus = 'Canceled Until Renewal Date'; 
+        //member.packageRenewalDate = null;
         await member.save();
       }
     }
 
     res.status(200).send('Health package subscription canceled successfully.');
+    console.log('Health package subscription canceled successfully.');
+
   } catch (error) {
+
     console.error(error);
     res.status(500).send('An error occurred while canceling the health package subscription.');
+    console.log('An error occurred while canceling the health package subscription.');
   }
 };
+
 const viewAvailableAppointments = async (req, res) => {
   const doctorId  = req.body.id;
   console.log(doctorId);

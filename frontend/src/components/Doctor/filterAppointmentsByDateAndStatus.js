@@ -12,9 +12,8 @@ function FilteredAppointments() {
 
     const date = event.target.date.value
     const status = event.target.statusDD.value;
-    const doctorid = "6525afac114367999aba79df";
+    // const doctorid = "6525afac114367999aba79df";
     const response = await doctorService.FilteredAppointments(
-      doctorid,
       date,
       status
     );

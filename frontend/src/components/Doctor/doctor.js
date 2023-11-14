@@ -23,7 +23,7 @@ function DoctorPage() {
   return (
     <Routes>
       <Route path="/" element={<DoctorHome />} />
-      <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
+      <Route path='/updatePassword' element = {<UpdatePassword/>} />
       <Route path="/getAllMyPatients" element={< MyPatientList/>} />
       {/* <Route path="/updateDoctor" element={< UpdateDoctor/>} /> */}
       <Route path="/updateDoctor2" element={< EditDoctor/>} />
@@ -39,7 +39,7 @@ function DoctorPage() {
 }
 
 function DoctorHome() {
-  var id = '6525afac114367999aba79df'
+  // var id = '6525afac114367999aba79df'
  // var username="doc1"
   const [result, setResult] = useState("");
   useEffect(() => {
@@ -54,7 +54,7 @@ function DoctorHome() {
       }
     };
     fetchData(); 
-  });
+  }, []);
   return (
     <div className="App">
       <Navbar />
@@ -79,7 +79,7 @@ function DoctorHome() {
           <a href="/doctor/filterPatientsByUpcomingPendingAppointments" rel="noopener noreferrer">
             <button className="btn btn-primary"> Filter Patients by Upcoming Appointments </button>
           </a>
-          <a href={`/doctor/${id}/updatePassword/`} rel="noopener noreferrer">
+          <a href={"/doctor/updatePassword/"} rel="noopener noreferrer">
             <button className="btn btn-primary"> Update my Password </button>
           </a>
           <a href="/doctor/addTimeSlots" rel="noopener noreferrer">

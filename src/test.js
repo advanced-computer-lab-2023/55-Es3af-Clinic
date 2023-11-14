@@ -8,6 +8,7 @@ const patientController = require('./controllers/PatientController');
 const userController = require('./controllers/UserController');
 const {auth} = require("./utils/auth");
 
+
 //require("dotenv").config();
 //const {createUser,getUsers, updateUser, deleteUser} = require("./Routes/userController");
 const MongoURI = "mongodb+srv://55Es3af:SVH8v8XKZSxU1J6p@cluster0.zqasadb.mongodb.net/Clinic?retryWrites=true&w=majority" ;
@@ -39,6 +40,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/login"  ,userController.login);
 //app.put('/forgetPassword', userController.forgetPassword);
+//app.use(auth);
+
 
 app.use("/", router);
 

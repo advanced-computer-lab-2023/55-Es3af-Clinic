@@ -16,7 +16,7 @@ class PatientService {
 
   //de btshtaghal b ID 3ady bas ana mesameyah username
   async getAmountInWallet(){
-    return http.get(`/patient/getAmountInWallet`)
+    return http.get("/patient/getAmountInWallet")
   }
   async withdrawFromWallet(body){
     return http.put("/patient/widrawFromWallet",body)
@@ -103,6 +103,11 @@ class PatientService {
   viewSubscribedHealthPackages(id) {
     return http.get(`/patient/viewSubscribedHealthPackages/${id}`);
   }
+
+  // cancelPackageSubscirption(id) {
+  //   return http.put(`/patient/viewSubscribedHealthPackages/${id}`);
+  // }
+
   viewPatientsAppointments(id) {
     return http.get(`/patient/viewPatientAppointments/${id}`);
   }

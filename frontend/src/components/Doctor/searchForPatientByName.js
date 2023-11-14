@@ -6,7 +6,7 @@ import DoctorService from "../../services/doctorService";
 function SearchPatient() {
   const [results, setResults] = useState([]);
   const [name, setName] = useState('');
-  const doctorId = "6525afac114367999aba79df";
+  // const doctorId = "6525afac114367999aba79df";
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -15,7 +15,7 @@ function SearchPatient() {
   const search = async (event) => {
     event.preventDefault();
     try {
-      const response = await DoctorService.SearchPatientByName(name, doctorId);
+      const response = await DoctorService.SearchPatientByName(name);
       setResults(response.data.data.patients);
     } catch (error) {
       console.error("Error searching for patients:", error.message);
