@@ -25,9 +25,10 @@ const UsersList = (props) => {
       });
   };
 
-  const deleteUser = (event) => {
-    const { name } = event.target;
-    AdminService.deleteUser(name)
+  const deleteUser = (userID) => {
+    //const { name } = event.target;
+    //console.log(`name: ${event}`) 
+    AdminService.deleteUser(userID)
       .then((response) => {
         console.log(response.data);
         window.location.reload(false);
