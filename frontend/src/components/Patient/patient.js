@@ -142,7 +142,7 @@ function PatientHome() {
             className="btn btn-primary" // You can adjust this class based on your styling
             onClick={handleViewMedicalHistory}
           >
-            View Medical History
+            View/Remove Medical History
           </button>
           </a>
           {showMedicalHistory && (

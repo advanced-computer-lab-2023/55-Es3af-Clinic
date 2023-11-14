@@ -511,11 +511,11 @@ const searchBySpecDate = async (req, res) => {
         for (var doc of allDoctors) {
           var id = doc._id.valueOf();
           if (appointments.length == 0) {
-            var details = await viewDoctorDetails(doc, "farouhaTe3bet");
+            var details = await viewDoctorDetails(doc, id);
             console.log(`deen om el appointments fadya ${details}`);
             doctors.push(details);
           } else if (!appointments.includes(id)) {
-            var details = await viewDoctorDetails(doc, "farouhaTe3bet");
+            var details = await viewDoctorDetails(doc, id);
             console.log(
               `om el appointments ${appointments} wel details ${details}`
             );
@@ -531,7 +531,7 @@ const searchBySpecDate = async (req, res) => {
     if (date && speciality) {
       for (doc of doctors) {
         if (doc.speciality == speciality) {
-          var details = await viewDoctorDetails(doc, "farouhaTe3bet");
+          var details = await viewDoctorDetails(doc, id);
           console.log(details);
           result.push(details);
         }

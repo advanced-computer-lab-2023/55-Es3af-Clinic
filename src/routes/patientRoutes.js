@@ -30,7 +30,7 @@ patientRoutes.get('/viewPatientAppointments', patientController.viewPatientAppoi
 patientRoutes.post('/uploadMedicalHistory', patientController.uploadMedicalHistory);
 patientRoutes.post("/BookAnAppointment/:id", patientController.BookAnAppointment);
 patientRoutes.get('/viewSubscribedHealthPackages/:username', patientController.viewSubscribedHealthPackages);
-patientRoutes.put('/cancelHealthPackageSubscription/:id', patientController.cancelHealthPackageSubscription);
+patientRoutes.put('/cancelHealthPackageSubscription', patientController.cancelHealthPackageSubscription);
 patientRoutes.get('/viewMedicalHistory', patientController.viewMedicalHistory);
 patientRoutes.delete('/removeMedicalHistory/:medicalHistoryId', patientController.removeMedicalHistory);
 module.exports = {patientRoutes}
