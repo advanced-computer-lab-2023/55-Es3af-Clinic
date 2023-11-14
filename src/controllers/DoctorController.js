@@ -247,7 +247,7 @@ const getAllMyPatients = async (req, res) => {
       return;
     }
 
-    console.log(doctor._id);
+    //console.log(doctor._id);
 
     const appointments = await appointment.find({ doctor: doctor._id });
     const patientIds = appointments.map((appointment) => appointment.patient);
@@ -282,12 +282,20 @@ const searchPatientByName = async (req, res) => {
       }
     });
     const doctorId = id;
-    const appointments = await appointment.find({ doctor: doctorId });
+    const doctor = await doctorModel.findById(doctorId);
+    
+    if (!doctor) {
+      res.status(404).json({
+        message: "Doctor not found",
+      });
+      return;
+    }
+    const appointments = await appointment.find({ doctor: doctor._id});
     const patientIds = appointments.map((appointment) => appointment.patient);
     const patients = await patientModel.find({
-      $and: [{ _id: { $in: patientIds } }, { name: name }],
+      _id: { $in: patientIds },
+      name: { $regex: new RegExp(name, "i") },
     });
-
     res.status(200).json({
       status: "success",
       data: {
