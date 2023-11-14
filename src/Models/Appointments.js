@@ -10,6 +10,10 @@ const appointmentsSchema = new Schema({
         ref: 'patient',
         autoRemove: true,
       },
+      patientName: {
+        type: String,
+        
+      },
       doctor: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'doctor',

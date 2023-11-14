@@ -7,11 +7,14 @@ class PatientService {
       `http://localhost:8000/patient/search?name=${name}&speciality=${spec}`
     );
   }
-  getPatient(id) {
-    return http.get(`/patient/${id}`);
+  getPatient() {
+    return http.get('/patient/getPatient');
   }
-  async createSession(body) {
-    return http.post("/patient/createSession", body);
+  async createSession(body){
+    return http.post("/patient/createSession", body)
+  }
+  AvailableAppointments(id) {
+    return http.get(`patient/viewAvailableAppointments/${id}`);
   }
 
   //de btshtaghal b ID 3ady bas ana mesameyah username
@@ -19,7 +22,7 @@ class PatientService {
     return http.get("/patient/getAmountInWallet");
   }
   async withdrawFromWallet(body) {
-    return http.put("/patient/widrawFromWallet", body);
+    return http.put("/patient/withdrawFromWallet", body);
   }
   async subscribeToAHealthPackage(info) {
     return http.put("/patient/subscribeToAHealthPackage", info);
@@ -91,17 +94,18 @@ class PatientService {
   BookAnAppointment(id) {
     return http.post(`/patient/BookAnAppointment/${id}`);
   }
-  viewSubscribedHealthPackages(id) {
-    return http.get(`/patient/viewSubscribedHealthPackages/${id}`);
+  viewSubscribedHealthPackages() {
+    return http.get("/patient/viewSubscribedHealthPackages");
   }
 
-  // cancelPackageSubscirption(id) {
-  //   return http.put(`/patient/viewSubscribedHealthPackages/${id}`);
-  // }
+  cancelPackageSubscirption(body) {
+     return http.put(`/patient/cancelHealthPackageSubscription`,body);
+   }
 
   viewPatientsAppointments() {
     return http.get("/patient/viewPatientAppointments");
   }
+  
 }
 
 export default new PatientService();
