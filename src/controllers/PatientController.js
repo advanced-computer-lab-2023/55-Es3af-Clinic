@@ -317,14 +317,14 @@ const viewDoctors = async (req, res) => {
 async function doctorPrice(patientID, doctorUsername) {
   let sessionPrice;
   const doctor = await doctorModel.findOne({ username: doctorUsername });
-  console.log(`doctor in function is ${doctor}`);
+  //console.log(`doctor in function is ${doctor}`);
   sessionPrice = doctor.hourlyRate * 1.1;
-  console.log(`patient ID in function ${patientID}`);
+  //console.log(`patient ID in function ${patientID}`);
   const patient = await patientModel.findById(patientID);
-  console.log(`patient in function is ${patient}`);
+  //console.log(`patient in function is ${patient}`);
   if (patient.package !== "none") {
     const package = await packageModel.findOne({ type: patient.package });
-    console.log(`package in function is ${package}`);
+    //console.log(`package in function is ${package}`);
     sessionPrice = sessionPrice * (1 - package.sessionDiscount);
   }
   return sessionPrice;
@@ -608,7 +608,7 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
 
   try {
     let filter = { patient: id, date: { $gte: currentDate } };
-    console.log(filter)
+    //console.log(filter)
     if (date) {
       filter.date = { $gte: date };
     }
@@ -618,13 +618,14 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
     console.log(`filter: ${filter.date} and ${filter.status}`)
     const appointments = await appointmentModel.find(filter)
     .populate("doctor", "name -_id -__t");
-    console.log(`appointments: ${appointments}`);
+    //console.log(`appointments: ${appointments}`);
 
     var allApps = []
 
     if (appointments) {
       for(var app of appointments){
-        const doctor = await doctorModel.findById(app.doctor)
+        //console.log(app.doctor)
+        const doctor = await doctorModel.findOne({name: app.doctor.name})
         var result = {
           name: doctor.name,
           duration: app.duration,
