@@ -3,6 +3,7 @@ const { default: mongoose } = require("mongoose");
 const bcrypt = require("bcrypt");
 const { createToken } = require("../utils/auth.js");
 const jwt = require('jsonwebtoken')
+const nodemailer = require('nodemailer')
 
 const createUser = async (req, res) => {
   //add a new user to the database with
@@ -91,53 +92,57 @@ const logout = (req, res) => {
   res.clearCookie("jwt");
   res.status(200).json({ message: "Logged out successfully" });
 };
+
 const forgetPassword = async (req, res) => {
   const { username, email } = req.body;
-  console.log("backend etnada");
 
-  const salt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hash("55Es3afACL", salt);
-  var newPassword = hashedPassword;
+  // const salt = await bcrypt.genSalt();
+  // const hashedPassword = await bcrypt.hash("55Es3afACL", salt);
+  // var newPassword = hashedPassword;
 
-  //res.status(200).send('test')
-
-  //  const transporter = nodemailer.createTransport({
-  //    service: "gmail",
-  //    auth: {
-  //      user: "55es3afclinicpharmacy@gmail.com",
-  //      pass: "55Es3afACL",
-  //    },
-  //  });
-
-  //  const mailOptions = {
-  //    from: "55es3afclinicpharmacy@gmail.com",
-  //    to: "zeinaayman666@gmail.com",
-  //    subject: "Password restoration",
-  //    text: "Your new password is: 55Es3afACL",
-  //  };
-
-  //  transporter.sendMail(mailOptions, (error, info) => {
-  //    if (error) {
-  //      console.error(error);
-  //    } else {
-  //      console.log("Email sent: " + info.response);
-  //      res.status.send("done");
-  //    }
-  //  });
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "55es3afclinicpharmacy@gmail.com",
+      pass: "itqq jnfy kirk druf",
+    },
+  });
 
   const user = await userModel.findOne({ username: username, email: email });
-  console.log(`username: ${username}, email: ${email}`);
-  //console.log(user)
 
   if (!user) res.status(200).send("username or email is wrong");
   else {
+    // await userModel.findByIdAndUpdate(user._id.valueOf(), {
+    //   password: newPassword,
+    // });
+    const info = await transporter.sendMail({
+      from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+      to: email, // list of receivers
+      subject: "Password Reset", // Subject line
+      text: "Click on this link to reset your password", // plain text body
+      html: '<b>Click on this <a href = "http://localhost:3000/resetPassword">link</a> to reset your password</b>', // html body
+    });
+    res.status(200).send("an email has been sent");
+  }
+};
+
+const resetPassword = async(req, res) => {
+  const { username, password } = req.body;
+
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(password, salt);
+  var newPassword = hashedPassword;
+
+  const user = await userModel.findOne({ username: username });
+
+  if(!user) res.status(200).send('Username is incorrect')
+  else{
     await userModel.findByIdAndUpdate(user._id.valueOf(), {
       password: newPassword,
     });
-    console.log("updated");
-    res.status(200).send("updated");
+    res.status(200).send("Password updated successfully!");
   }
-};
+}
 
 async function getPassword(id, password){
   var user = await userModel.findById(id)
@@ -201,6 +206,8 @@ const changePassword = async (req, res) => {
   res.status(200).send(message)
 };
 
+
+
 module.exports = {
   createUser,
   getUsers,
@@ -210,4 +217,5 @@ module.exports = {
   logout,
   forgetPassword,
   changePassword,
+  resetPassword,
 };

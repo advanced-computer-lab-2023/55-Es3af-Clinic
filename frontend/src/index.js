@@ -10,6 +10,7 @@ import DoctorPage from './components/Doctor/doctor';
 import AdminPage from './components/Admin/admin';
 import Login from './components/login';
 import ForgetPassword from './components/forgetPassword'
+import ResetPassword from './components/resertPassword';
 //import page that i want to test
 
 
@@ -24,7 +25,7 @@ root.render(
     <Route path="requestDoctor/*" element={<RequestDoctor/>} />
     <Route path="/admin/*" element={<AdminPage/>} />
     <Route path="/forgetPassword" element={<ForgetPassword/>} />
-    
+    <Route path="/resetPassword" element={<ResetPassword/>} />
     <Route path="/login" element={<Login />} />
     </Routes>
   </BrowserRouter>

@@ -27,11 +27,15 @@ class UserService {
   }
 
   forgetPassword(user) {
-    return http.put("/forgetPassword", user);
+    return http.post("/forgetPassword", user);
   }
 
   updatePassword(password, type){
     return http.put(`/${type}/updatePassword`, password)
+  }
+
+  resetPassword(user){
+    return http.put('/resetPassword', user);
   }
 }
 

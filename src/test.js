@@ -46,3 +46,5 @@ app.put('/forgetPassword', userController.forgetPassword);
 app.use("/", router);
 
 app.get('/getSpec', patientController.getAllSpecialities)
+
+
