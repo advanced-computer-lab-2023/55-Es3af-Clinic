@@ -69,11 +69,13 @@ function Login(props) {
               placeholder="Password"
               onChange={handleInputChange}
             ></input>
+            <br></br>
           </div>
 
           <button className="btn btn-primary" type="submit">
             Log In
           </button>
+          <br></br>
           <a href="/forgetPassword" rel="noopener noreferrer">
             Forgot your password?
           </a>
