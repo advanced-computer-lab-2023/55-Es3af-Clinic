@@ -120,24 +120,25 @@ const forgetPassword = async (req, res) => {
       to: email, // list of receivers
       subject: "Password Reset", // Subject line
       text: "Click on this link to reset your password", // plain text body
-      html: '<b>Click on this <a href = "http://localhost:3000/resetPassword">link</a> to reset your password</b>', // html body
+      html: `<b>Click on this <a href = "http://localhost:3000/resetPassword/${user._id.valueOf()}">link</a> to reset your password</b>`, // html body
     });
     res.status(200).send("an email has been sent");
   }
 };
 
 const resetPassword = async(req, res) => {
-  const { username, password } = req.body;
+  const { password } = req.body;
+  const id = req.params.id
 
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(password, salt);
   var newPassword = hashedPassword;
 
-  const user = await userModel.findOne({ username: username });
+  const user = await userModel.findById(id);
 
   if(!user) res.status(200).send('Username is incorrect')
   else{
-    await userModel.findByIdAndUpdate(user._id.valueOf(), {
+    await userModel.findByIdAndUpdate(id, {
       password: newPassword,
     });
     res.status(200).send("Password updated successfully!");

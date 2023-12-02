@@ -23,5 +23,5 @@ router.use("/admin", adminRoutes);
 router.use("/packages", packageRoutes);
 router.get("/logout", userController.logout);
 router.post('/forgetPassword', userController.forgetPassword)
-router.put('/resetPassword', userController.resetPassword)
+router.put('/resetPassword/:id', userController.resetPassword)
 module.exports={router};
