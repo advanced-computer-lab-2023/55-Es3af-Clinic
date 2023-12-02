@@ -18,6 +18,7 @@ const stripe = require("stripe")(
 const bcrypt = require("bcrypt");
 const upload = multer({ dest: "uploads/" });
 const jwt = require("jsonwebtoken");
+const nodemailer = require('nodemailer')
 
 const test = async (req, res) => {
   const app = await appointmentModel.find({ date: req.query.date });
@@ -412,7 +413,7 @@ const searchBySpecDate = async (req, res) => {
       // res.redirect('/login');
     } else {
       id = decodedToken.name;
-      console.log(`got the id: ${id}`)
+      //console.log(`got the id: ${id}`)
     }
   });
 
@@ -812,6 +813,13 @@ const BookAnAppointment = async (req, res) => {
   const appointmentid = req.body.appointmentid;
   const amount =req.body.amount;
 
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "55es3afclinicpharmacy@gmail.com",
+      pass: "itqq jnfy kirk druf",
+    },
+  });
 
   try {
     if(id==''){
@@ -855,8 +863,7 @@ const BookAnAppointment = async (req, res) => {
     } catch (err) {
       console.error(err);
     }
-    
-      
+
     doctorModel.updateOne(
       { _id: doctorid },
       {
@@ -864,13 +871,29 @@ const BookAnAppointment = async (req, res) => {
         $set: { amountInWallet: amount }
       }
     )
-      .then(result => {
-        //console.log(result);
-      })
-      .catch(err => {
-        console.error(err);
-      });
-        
+    .then(result => {
+      //console.log(result);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+
+
+    const emailToPatient = await transporter.sendMail({
+      from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+      to: patient.email, // list of receivers
+      subject: "Booked Appointment", // Subject line
+      text: `You have booked an appointment with doctor ${doctor.name} specialized in ${doctor.speciality} at ${newAppointment.date}. The total price is ${amount}.`, // plain text body
+      html: `<b>You have booked an appointment with doctor ${doctor.name} specialized in ${doctor.speciality} at ${newAppointment.date}. The total price is ${amount}.</b>`, // html body
+    });
+
+    const emailToDoctor = await transporter.sendMail({
+      from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+      to: doctor.email, // list of receivers
+      subject: "Booked Appointment", // Subject line
+      text: `Patient ${name} has booked an appointment with you at ${newAppointment.date}. The total price is ${amount}.`, // plain text body
+      html: `<b>Patient ${name} has booked an appointment with you at ${newAppointment.date}. The total price is ${amount}.</b>`, // html body
+    });
 
     res.status(200).send("Appointment was booked successfully");
   } catch (error) {
