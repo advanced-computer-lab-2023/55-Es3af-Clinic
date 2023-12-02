@@ -6,7 +6,9 @@ import PackageService from "../../services/packageService";
 import MemberService from "../../services/familyMemberService";
 import patientService from "../../services/patientService";
 
+
 const PkgListP = (props) => {
+
   const intialBody = {
     packageID:"",
     patients:[]
@@ -190,6 +192,7 @@ const PkgListP = (props) => {
       for (let i = -1; i < body.patients.length; i++) {
         finalAmnt += money.amount * (1 - money.disc);
       }
+    else finalAmnt=money.amount  
     setCBody(async(prevCBody)=>{
       const updatedCBody = {
         lineItems: [
@@ -209,6 +212,7 @@ const PkgListP = (props) => {
       };
       console.log(updatedCBody);
         try{
+          
           const response = await fetch("http://localhost:8000/patient/createSession", {
             method: "POST",
             headers: {
@@ -216,23 +220,24 @@ const PkgListP = (props) => {
             },
             body: JSON.stringify(updatedCBody),
           });
-      
+          console.log(response);
           if (!response.ok) {
             const errorResponse = await response.json();
             console.error(errorResponse); // Log the error details
             return;
           }
-      
+
           const jsonResponse = await response.json();
           const { url } = jsonResponse;
           window.location = url;
+
           patientService.subscribeToAHealthPackage(body).then((response1) => {
             alert(response1.data+"\n Amount deducted successfully");
           })
           .catch((e) => {
             console.log(e);
           });
-
+        
        }
         catch (e) {
         console.log(e);

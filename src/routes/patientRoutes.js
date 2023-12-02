@@ -20,7 +20,6 @@ patientRoutes.get('/getPatient', patientController.getPatient)
 patientRoutes.post('/addFamilyMember', patientController.addFamilyMember)
 patientRoutes.get('/doctorInfo/:id',patientController.viewDocInfo);
 patientRoutes.get("/viewPrescriptions",patientController.viewPrescriptions)
-//patientRoutes.get("/filterPrescriptions/:id", patientController.filterprescriptionsbydatestatusdoctor)
 patientRoutes.put('/subscribeToAHealthPackage', patientController.subscribeToAHealthPackage)
 patientRoutes.get("/filterprescriptionsbydatestatusdoctor", patientController.filterprescriptionsbydatestatusdoctor)
 patientRoutes.get("/filterAppointmentsByDateAndStatus", patientController.filterAppointmentsByDateAndStatus)
