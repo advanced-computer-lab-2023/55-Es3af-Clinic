@@ -25,7 +25,7 @@ root.render(
     <Route path="requestDoctor/*" element={<RequestDoctor/>} />
     <Route path="/admin/*" element={<AdminPage/>} />
     <Route path="/forgetPassword" element={<ForgetPassword/>} />
-    <Route path="/resetPassword" element={<ResetPassword/>} />
+    <Route path="/resetPassword/:id" element={<ResetPassword/>} />
     <Route path="/login" element={<Login />} />
     </Routes>
   </BrowserRouter>
