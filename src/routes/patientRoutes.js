@@ -4,7 +4,7 @@ const userController = require('../controllers/UserController')
 
 
 const patientRoutes = new Router();
-patientRoutes.get('/viewAvailableAppointments/:id', patientController.viewAvailableAppointments);
+patientRoutes.get('/viewAvailableAppointments/', patientController.viewAvailableAppointments);
 
 patientRoutes.get('/getAmountInWallet', patientController.getAmountInWallet)
 patientRoutes.post("/createSession",patientController.checkoutSession)
@@ -29,7 +29,7 @@ patientRoutes.get("/filterAppointmentsByDateAndStatus", patientController.filter
 patientRoutes.get('/viewPatientAppointments', patientController.viewPatientAppointments);
 patientRoutes.post('/uploadMedicalHistory', patientController.uploadMedicalHistory);
 patientRoutes.post("/BookAnAppointment", patientController.BookAnAppointment);
-patientRoutes.get('/viewSubscribedHealthPackages/:username', patientController.viewSubscribedHealthPackages);
+patientRoutes.get('/viewSubscribedHealthPackages', patientController.viewSubscribedHealthPackages);
 patientRoutes.put('/cancelHealthPackageSubscription', patientController.cancelHealthPackageSubscription);
 patientRoutes.get('/viewMedicalHistory', patientController.viewMedicalHistory);
 patientRoutes.delete('/removeMedicalHistory/:medicalHistoryId', patientController.removeMedicalHistory);
