@@ -34,7 +34,7 @@ function ResetPassword() {
         //setPassword(value)
       }
     }
-    if(name == 'confirmPassword'){
+    if(name === 'confirmPassword'){
       if(value !== password.password){
         setMessage3('passwords does not match')
       }
