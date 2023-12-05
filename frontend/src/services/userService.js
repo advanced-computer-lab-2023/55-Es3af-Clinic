@@ -34,8 +34,8 @@ class UserService {
     return http.put(`/${type}/updatePassword`, password)
   }
 
-  resetPassword(user){
-    return http.put('/resetPassword', user);
+  resetPassword(user, id){
+    return http.put(`/resetPassword/${id}`, user);
   }
 }
 

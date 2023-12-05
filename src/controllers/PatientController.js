@@ -18,6 +18,7 @@ const stripe = require("stripe")(
 const bcrypt = require("bcrypt");
 const upload = multer({ dest: "uploads/" });
 const jwt = require("jsonwebtoken");
+const nodemailer = require('nodemailer')
 
 const test = async (req, res) => {
   const app = await appointmentModel.find({ date: req.query.date });
@@ -116,7 +117,7 @@ const addFamilyMember = async (req, res) => {
     });
       // const patient = req.query.patient;
       const patientID = await userModel.findById(id);
-      console.log(req.body);
+      //console.log(req.body);
 
       const member = new familyMemberModel({
         name: req.body.name,
@@ -126,7 +127,7 @@ const addFamilyMember = async (req, res) => {
         relationToPatient: req.body.relationToPatient,
         patient: patientID._id.valueOf(), //id zy ma heya
       });
-      console.log(`family member is ${member}`);
+      //console.log(`family member is ${member}`);
       //var patient = member.patient
       //console.log(`patient is ${patient}`)
     
@@ -134,18 +135,18 @@ const addFamilyMember = async (req, res) => {
         .find({ patient: member.patient })
         .exec()
         .then((document) => {
-          console.log(`family members are ${document}`);
+          //console.log(`family members are ${document}`);
           familyMemberModel
             .findOne({ name: member.name })
             .exec()
             .then((document2) => {
               if (document2) {
-                console.log("Family member already exists");
+                //console.log("Family member already exists");
                 res.status(200).send("Family member already exists");
                 return;
               } else {
                 member.save().catch((err) => console.log(err));
-                console.log("Family member added");
+                //console.log("Family member added");
                 res.status(200).send("Family member added");
               }
             })
@@ -181,12 +182,12 @@ const viewFamilyMembers = async (req, res) => {
     const neededPatientID = await userModel.findById(neededPatient);
 
     if (!neededPatientID) {
-      console.log("Patient not found.");
+      //console.log("Patient not found.");
       res.status(404).send("Patient not found");
       return;
     }
 
-    console.log("Patient ID:", neededPatientID._id);
+    //console.log("Patient ID:", neededPatientID._id);
 
     const familyMemberAcc = await familyMembersAcc.find({
       patient: neededPatientID._id,
@@ -264,13 +265,13 @@ const viewDoctors = async (req, res) => {
   var id = '' //patient id
   jwt.verify(token, "supersecret", (err, decodedToken) => {
     if (err) {
-      console.log('You are not logged in.');
+      //console.log('You are not logged in.');
       // res send status 401 you are not logged in
       res.status(401).json({ message: "You are not logged in." });
       // res.redirect('/login');
     } else {
       id = decodedToken.name;
-      console.log('got the id')
+      //console.log('got the id')
     }
   });
 
@@ -287,9 +288,9 @@ const viewDoctors = async (req, res) => {
           docArr.push(doctor);
           var price;
           try {
-            console.log(`doctor is ${doctor}`);
+            //console.log(`doctor is ${doctor}`);
             price = await doctorPrice(id, doctor.username);
-            console.log(`returned price from function is ${price}`);
+            //console.log(`returned price from function is ${price}`);
             docPrice.push(price);
           } catch (err) {
             console.error(err);
@@ -330,57 +331,16 @@ async function doctorPrice(patientID, doctorUsername) {
   return sessionPrice;
 }
 
-//working fine testing fine
-// const searchDoctorsByName = async(req, res) => {
-//     var docName = req.query.docName
-//     var patientUsername = req.body.username
-//     doctorModel.find({name: docName})
-//         .exec()
-//         .then(async (result) => {
-//             console.log(`doctors are ${result}`)
-//             if(Object.keys(result).length === 0){
-//                 res.status(200).send(`There is no results for ${docName}`)
-//             }
-//             else {
-//                 const info = []
-//                 for(var doctor of result){
-//                     var price = await doctorPrice(patientUsername, doctor.username)
-//                     console.log(`doc price is ${price}`)
-//                     var docInfo = {
-//                         name: result.name,
-//                         speciality: result.speciality,
-//                         price: price
-//                     }
-//                     info.push(docInfo)
-//                 }
-//                 res.status(200).send(info)
-//             }
-//         })
-//         .catch((err) => {console.error(err)})
-// }
-
-// const searchDoctorsBySpeciality = async(req, res) =>{
-//     var docSpec = req.query.speciality
-//     doctorModel.find({speciality : docSpec})
-//         .exec()
-//         .then((result) => {
-//             if(Object.keys(result).length === 0){
-//                 res.status(200).send(`There is no results for ${docSpec}`)
-//             }
-//             else {res.status(200).send(result)}
-//         })
-//         .catch((err) => {console.error(err)})
-// }
 
 async function viewDoctorDetails(doctor, patientID) {
   //const patient = patientModel.findOneAndDelete({username: patientUsername})
   var details = {
-    id: doctor._id.valueOf(),
+    id: doctor._id,
     name: doctor.name,
     speciality: doctor.speciality,
     price: await doctorPrice(patientID, doctor.username),
   };
-  console.log(`details ${details}`);
+  //console.log(`details ${details}`);
   return details;
 }
 
@@ -393,30 +353,30 @@ const searchByNameSpec = async (req, res) => {
   var id = ''
   jwt.verify(token, "supersecret", (err, decodedToken) => {
     if (err) {
-      console.log('You are not logged in.');
+      //console.log('You are not logged in.');
       // res send status 401 you are not logged in
       res.status(401).json({ message: "You are not logged in." });
       // res.redirect('/login');
     } else {
       id = decodedToken.name;
-      console.log('got the id')
+      //console.log('got the id')
     }
   });
 
   //const patientUsername = "farouhaTe3bet";
-  console.log(`name ${name} spec ${spec}`);
+  //console.log(`name ${name} spec ${spec}`);
   var search = {};
   if (name) {
     search.name = name;
-    console.log(search);
+    //console.log(search);
   }
   if (spec) {
     search.speciality = spec;
   }
   try {
-    console.log(search);
+   // console.log(search);
     const doctor = await doctorModel.find(search);
-    console.log(`doctors ${doctor}`);
+    //console.log(`doctors ${doctor}`);
     if (Object.keys(doctor).length === 0) {
       res.status(200).send(`There is no results for ${search}`);
     } else {
@@ -424,7 +384,7 @@ const searchByNameSpec = async (req, res) => {
       for (var doc of doctor) {
         info.push(await viewDoctorDetails(doc, id));
       }
-      console.log(`all info ${info}`);
+      //console.log(`all info ${info}`);
       res.status(200).send(info);
     }
   } catch (err) {
@@ -436,7 +396,7 @@ const getAllSpecialities = async (req, res) => {
   const specialities = await doctorModel
     .find({}, { speciality: 1, _id: 0, __t: 0 })
     .distinct("speciality");
-  console.log(specialities);
+  //console.log(specialities);
   res.status(200).send(specialities);
 };
 
@@ -453,17 +413,17 @@ const searchBySpecDate = async (req, res) => {
       // res.redirect('/login');
     } else {
       id = decodedToken.name;
-      console.log('got the id')
+      //console.log(`got the id: ${id}`)
     }
   });
 
   //const patientID = req.params.id
-  console.log(`spec: ${speciality}`);
+  //console.log(`spec: ${speciality}`);
   if (date) {
     var date2 = new Date(date);
     date2.setHours(date2.getHours() + 2);
 
-    console.log(date2);
+    //console.log(date2);
   }
 
   try {
@@ -473,10 +433,11 @@ const searchBySpecDate = async (req, res) => {
 
     if (speciality && !date) {
       //if there's no date, working fine
-      console.log("speciality only");
+      //console.log("speciality only");
       var doctor = await doctorModel.find({ speciality: speciality });
       if (doctor.length > 0) {
         for (var d of doctor) {
+          //console.log(`id is ${id}`)
           var details = await viewDoctorDetails(d, id);
           //console.log(details);
           doctors.push(details);
@@ -489,7 +450,7 @@ const searchBySpecDate = async (req, res) => {
       const appoint = await appointmentModel.find({
         $or: [{ status: "pending" }, { status: "currently working" }],
       }); //get all appointments of date greater than or equal
-      console.log(`result of find is ${appoint}`);
+      //console.log(`result of find is ${appoint}`);
       if (appoint.length < 1) {
         res.status(200).send("no appointments at that time");
       } else {
@@ -497,48 +458,50 @@ const searchBySpecDate = async (req, res) => {
           var newDate = new Date(app.date);
           newDate.setMinutes(newDate.getMinutes() + app.duration);
 
-          console.log(app.date);
-          console.log(`^^ start date,   vv end date`);
-          console.log(newDate);
+          // console.log(app.date);
+          // console.log(`^^ start date,   vv end date`);
+          // console.log(newDate);
           if (newDate > date2 && date2 > app.date) {
             appointments.push(app.doctor._id.valueOf());
-            console.log(
-              `deen om el id beta3 el doctor${app.doctor._id.valueOf()}`
-            );
+           // console.log(
+            //   `deen om el id beta3 el doctor${app.doctor._id.valueOf()}`
+            // );
           }
         }
         const allDoctors = await doctorModel.find({});
         for (var doc of allDoctors) {
-          var id = doc._id.valueOf();
+          var docid = doc._id.valueOf();
           if (appointments.length == 0) {
             var details = await viewDoctorDetails(doc, id);
-            console.log(`deen om el appointments fadya ${details}`);
+            //console.log(`deen om el appointments fadya ${details}`);
             doctors.push(details);
-          } else if (!appointments.includes(id)) {
+          } else if (!appointments.includes(docid)) {
             var details = await viewDoctorDetails(doc, id);
-            console.log(
-              `om el appointments ${appointments} wel details ${details}`
-            );
+            //console.log(
+            //   `om el appointments ${appointments} wel details ${details}`
+            // );
             doctors.push(details);
           }
         }
       }
-      console.log(`else if date`);
+      //console.log(`else if date`);
       //console.log(doctors);
     }
-    console.log(`finished else if date`);
+    //console.log(`finished else if date`);
 
     if (date && speciality) {
       for (doc of doctors) {
+        //console.log(doc)
         if (doc.speciality == speciality) {
-          var details = await viewDoctorDetails(doc, id);
-          console.log(details);
-          result.push(details);
+          // var details = await viewDoctorDetails(doc, id);
+          // //console.log(details);
+          // result.push(details);
+          result.push(doc)
         }
       }
       res.status(200).send(result);
     } else if (date && !speciality) {
-      console.log(`else if date only`);
+      //console.log(`else if date only`);
       res.status(200).send(doctors);
     }
   } catch (err) {
@@ -555,13 +518,13 @@ const viewDocInfo = async (req, res) => {
   var id = ''
   jwt.verify(token, "supersecret", (err, decodedToken) => {
     if (err) {
-      console.log('You are not logged in.');
+      //console.log('You are not logged in.');
       // res send status 401 you are not logged in
       res.status(401).json({ message: "You are not logged in." });
       // res.redirect('/login');
     } else {
       id = decodedToken.name;
-      console.log('got the id')
+      //console.log('got the id')
     }
   });
 
@@ -596,13 +559,13 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
   var id = ''
   jwt.verify(token, "supersecret", (err, decodedToken) => {
     if (err) {
-      console.log('You are not logged in.');
+      //console.log('You are not logged in.');
       // res send status 401 you are not logged in
       res.status(401).json({ message: "You are not logged in." });
       // res.redirect('/login');
     } else {
       id = decodedToken.name;
-      console.log('got the id')
+     // console.log('got the id')
     }
   });
 
@@ -615,7 +578,7 @@ const filterAppointmentsByDateAndStatus = async (req, res) => {
     if (status) {
       filter.status = status;
     }
-    console.log(`filter: ${filter.date} and ${filter.status}`)
+    //console.log(`filter: ${filter.date} and ${filter.status}`)
     const appointments = await appointmentModel.find(filter)
     .populate("doctor", "name -_id -__t");
     //console.log(`appointments: ${appointments}`);
@@ -652,17 +615,17 @@ const viewPrescriptions = async (req, res) => {
   var id = ''
   jwt.verify(token, "supersecret", (err, decodedToken) => {
     if (err) {
-      console.log('You are not logged in.');
+      //console.log('You are not logged in.');
       // res send status 401 you are not logged in
       res.status(401).json({ message: "You are not logged in." });
       // res.redirect('/login');
     } else {
       id = decodedToken.name;
-      console.log('got the id')
+      //console.log('got the id')
     }
   });
 
-  console.log(`Patient is ${id}`);
+  //console.log(`Patient is ${id}`);
   PrescriptionsModel.findById( id )
     .populate("doctor", "name -_id -__t")
     .exec()
@@ -685,13 +648,13 @@ const filterprescriptionsbydatestatusdoctor = async (req, res) => {
   var id = ''
   jwt.verify(token, "supersecret", (err, decodedToken) => {
     if (err) {
-      console.log('You are not logged in.');
+      //console.log('You are not logged in.');
       // res send status 401 you are not logged in
       res.status(401).json({ message: "You are not logged in." });
       // res.redirect('/login');
     } else {
       id = decodedToken.name;
-      console.log('got the id')
+      //console.log('got the id')
     }
   });
 
@@ -829,7 +792,7 @@ const withdrawFromWallet = async (req, res) => {
     const amountToWithdraw = req.body.amount;
   try {
     const patient = await patientModel.findById(id).exec();
-    console.log(patient.amountInWallet)
+    //console.log(patient.amountInWallet)
     if (patient.amountInWallet < amountToWithdraw) {
       return res.status(200).send("Not suffecient funds in wallet");
     } else {
@@ -850,6 +813,13 @@ const BookAnAppointment = async (req, res) => {
   const appointmentid = req.body.appointmentid;
   const amount =req.body.amount;
 
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "55es3afclinicpharmacy@gmail.com",
+      pass: "itqq jnfy kirk druf",
+    },
+  });
 
   try {
     if(id==''){
@@ -889,12 +859,11 @@ const BookAnAppointment = async (req, res) => {
     // Save the appointment to the database
     try {
       const result = await newAppointment.save();
-      console.log(result);
+      //console.log(result);
     } catch (err) {
       console.error(err);
     }
-    
-      
+
     doctorModel.updateOne(
       { _id: doctorid },
       {
@@ -902,13 +871,29 @@ const BookAnAppointment = async (req, res) => {
         $set: { amountInWallet: amount }
       }
     )
-      .then(result => {
-        console.log(result);
-      })
-      .catch(err => {
-        console.error(err);
-      });
-        
+    .then(result => {
+      //console.log(result);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+
+
+    const emailToPatient = await transporter.sendMail({
+      from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+      to: patient.email, // list of receivers
+      subject: "Booked Appointment", // Subject line
+      text: `You have booked an appointment with doctor ${doctor.name} specialized in ${doctor.speciality} at ${newAppointment.date}. The total price is ${amount}.`, // plain text body
+      html: `<b>You have booked an appointment with doctor ${doctor.name} specialized in ${doctor.speciality} at ${newAppointment.date}. The total price is ${amount}.</b>`, // html body
+    });
+
+    const emailToDoctor = await transporter.sendMail({
+      from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+      to: doctor.email, // list of receivers
+      subject: "Booked Appointment", // Subject line
+      text: `Patient ${name} has booked an appointment with you at ${newAppointment.date}. The total price is ${amount}.`, // plain text body
+      html: `<b>Patient ${name} has booked an appointment with you at ${newAppointment.date}. The total price is ${amount}.</b>`, // html body
+    });
 
     res.status(200).send("Appointment was booked successfully");
   } catch (error) {
@@ -1219,7 +1204,7 @@ const cancelHealthPackageSubscription = async (req, res) => {
     response+= patient.name + "'s health package subscription canceled successfully. \n";
     }
     res.status(200).send(response);
-    console.log(response);
+    //console.log(response);
 
   } catch (error) {
     console.error(error);
@@ -1236,7 +1221,7 @@ const cancelHealthPackageSubscription = async (req, res) => {
 
 const viewAvailableAppointments = async (req, res) => {
   const id  = req.params.id;
-  console.log(id);
+  //console.log(id);
   try {
     // Get the doctor's information, including available time slots
     const doctor = await doctorModel.findById(id);
