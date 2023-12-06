@@ -91,7 +91,6 @@ const viewEmploymentContract = async (req, res) => {
     const idObject = new mongoose.Types.ObjectId(doctorId)
     console.log(idObject)
     const doctor = await doctorModel.findById(idObject);
-    console.log(doctor)
     if (!doctor) {
       return res.status(404).json({
         status: "fail",
