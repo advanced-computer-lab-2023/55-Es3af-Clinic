@@ -12,8 +12,7 @@ import FilteredPatientsByAppointments from "./filterPatientByAppointment";
 import UpdatePassword from '../Doctor/updatePassword';
 import doctorService from "../../services/doctorService.js";
 import AddTimeSlots from './addTimeSlots';
-import { Link } from 'react-router-dom';
-
+import MyContractList from './viewEmploymentContract.js';
 
 
 
@@ -31,6 +30,7 @@ function DoctorPage() {
       <Route path="/filterPatientsByUpcomingPendingAppointments" element= {< FilteredPatientsByAppointments />} />
       <Route path="/" element={<DoctorHome />} />
       <Route path="/addTimeSlots" element={<AddTimeSlots />} /> 
+      <Route path ="/contracts" element={<MyContractList/>}/>
     </Routes>
   );
 }
@@ -80,6 +80,9 @@ function DoctorHome() {
           </a>
           <a href="/doctor/addTimeSlots" rel="noopener noreferrer">
               <button className="btn btn-primary">Add Available Time Slots</button>
+          </a>
+          <a href="/doctor/contracts" rel="./components/doctor/viewEmploymentContract.js">
+            <button className="btn btn-primary"> Contracts </button>
           </a>
         </div>
       </header>

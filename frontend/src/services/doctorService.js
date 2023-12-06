@@ -16,7 +16,8 @@ class DoctorService {
       throw error;
     }
   }
-  async getAmountInWallet(username){
+  // update contract status after doctor accepts employment contract
+  async getAmountInWallet(username) {
     return http.get(`/doctor/${username}/getAmountInWallet`)
   }
 
@@ -27,6 +28,28 @@ class DoctorService {
   async getAllPatients() {
     return http.get("/doctor/getPatients");
   }
+  // Get contract by doctor ID
+  async getContractsByDoctorId(doctorId) {
+
+    return await http.get(`/contract/doctor/${doctorId}`);
+
+  }
+
+  async getContractById(contractId) {
+    return await http.get(`/contract/${contractId}`);
+  }
+  async updateContract(contractId, contract) {
+    return await http.put(`/contract/${contractId}`, contract);
+  }
+
+  async deleteContract(contractId) {
+    return await http.delete(`/contract/${contractId}`);
+  }
+
+  async createContract(contract) {
+    return await http.post("/contract", contract);
+  }
+
   async FilteredAppointments(doctorid, date, status) {
     const queryParams = {};
 
@@ -51,12 +74,12 @@ class DoctorService {
     );
   }
 
-  updatePassword(id, password){
+  updatePassword(id, password) {
     console.log('put is called')
-    return http.put(`/doctor/${id}/updatePassword`, {password: password})
+    return http.put(`/doctor/${id}/updatePassword`, { password: password })
   }
 
-  getPassword(id){
+  getPassword(id) {
     return http.get(`/doctor/${id}/updatePassword`)
   }
   async getTimeSlots(doctorId) {
@@ -67,7 +90,7 @@ class DoctorService {
       throw error;
     }
   }
-  
+
   async addTimeSlots(id, timeSlotsData) {
     try {
       const response = await http.post(`/doctor/addTimeSlots/${id}`, timeSlotsData, {
