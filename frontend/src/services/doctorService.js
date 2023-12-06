@@ -31,9 +31,9 @@ class DoctorService {
     return http.get("/doctor/getPatients");
   }
   // Get contract by doctor ID
-  async getContractsByDoctorId(doctorId) {
+  async getContractsByDoctorId() {
 
-    return await http.get(`/contract/doctor/${doctorId}`);
+    return await http.get("/contract/doctor/");
 
   }
 

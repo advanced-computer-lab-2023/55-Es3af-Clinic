@@ -1,6 +1,7 @@
 const contract = require("../Models/EmploymentContract.js");
 const doctorModel = require("../Models/Doctor");
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 
 const createContract = async (req, res) => {
 
@@ -104,6 +105,7 @@ const viewEmploymentContract = async (req, res) => {
         message: "Contract not found"
       })
     }
+    console.log(contracts);
     res.status(200).json({
       status: "success",
       data: {
