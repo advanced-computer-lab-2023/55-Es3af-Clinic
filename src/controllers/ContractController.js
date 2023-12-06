@@ -76,9 +76,17 @@ const updateContract = async (req, res) => {
 
 // View my employment contract
 const viewEmploymentContract = async (req, res) => {
-  const doctorId = req.params.doctorId; // Doctor's ID
-  console.log(doctorId)
   try {
+    const token = req.cookies.jwt;
+    var doctorId;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        doctorId = decodedToken.name;
+      }
+    });
     const idObject = new mongoose.Types.ObjectId(doctorId)
     console.log(idObject)
     const doctor = await doctorModel.findById(idObject);
