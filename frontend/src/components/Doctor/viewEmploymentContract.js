@@ -15,7 +15,7 @@ const MyContractList = (props) => {
   
     const retrieveContracts =  () => {
       console.log("test")
-      DoctorService.getContractsByDoctorId("6525afac114367999aba79df")
+      DoctorService.getContractsByDoctorId()
         .then((response) => {
           console.log(response.data);
           if (Array.isArray(response.data.data.contracts)) {
