@@ -60,14 +60,6 @@ const MyContractList = (props) => {
                   style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
                 >
                   <div className="card-body">
-                    <button
-                      style={{ backgroundColor: "#2a5923" }}
-                      id="updateButton"
-                      onClick={async(e) => {
-                        e.preventDefault()
-                        await acceptContract(contract._id,contract)
-                      }}
-                    >
                       <h3 className="card-title" style={{ color: "white" }}>
                         Markup: {contract.markup}
                       </h3>
@@ -104,6 +96,17 @@ const MyContractList = (props) => {
                       <h3 className="card-title" style={{ color: "white" }}>
                         Fees: {contract.fees}
                       </h3>
+                      <button
+                      style={{ backgroundColor: "#2a5923" }}
+                      id="updateButton"
+                      className="btn btn-primary"
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        await acceptContract(contract._id, contract);
+                      }}
+                      disabled={contract.status !== "Pending"}
+                    >
+                      Accept Contract
                     </button>
                   </div>
                 </div>
