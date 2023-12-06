@@ -11,6 +11,7 @@ doctorRouter.use(express.json());
 
 doctorRouter.post("/addDoctor", doctorController.addDoctor);
 doctorRouter.put('/updatePassword', userController.changePassword)
+doctorRouter.get('/notifi', userController.getNotifications)
 doctorRouter.route("/updateDoctor").put(doctorController.updateDoctor);
 doctorRouter.route("/getPatients").get(doctorController.getAllPatients);
 doctorRouter.route("/getAllDoctors").get(doctorController.getAllDoctors);

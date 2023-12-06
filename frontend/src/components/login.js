@@ -85,6 +85,9 @@ function Login(props) {
           <a href="/register" rel="noopener noreferrer">
             Register as Patient
           </a>
+          <a href="http://localhost:4000" rel="noopener noreferrer">
+              Go to Pharmacy
+            </a>
         </form>
       </div>
     </div>
