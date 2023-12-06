@@ -11,7 +11,7 @@ const PrescriptionList = (props) => {
     }, []);
   
     const retrieveMembers = () => {
-      PatientService.viewPrescriptions("654bed1dbe07a9603f5b4030")
+      PatientService.viewPrescriptions()
           .then((response) => {
           console.log(response.data);
           if (Array.isArray(response.data)) {
@@ -51,7 +51,7 @@ const PrescriptionList = (props) => {
                       Medicine: {user.medicine}
                     </h3>
                     <h3 className="card-title" style={{ color: "white" }}>
-                      Doctor: {user.doctor.name}
+                      Doctor: {user.doctor}
                     </h3>
                     <h3 className="card-title" style={{ color: "white" }}>
                       Status:  {user.status}

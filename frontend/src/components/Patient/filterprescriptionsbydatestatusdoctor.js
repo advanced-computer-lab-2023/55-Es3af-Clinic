@@ -13,11 +13,10 @@ function FilteredPrescriptionList() {
     const date = event.target.date.value;
     const doctor = event.target.doctor.value;
     const status = event.target.status.value;
-    const patientid = "654bed1dbe07a9603f5b4030";
+    //const patientid = "654bed1dbe07a9603f5b4030";
     
 
     const response = await PatientService.FilteredPrescriptionList(
-      patientid,
       date,
       doctor,
       status
@@ -56,7 +55,7 @@ function FilteredPrescriptionList() {
             placeholder="enter status" />
 
             <input
-            type="string"
+            type="date"
             className="form-control"
             id="date"
             name="date"
@@ -80,7 +79,7 @@ function FilteredPrescriptionList() {
                       Medicine: {result.medicine}
                     </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Doctor: {result.doctor.name}
+                   Doctor: {result.doctor}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
                    Status: {result.status}

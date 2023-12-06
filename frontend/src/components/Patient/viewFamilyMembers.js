@@ -11,7 +11,7 @@ const MembersList = (props) => {
   }, []);
 
   const retrieveMembers = () => {
-    MemberService.getAll("farouhaTe3bet")
+    MemberService.getAll()
         .then((response) => {
         console.log(response.data);
         if (Array.isArray(response.data)) {

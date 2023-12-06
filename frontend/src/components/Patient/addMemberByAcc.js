@@ -21,7 +21,7 @@ function AddMemberAcc() {
     async function addMember(e) {
         e.preventDefault();
         // no need to console log response data, only for testing
-        MemberService.addMember(member,"farouhaTe3bet")
+        MemberService.addMember(member)
           .then((response) => {
             alert(response.data);
           })

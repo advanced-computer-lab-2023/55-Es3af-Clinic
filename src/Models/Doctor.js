@@ -40,13 +40,29 @@ const doctorSchema = new Schema({
     type:Number,
     default:0,
   },
+  IDdoc: {
+    name: String,
+    data: Buffer,
+    contentType: String
+  },
+  MedicalLicenses: [{
+    name: String,
+    data: Buffer,
+    contentType: String
+  }],
+  MedicalDegree: {
+    name: String,
+    data: Buffer,
+    contentType: String
+  },
   availableTimeSlots: [
     {
-      day: { type: String, required: true },
+      date: { type: Date , required: true },
       startTime: { type: String, required: true },
-      endTime: { type: String, required: true }
+      endTime: { type: String, required: true },
     }
   ]
+  
 });
 
 //const doctor = mongoose.model("doctor", doctorSchema);

@@ -1,14 +1,14 @@
 import http from "./http-common";
 
 class MemberService {
-    getAll(patient){
-        return http.get('/patient/familyMembers', {params:{patient}})
+    getAll(){
+        return http.get('/patient/familyMembers')
     }
-    async addMember(member,patient){
-        return http.post(`/patient/${patient}/addFamilyMemberByAcc`,member)
+    async addMember(member){
+        return http.post("/patient/addFamilyMemberByAcc",member)
     }
-    async addMember2 (member, patientUser) {
-        return http.post('/patient/addFamilyMember', member, {params:{patient:patientUser}})
+    async addMember2 (member) {
+        return http.post('/patient/addFamilyMember', member)
     }
 }
 

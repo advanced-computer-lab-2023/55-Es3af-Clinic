@@ -6,12 +6,12 @@ import UsersList from "./listUsers";
 //import AdminService from "../services/adminService";
 import DeleteUser from "./deleteUser";
 import ViewDoctorRequests from "./viewDoctorRequests";
-import UpdatePassword from '../Admin/updatePassword';
+import UpdatePassword from '../updatePassword';
 import Packages from "./packages";
 import packageService from "../../services/packageService";
 import UpdatePackage from "../updatePackage";
 import { Link } from "react-router-dom";
-
+import Navbar from "../navbar";
 
 function AdminPage() {
   return (
@@ -24,7 +24,7 @@ function AdminPage() {
       <Route path="/viewDoctorData/*" element={<ViewDoctorRequests />} />
       <Route path="/view/*" element={<ViewDoctorRequests />} />
       <Route path="/packages/*" element={<Packages />} />
-      <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
+      <Route path='/updatePassword' element = {<UpdatePassword/>} />
 
 
     </Routes>
@@ -32,9 +32,10 @@ function AdminPage() {
 }
 
 function AdminHome() {
-  const id = '652b5385daaac6a3807ee5c7'
+  //const id = '652b5385daaac6a3807ee5c7'
   return (
     <div className="App">
+      <Navbar />
       <header className="App-header">
         <div>
           <a href="/admin/addAdmin" rel="noopener noreferrer">
@@ -60,7 +61,7 @@ function AdminHome() {
           <a href="/admin/packages" rel="noopener noreferrer">
             <button className="btn btn-primary"> Packages </button>
           </a>
-          <Link to={`/admin/${id}/updatePassword/`} style={{ textDecoration: 'none' }}>
+          <Link to={"/admin/updatePassword/"} style={{ textDecoration: 'none' }}>
             <button className="btn btn-primary"> Update my Password </button>
           </Link>
         </div>

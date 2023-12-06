@@ -23,9 +23,10 @@ function AddMember() {
     async function addMember2(e) {
         e.preventDefault();
         // no need to console log response data, only for testing
-        MemberService.addMember2(member,"farouhaTe3bet")
+        MemberService.addMember2(member)
           .then((response) => {
             console.log(response.data);
+            alert(response.data)
           })
           .catch((e) => {
             console.log(e);
@@ -36,7 +37,7 @@ function AddMember() {
         <div className="App">
           <header className="App-header">
           <div className="top-right-button">
-            <a href= "/patient/farouhaTe3bet/addFamilyMemberByAcc">
+            <a href= "/patient/addFamilyMemberByAcc">
           <button className="btn btn-primary" >Add by Email/Phone number</button>
           </a>
         </div>

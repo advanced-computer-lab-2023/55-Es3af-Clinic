@@ -3,24 +3,35 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import patientService from "../../services/patientService";
 import { Link } from "react-router-dom";
-import React from 'react';
-import useDoctorSearch from './searchDoctors';
-
 
 function FilterDoctors() {
-  const { results, searchPerformed, searchDoctors } = useDoctorSearch();
-
-  //console.log(specs)
+  const [results, setResults] = useState([]);
+  const [searchPerformed, setSearchPerformed] = useState(false);
 
   const search = async (event) => {
     event.preventDefault();
 
-    const date = event.target.date.value;
+    const date = event.target.date.value
     const speciality = event.target.speciality.value;
-    //const patientid = '652b2da81a7433f37b218610';
+   // const patientid = "652b2da81a7433f37b218610";
+    
 
-    // Call the searchDoctors function from the custom hook
-    await searchDoctors( date, speciality);
+    const response = await patientService.FilterDoctors(
+      date,
+      speciality
+    );
+
+    setResults(response.data);
+    console.log(response)
+    setSearchPerformed(true);
+
+    const formatDateOfBirth = (dateOfBirth) => {
+      const date = new Date(dateOfBirth);
+      const day = date.getDate();
+      const month = date.getMonth() + 1; // Month is zero-indexed
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
   };
 
   return (
@@ -62,7 +73,7 @@ function FilterDoctors() {
                    Doctor: {result.name}
                 </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
-                   Hourly Rate: {result.price}
+                   Price: {result.price}
                   </h3>
                   <h3 className="card-title" style={{ color: "white" }}>
                   Speciality: {result.speciality}

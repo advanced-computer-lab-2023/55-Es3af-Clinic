@@ -1,4 +1,5 @@
 const Router = require("express");
+const userController = require("../controllers/UserController")
 const {patientRoutes} = require('../routes/patientRoutes');
 const {doctorRouter} = require('../routes/doctorRoutes');
 const {requestDoctorRoutes} = require('../routes/requestDoctorRoute');
@@ -20,4 +21,7 @@ router.use("/requestDoctor",requestDoctorRoutes);
 router.use("/register",registerPatientRoutes);
 router.use("/admin", adminRoutes);
 router.use("/packages", packageRoutes);
+router.get("/logout", userController.logout);
+router.post('/forgetPassword', userController.forgetPassword)
+router.put('/resetPassword/:id', userController.resetPassword)
 module.exports={router};

@@ -2,8 +2,8 @@ import http from "./http-common";
 
 class RequestDoctorService {
 
-  requestDoctor(requestDoctor) {
-    return http.post("/requestDoctor", requestDoctor);
+  requestDoctor(requestDoctor,files) {
+    return http.post("/requestDoctor", requestDoctor, files);
   }
 }
 

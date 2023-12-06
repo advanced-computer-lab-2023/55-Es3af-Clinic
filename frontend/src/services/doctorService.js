@@ -4,21 +4,23 @@ class DoctorService {
   async getAllMyPatients(doctor) {
     return http.get("/doctor/getAllMyPatients", { params: { doctor } });
   }
-  async updateDoctor(doctorId, doctor) {
+  async updateDoctor(doctor) {
     try {
-      const response = await http.put(`/doctor/updateDoctor?doctorId=${doctorId}`, doctor, {
+      const token = localStorage.getItem("token");
+      const response = await http.put("/doctor/updateDoctor", doctor, {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
+
       return response.data;
     } catch (error) {
       throw error;
     }
   }
-  // update contract status after doctor accepts employment contract
-  async getAmountInWallet(username) {
-    return http.get(`/doctor/${username}/getAmountInWallet`)
+  async getAmountInWallet() {
+    return http.get("/doctor/getAmountInWallet");
   }
 
   // selectPatient(doctorId, patientId) {
@@ -60,42 +62,42 @@ class DoctorService {
       queryParams.status = status;
     }
 
-    return http.get(`/doctor/filterAppointmentsByDateAndStatus/${doctorid}`, {
+    return http.get("/doctor/filterAppointmentsByDateAndStatus", {
       params: queryParams,
     });
   }
-  async SearchPatientByName(name, doctorId) {
-    return http.get(`/doctor/searchPatientByName?name=${name}&doctorId=${doctorId}`);
+  async SearchPatientByName(name) {
+    return http.get(`/doctor/searchPatientByName?name=${name}`);
   }
 
-  filterPatient(doctorId, inputDate) {
+  filterPatient(inputDate) {
     return http.get(
-      `/doctor/filterPatientsByUpcomingPendingAppointments?Id=${doctorId}&date=${inputDate}`
+      `/doctor/filterPatientsByUpcomingPendingAppointments?date=${inputDate}`
     );
   }
 
-  updatePassword(id, password) {
-    console.log('put is called')
-    return http.put(`/doctor/${id}/updatePassword`, { password: password })
-  }
+  // updatePassword(password){
+  //   console.log('put is called')
+  //   return http.put("/doctor/updatePassword", {password: password})
+  // }
 
-  getPassword(id) {
-    return http.get(`/doctor/${id}/updatePassword`)
-  }
-  async getTimeSlots(doctorId) {
+  // getPassword(){
+  //   return http.get(`/doctor/updatePassword`)
+  // }
+  async getTimeSlots() {
     try {
-      const response = await http.get(`/doctor/getTimeSlots/${doctorId}`);
+      const response = await http.get("/doctor/getTimeSlots");
       return response.data;
     } catch (error) {
       throw error;
     }
   }
 
-  async addTimeSlots(id, timeSlotsData) {
+  async addTimeSlots(timeSlotsData) {
     try {
-      const response = await http.post(`/doctor/addTimeSlots/${id}`, timeSlotsData, {
+      const response = await http.post("/doctor/addTimeSlots", timeSlotsData, {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
       return response.data;
@@ -103,6 +105,31 @@ class DoctorService {
       throw error;
     }
   }
+async viewMedicalHistory() {
+  try {
+    const response = await http.get('/doctor/viewMedicalHistory');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+  // async scheduleFollowUpAppointment(appointmentData) {
+  //   try {
+  //     const response = await http.post(
+  //       "/doctor/scheduleFollowUpAppointment",
+  //       appointmentData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //     return response.data;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 }
 
 export default new DoctorService();

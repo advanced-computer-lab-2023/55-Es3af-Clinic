@@ -6,7 +6,7 @@ import DoctorService from "../../services/doctorService";
 function SearchPatient() {
   const [results, setResults] = useState([]);
   const [name, setName] = useState('');
-  const doctorId = "6525afac114367999aba79df";
+  // const doctorId = "6525afac114367999aba79df";
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -15,14 +15,22 @@ function SearchPatient() {
   const search = async (event) => {
     event.preventDefault();
     try {
-      const response = await DoctorService.SearchPatientByName(name, doctorId);
+      const response = await DoctorService.SearchPatientByName(name);
       setResults(response.data.data.patients);
     } catch (error) {
       console.error("Error searching for patients:", error.message);
       // Add logic to handle and display the error
     }
   };
-
+  const formatDateOfBirth = (dateOfBirth) => {
+    const date = new Date(dateOfBirth);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Month is zero-indexed
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+  
+  
   return (
     <div className="App">
       <header className="App-header">
@@ -53,13 +61,30 @@ function SearchPatient() {
                 <div className="card-body">
                   <h3 className="card-title" style={{ color: "white" }}>
                     Name: {result.name}
-                  </h3>
-                  <a
+                    </h3>
+                    <h3 className="card-title" style={{ color: "white" }}>
+                    Email: {result.email}
+                    </h3>
+                    <h3 className="card-title" style={{ color: "white" }}>
+                    Date Of Birth: {formatDateOfBirth(result.dateOfBirth)}
+                    </h3>
+                    <h3 className="card-title" style={{ color: "white" }}>
+                    Gender:{result.gender}
+                    </h3>  
+                    <h3 className="card-title" style={{ color: "white" }}>
+                    Mobile:{result.mobile}
+                    </h3>
+                  {/* <a
                     href={`/doctor/searchPatientByName?name=${result.name}`}
                     rel="noopener noreferrer"
-                  >
-                    <button className="btn btn-primary">View Details</button>
-                  </a>
+                  > */}
+                   {/* <h3 className="card-title" style={{ color: "white" }}>
+                    <button className="btn btn-primary"
+                    id="updateButton"
+                    onClick={()=> (result)}>
+                      View Details</button>
+                      </h3> */}
+                  {/* </a> */}
                 </div>
               </div>
         ))

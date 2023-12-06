@@ -10,6 +10,10 @@ const appointmentsSchema = new Schema({
         ref: 'patient',
         autoRemove: true,
       },
+      patientName: {
+        type: String,
+        
+      },
       doctor: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'doctor',
@@ -26,7 +30,8 @@ const appointmentsSchema = new Schema({
       
      status:{
          type: String, 
-        enum:["done", "canceled", "currently working", "pending", 'rescheduled']
+        enum:["done", "canceled", "currently working", "pending", 'rescheduled'],
+        default: "pending"
     }
 })
 

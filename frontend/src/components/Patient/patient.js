@@ -12,14 +12,16 @@ import FilteredPrescriptionList from "./filterprescriptionsbydatestatusdoctor";
 import FilteredAppointmentsList from "./filterAppointmentsByDateAndStatuspatient"; 
 import FilterDoctors from "./Filterdoctors";
 import PkgListP from "./viewPackages";
-import UpdatePassword from './updatePassword';
+import UpdatePassword from '../updatePassword';
 import UploadMedicalHistory from './UploadMedicalHistory';
 import AddMemberAcc from "./addMemberByAcc";
 import BookAnAppointment  from "./BookAnAppointment";
 import patientService from "../../services/patientService";
-import useDoctorSearch from "./searchDoctors";
 import ViewSubscribedPackages from './viewSubscribedPackages';
-
+import ViewAppointments from "./viewAppointment";
+import AvailableAppointments from "./viewAvailableAppointments";
+import ViewMedicalHistory from './viewMedicalHistory';
+import Navbar from "../navbar";
 
 
 function PatientPage() {
@@ -36,35 +38,69 @@ function PatientPage() {
       <Route path="/viewPrescriptions" element={<PrescriptionList />} />
       <Route path="/filterprescriptionsbydatestatusdoctor" element={<FilteredPrescriptionList />} />
       <Route path="/filterAppointmentsByDateAndStatus" element= {<FilteredAppointmentsList />} />
-      <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
-      <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
+      <Route path='/updatePassword' element = {<UpdatePassword/>} />
       <Route path='/UploadMedicalHistory' element = {<UploadMedicalHistory/>} />
-      <Route path='/:username/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
-      <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />
+      <Route path='/addFamilyMemberByAcc' element = {<AddMemberAcc/>} />
       <Route path="/viewSubscribedPackages" element={<ViewSubscribedPackages />} />
+      <Route path="/viewAppointments" element={<ViewAppointments />} />
+      <Route path='/BookAnAppointment' element = {<BookAnAppointment/> } />
+      <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
+      <Route path="/viewAvailableAppointments" element= {<AvailableAppointments />} />
+      <Route path="/viewMedicalHistory" element={<ViewMedicalHistory />} /> 
     </Routes>
   );
 }
 
 function PatientHome() {
-  var id = '654bed1dbe07a9603f5b4030'
-  var username = "farouhaTe3bet"
+  //var id = '6550f3b6d9aee1af3acedf0a'
   const [result, setResult] = useState("");
+  const [showMedicalHistory, setShowMedicalHistory] = useState(false);
+  const [medicalHistory, setMedicalHistory] = useState([]);
+  const fetchMedicalHistory = async () => {
+    try {
+      const response = await patientService.viewMedicalHistory();
+      const medicalHistoryData = response.data.result;
+      setMedicalHistory(medicalHistoryData);
+    } catch (error) {
+      console.error('Error fetching medical history:', error.message);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await patientService.getAmountInWallet(username);
-        const amountInWalletResult = response.data; 
+        const response = await patientService.getAmountInWallet();
+        const amountInWalletResult = response.data;
         setResult(amountInWalletResult);
       } catch (error) {
         console.error(error);
-        setResult("Error"); 
+        setResult("Error");
       }
     };
-    fetchData(); 
-  });
+    fetchData();
+  }, []);
+
+  const handleViewMedicalHistory = async () => {
+    try {
+      await fetchMedicalHistory();
+      setShowMedicalHistory(true);
+    } catch (error) {
+      console.error('Error fetching medical history:', error.message);
+    }
+  };
+
+  const handleRemoveMedicalHistory = async (medicalHistoryId) => {
+    try {
+      await patientService.removeMedicalHistory(medicalHistoryId);
+      await fetchMedicalHistory();
+    } catch (error) {
+      console.error('Error removing medical history:', error.message);
+    }
+  };
+
   return (
     <div className="App">
+      <Navbar />
       <header className="App-header">
         <div className="payment-buttons">
           <h5 className="top-right-button">Amount In Wallet: {result} </h5>
@@ -77,28 +113,45 @@ function PatientHome() {
             <a href="/patient/viewDoctors" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Doctors </button>
           </a>
-          <a href="/patient/viewPrescriptions/" rel="noopener noreferrer">
+          <a href = '/patient/viewAppointments' rel="noopener noreferrer">
+          <button className="btn btn-primary"> View Appointments </button>
+          </a>
+          <a href="/patient/viewPrescriptions" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Prescriptions </button>
           </a>
-          <a href="/patient/search/" rel="noopener noreferrer">
+          <a href="/patient/search" rel="noopener noreferrer">
             <button className="btn btn-primary"> Search </button>
             </a>
-          <a href="/patient/filterAppointmentsByDateAndStatus/" rel="noopener noreferrer">
+          <a href="/patient/filterAppointmentsByDateAndStatus" rel="noopener noreferrer">
             <button className="btn btn-primary"> Filter Appointments </button>
           </a>
-          <a href="/patient/searchBySpecDate/" rel="noopener noreferrer">
+          <a href="/patient/searchBySpecDate" rel="noopener noreferrer">
             <button className="btn btn-primary"> Filter Doctors </button>
           </a>
-          <a href="/patient/viewHealthPackages/" rel="noopener noreferrer">
+          <a href="/patient/viewHealthPackages" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Health Packages </button>
           </a>
-          <a href={`/patient/${id}/updatePassword/`} rel="noopener noreferrer">
+          <a href={`/patient/updatePassword`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Update my Password </button>
           </a>
-          <a href={`/patient/UploadMedicalHistory/`} rel="noopener noreferrer">
+          <a href={`/patient/UploadMedicalHistory`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Upload Medical History </button>
           </a>
-          <a href={`/patient/${id}/BookAnAppointment/`} rel="noopener noreferrer">
+          <a href="/patient/viewMedicalHistory" rel="noopener noreferrer">
+          <button
+            className="btn btn-primary" // You can adjust this class based on your styling
+            onClick={handleViewMedicalHistory}
+          >
+            View/Remove Medical History
+          </button>
+          </a>
+          {showMedicalHistory && (
+            <ViewMedicalHistory
+              medicalHistory={medicalHistory}
+              removeMedicalHistory={handleRemoveMedicalHistory}
+            />
+          )}
+          <a href={`/patient/BookAnAppointment`} rel="noopener noreferrer">
             <button className="btn btn-primary"> Book An Appointment </button>
           </a>
           <a href="/patient/viewSubscribedPackages" rel="noopener noreferrer">

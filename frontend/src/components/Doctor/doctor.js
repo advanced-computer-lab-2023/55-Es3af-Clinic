@@ -9,10 +9,12 @@ import EditDoctor from "./updateDoctor2";
 import FilteredAppointments from "./filterAppointmentsByDateAndStatus.js";
 import SearchPatient from "./searchForPatientByName.js";
 import FilteredPatientsByAppointments from "./filterPatientByAppointment";
-import UpdatePassword from '../Doctor/updatePassword';
+import UpdatePassword from '../updatePassword.js';
 import doctorService from "../../services/doctorService.js";
 import AddTimeSlots from './addTimeSlots';
+import UploadPatientHealthRecords from './uploadPatientHealthRecords';
 import MyContractList from './viewEmploymentContract.js';
+import Navbar from "../navbar.js";
 
 
 
@@ -20,7 +22,7 @@ function DoctorPage() {
   return (
     <Routes>
       <Route path="/" element={<DoctorHome />} />
-      <Route path='/:id/updatePassword' element = {<UpdatePassword/>} />
+      <Route path='/updatePassword' element = {<UpdatePassword/>} />
       <Route path="/getAllMyPatients" element={< MyPatientList/>} />
       {/* <Route path="/updateDoctor" element={< UpdateDoctor/>} /> */}
       <Route path="/updateDoctor2" element={< EditDoctor/>} />
@@ -30,19 +32,20 @@ function DoctorPage() {
       <Route path="/filterPatientsByUpcomingPendingAppointments" element= {< FilteredPatientsByAppointments />} />
       <Route path="/" element={<DoctorHome />} />
       <Route path="/addTimeSlots" element={<AddTimeSlots />} /> 
+      <Route path="/uploadPatientHealthRecords" element={<UploadPatientHealthRecords/>} /> 
       <Route path ="/contracts" element={<MyContractList/>}/>
     </Routes>
   );
 }
 
 function DoctorHome() {
-  var id = '6525afac114367999aba79df'
-  var username="doc1"
+  // var id = '6525afac114367999aba79df'
+ // var username="doc1"
   const [result, setResult] = useState("");
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await doctorService.getAmountInWallet(username);
+        const response = await doctorService.getAmountInWallet();
         const amountInWalletResult = response.data; 
         setResult(amountInWalletResult);
       } catch (error) {
@@ -51,9 +54,10 @@ function DoctorHome() {
       }
     };
     fetchData(); 
-  });
+  }, []);
   return (
     <div className="App">
+      <Navbar />
       <header className="App-header">
         <div>
         <h5 className="top-right-button">Amount In Wallet: {result} </h5>
@@ -75,11 +79,14 @@ function DoctorHome() {
           <a href="/doctor/filterPatientsByUpcomingPendingAppointments" rel="noopener noreferrer">
             <button className="btn btn-primary"> Filter Patients by Upcoming Appointments </button>
           </a>
-          <a href={`/doctor/${id}/updatePassword/`} rel="noopener noreferrer">
+          <a href={"/doctor/updatePassword"} rel="noopener noreferrer">
             <button className="btn btn-primary"> Update my Password </button>
           </a>
           <a href="/doctor/addTimeSlots" rel="noopener noreferrer">
               <button className="btn btn-primary">Add Available Time Slots</button>
+          </a>
+          <a href="/doctor/uploadPatientHealthRecords" rel="noopener noreferrer">
+              <button className="btn btn-primary">Upload Patient Health Record</button>
           </a>
           <a href="/doctor/contracts" rel="./components/doctor/viewEmploymentContract.js">
             <button className="btn btn-primary"> Contracts </button>

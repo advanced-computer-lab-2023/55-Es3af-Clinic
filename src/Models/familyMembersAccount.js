@@ -12,7 +12,9 @@ const familyMemberAccSchema = new Schema({
     relationToPatient : {
         type: String,
         enum: ["Wife", "Child","Husband","Wife/Husband"]
-    }
+    },
+
+   
 });
 const FamilyMembers = mongoose.model("familyMembersAccount", familyMemberAccSchema);
 module.exports = FamilyMembers;
