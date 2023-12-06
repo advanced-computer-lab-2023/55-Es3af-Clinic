@@ -163,15 +163,27 @@ const viewHealthRecords = async (req, res) => {
 
   try {
     const token = req.cookies.jwt;
-    var id;
+    let id;
+
     jwt.verify(token, "supersecret", (err, decodedToken) => {
       if (err) {
         res.status(401).json({ message: "You are not logged in." });
       } else {
         id = decodedToken.name;
+        proceedWithViewHealthRecords(req, res, id, patientId);
       }
     });
-    const doctorId = id;
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
+  }
+};
+
+const proceedWithViewHealthRecords = async (req, res, doctorId, patientId) => {
+  try {
     const doctor = await doctorModel.findById(doctorId);
     if (!doctor) {
       return res.status(404).json({
@@ -181,11 +193,6 @@ const viewHealthRecords = async (req, res) => {
     }
 
     const healthRecords = await healthRecord.find({ patient: patientId });
-    // const patient = await patientModel.findById(patientId);
-
-    // .populate('healthRecords');
-
-    // console.log(patient)
 
     if (!healthRecords) {
       return res.status(404).json({
@@ -198,7 +205,7 @@ const viewHealthRecords = async (req, res) => {
       doctor: doctorId,
       patient: patientId,
     });
-    // console.log(Appointment)
+
     if (!Appointment) {
       return res.status(404).json({
         status: "fail",
@@ -206,23 +213,23 @@ const viewHealthRecords = async (req, res) => {
       });
     }
 
-    // const healthRecords = patient.healthRecords;
     console.log(healthRecords);
 
     res.status(200).json({
       status: "success",
       data: {
         healthRecords,
-        // patient
       },
     });
   } catch (err) {
-    // res.status(400).json({
-    //   message: err.message,
-    // });
-    console.log(err);
+    console.error(err);
+    res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
   }
 };
+
 
 //View a list of all my patients:
 const getAllMyPatients = async (req, res) => {
