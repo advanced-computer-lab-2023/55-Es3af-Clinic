@@ -60,7 +60,7 @@ function DoctorHome() {
       <Navbar />
       <header className="App-header">
         <div>
-        <h5 className="top-right-button">Amount In Wallet: {result} </h5>
+        <h5 >Amount In Wallet: {result} </h5>
           <a href="/doctor/getAllMyPatients" rel="noopener noreferrer">
             <button className="btn btn-primary"> View All My Patients </button>
             </a>
