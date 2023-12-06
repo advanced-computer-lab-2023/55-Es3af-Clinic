@@ -192,14 +192,15 @@ const proceedWithViewHealthRecords = async (req, res, doctorId, patientId) => {
       });
     }
 
-    const healthRecords = await healthRecord.find({ patient: patientId });
-
-    if (!healthRecords) {
+    const patient = await patientModel.findById(patientId);
+    if (!patient) {
       return res.status(404).json({
         status: "fail",
         message: "Patient not found",
       });
     }
+
+    const medicalHistory = patient.medicalHistory;
 
     const Appointment = await appointment.findOne({
       doctor: doctorId,
@@ -213,12 +214,18 @@ const proceedWithViewHealthRecords = async (req, res, doctorId, patientId) => {
       });
     }
 
-    console.log(healthRecords);
+    // Extract file data from medical history and send them in the response
+    const fileData = medicalHistory.map((record) => ({
+      name: record.name, // Assuming 'name' is the field storing the file name
+      contentType: record.contentType,
+      data: record.data, // Assuming 'data' is the field storing the binary data
+    }));
 
+    // Send the file data in the response
     res.status(200).json({
       status: "success",
       data: {
-        healthRecords,
+        healthRecords: fileData,
       },
     });
   } catch (err) {
@@ -229,6 +236,9 @@ const proceedWithViewHealthRecords = async (req, res, doctorId, patientId) => {
     });
   }
 };
+
+
+
 
 
 //View a list of all my patients:
