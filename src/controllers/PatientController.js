@@ -879,8 +879,10 @@ const BookAnAppointment = async (req, res) => {
       console.error(err);
     });
 
-    const patientMessage = `You have booked an appointment with doctor ${doctor.name} specialized in ${doctor.speciality} at ${newAppointment.date}. The total price is ${amount}.`
-    const doctorMessage = `Patient ${name} has booked an appointment with you at ${newAppointment.date}. The total price is ${amount}.`
+    const dateAndTime = properDateAndTime(newAppointment.date)
+
+    const patientMessage = `You have booked an appointment with doctor ${doctor.name} specialized in ${doctor.speciality} on ${dateAndTime}. The total price is ${amount}.`
+    const doctorMessage = `Patient ${name} has booked an appointment with you on ${dateAndTime}. The total price is ${amount}.`
 
     const emailToPatient = await transporter.sendMail({
       from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
@@ -918,6 +920,16 @@ const BookAnAppointment = async (req, res) => {
     res.status(500).send("An error occurred while booking the appointment");
   }
 };
+
+function properDateAndTime(dateAndTime){
+  const date = new Date(dateAndTime)
+  const day = date.getDate()
+  const month = date.getMonth()
+  const year = date.getFullYear()
+  const hour = date.getUTCHours()
+  const minute = date.getMinutes()
+  return `${day}/${month}/${year} at ${hour}:${minute}`
+}
 
 const uploadMedicalHistory = async (req, res) => {
   upload.array("medicalHistory", 5)(req, res, function (err) {
@@ -1310,4 +1322,5 @@ module.exports = {
   viewAvailableAppointments,
   viewMedicalHistory,
   removeMedicalHistory,
+  properDateAndTime,
 };

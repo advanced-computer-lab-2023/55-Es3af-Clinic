@@ -61,7 +61,7 @@ const NotificationIcon = ({ hasNotifications }) => {
         <div style={{ border: "1px solid #ccc", marginTop: 10, padding: 10 }}>
           <h3>Notifications</h3>
           {notifications.map((notification) => (
-            <div key={notification.notifID}>{notification.message}</div>
+            <div key={notification.notifID}>{notification.message}<br/>{notification.date}</div>
           ))}
         </div>
       )}

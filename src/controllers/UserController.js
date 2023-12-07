@@ -5,6 +5,7 @@ const { createToken } = require("../utils/auth.js");
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 const notificationModel = require('../Models/notifications.js')
+const patientController = require('./PatientController.js')
 
 const createUser = async (req, res) => {
   //add a new user to the database with
@@ -229,15 +230,16 @@ const getNotifications = async(req, res) => {
     var userNotification = []
     //console.log(result)
     var notifID = 0
-    for(var notifController of result){
-      if(notifController.receivers.includes(id)){
+    for(var notifi of result){
+      if(notifi.receivers.includes(id)){
         //console.log(notifController)
         notifID++
-        var message = notifController.message
-        userNotification.push({notifID, message})
+        var message = notifi.message
+        var date = patientController.properDateAndTime(notifi.createdAt)
+        userNotification.push({notifID, message, date})
       }
     }
-    if(userNotification.length == 0) userNotification.push({notifID, message:'You have no notifications yet'})
+    if(userNotification.length == 0) userNotification.push({notifID, message:'You have no notifications yet', date: ''})
     //console.log(userNotification)
     res.status(200).send(userNotification)
   })
