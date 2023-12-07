@@ -72,4 +72,34 @@
   flex-direction: column;
   gap: 20px;
 }
+.tabs {
+  position: fixed;
+  top: 5%;
+  display: flex;
+  background-color: #ddd; /* Grey background for the tabs */
+  border-radius: 15px; /* Rounded corners for the entire tab container */
+  overflow: hidden; /* Ensure rounded corners are applied to the container */
+}
+
+.tab {
+  flex: 1;
+  padding: 4px;
+  margin: 5px;
+  cursor: pointer;
+  border: none;
+  background-color: #ddd;
+  border-radius: 10px; /* More rounded corners for individual tabs */
+  transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+.tab.active {
+  background-color: #3498db;
+  color: white;
+}
+
+/* Optional: Hover effect for tabs */
+.tab:hover {
+  background-color: #c0c0c0; /* Light grey on hover */
+}
+
 
