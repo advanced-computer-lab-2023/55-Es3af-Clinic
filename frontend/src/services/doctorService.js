@@ -30,7 +30,29 @@ class DoctorService {
   async getAllPatients() {
     return http.get("/doctor/getPatients");
   }
-  async FilteredAppointments(date, status) {
+  // Get contract by doctor ID
+  async getContractsByDoctorId() {
+
+    return await http.get("/contract/doctor/");
+
+  }
+
+  async getContractById(contractId) {
+    return await http.get(`/contract/${contractId}`);
+  }
+  async updateContract(contractId, contract) {
+    return await http.put(`/contract/${contractId}`, contract);
+  }
+
+  async deleteContract(contractId) {
+    return await http.delete(`/contract/${contractId}`);
+  }
+
+  async createContract(contract) {
+    return await http.post("/contract", contract);
+  }
+
+  async FilteredAppointments(doctorid, date, status) {
     const queryParams = {};
 
     if (date) {

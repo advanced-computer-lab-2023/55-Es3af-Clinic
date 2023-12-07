@@ -8,7 +8,7 @@ const contractRoutes = new Router();
 
 // contractRouter.use(express.json());
 
-contractRoutes.get("/doctor/:doctorId",contractController.viewEmploymentContract)
+contractRoutes.get("/doctor/",contractController.viewEmploymentContract)
 contractRoutes.post("/", contractController.createContract);
 contractRoutes.put("/:contractId", contractController.updateContract);
 contractRoutes.delete("/:contractId", contractController.deleteContract);

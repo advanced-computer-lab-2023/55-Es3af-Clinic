@@ -21,7 +21,7 @@ function ResetPassword() {
 
   const handleInputChange = (event) => {
     const {name, value} = event.target
-    if(name == 'password'){
+    if(name === 'password'){
       if (value.length < 6) {
         setMessage2('Password is too short');
       } else if (!/\d/.test(value)) {
@@ -34,7 +34,7 @@ function ResetPassword() {
         //setPassword(value)
       }
     }
-    if(name == 'confirmPassword'){
+    if(name === 'confirmPassword'){
       if(value !== password.password){
         setMessage3('passwords does not match')
       }

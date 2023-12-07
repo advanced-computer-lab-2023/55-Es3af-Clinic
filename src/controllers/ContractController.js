@@ -1,6 +1,7 @@
 const contract = require("../Models/EmploymentContract.js");
 const doctorModel = require("../Models/Doctor");
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 
 const createContract = async (req, res) => {
 
@@ -76,13 +77,20 @@ const updateContract = async (req, res) => {
 
 // View my employment contract
 const viewEmploymentContract = async (req, res) => {
-  const doctorId = req.params.doctorId; // Doctor's ID
-  console.log(doctorId)
   try {
+    const token = req.cookies.jwt;
+    var doctorId;
+    jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+      if (err) {
+        res.status(401).json({message: "You are not logged in."})
+      }
+      else {
+        doctorId = decodedToken.name;
+      }
+    });
     const idObject = new mongoose.Types.ObjectId(doctorId)
     console.log(idObject)
     const doctor = await doctorModel.findById(idObject);
-    console.log(doctor)
     if (!doctor) {
       return res.status(404).json({
         status: "fail",
@@ -96,6 +104,7 @@ const viewEmploymentContract = async (req, res) => {
         message: "Contract not found"
       })
     }
+    console.log(contracts);
     res.status(200).json({
       status: "success",
       data: {

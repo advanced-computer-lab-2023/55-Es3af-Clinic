@@ -5,6 +5,7 @@ const userModel = require("../Models/user.js");
 const packageModel = require("../Models/Packages.js");
 const appointmentModel = require("../Models/Appointments.js");
 const PrescriptionsModel = require("../Models/Prescriptions.js");
+const notificationModel = require('../Models/notifications.js')
 const followUpModel = require("../Models/FollowUpRequests.js");
 const multer = require("multer");
 const fs = require("fs");
@@ -877,21 +878,37 @@ const BookAnAppointment = async (req, res) => {
       console.error(err);
     });
 
+    const patientMessage = `You have booked an appointment with doctor ${doctor.name} specialized in ${doctor.speciality} at ${newAppointment.date}. The total price is ${amount}.`
+    const doctorMessage = `Patient ${name} has booked an appointment with you at ${newAppointment.date}. The total price is ${amount}.`
 
     const emailToPatient = await transporter.sendMail({
       from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
       to: patient.email, // list of receivers
       subject: "Booked Appointment", // Subject line
-      text: `You have booked an appointment with doctor ${doctor.name} specialized in ${doctor.speciality} at ${newAppointment.date}. The total price is ${amount}.`, // plain text body
-      html: `<b>You have booked an appointment with doctor ${doctor.name} specialized in ${doctor.speciality} at ${newAppointment.date}. The total price is ${amount}.</b>`, // html body
+      text: patientMessage, // plain text body
+      html: `<b>${patientMessage}</b>`, // html body
     });
+
+    const patientNotif = new notificationModel({
+      receivers: patient._id,
+      message: patientMessage
+    })
+
+    patientNotif.save().catch((err) => {console.error(err)})
+
+    const doctorNotif = new notificationModel({
+      receivers: doctor._id,
+      message: doctorMessage
+    })
+
+    doctorNotif.save().catch((err) => {console.error(err)})
 
     const emailToDoctor = await transporter.sendMail({
       from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
       to: doctor.email, // list of receivers
       subject: "Booked Appointment", // Subject line
-      text: `Patient ${name} has booked an appointment with you at ${newAppointment.date}. The total price is ${amount}.`, // plain text body
-      html: `<b>Patient ${name} has booked an appointment with you at ${newAppointment.date}. The total price is ${amount}.</b>`, // html body
+      text: doctorMessage, // plain text body
+      html: `<b>${doctorMessage}</b>`, // html body
     });
 
     res.status(200).send("Appointment was booked successfully");

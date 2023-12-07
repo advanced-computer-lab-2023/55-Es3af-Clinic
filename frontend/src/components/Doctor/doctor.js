@@ -13,9 +13,8 @@ import UpdatePassword from '../updatePassword.js';
 import doctorService from "../../services/doctorService.js";
 import AddTimeSlots from './addTimeSlots';
 import UploadPatientHealthRecords from './uploadPatientHealthRecords';
-import { Link } from 'react-router-dom';
+import MyContractList from './viewEmploymentContract.js';
 import Navbar from "../navbar.js";
-
 
 
 
@@ -34,6 +33,7 @@ function DoctorPage() {
       <Route path="/" element={<DoctorHome />} />
       <Route path="/addTimeSlots" element={<AddTimeSlots />} /> 
       <Route path="/uploadPatientHealthRecords" element={<UploadPatientHealthRecords/>} /> 
+      <Route path ="/contracts" element={<MyContractList/>}/>
     </Routes>
   );
 }
@@ -60,7 +60,7 @@ function DoctorHome() {
       <Navbar />
       <header className="App-header">
         <div>
-        <h5 className="top-right-button">Amount In Wallet: {result} </h5>
+        <h5 >Amount In Wallet: {result} </h5>
           <a href="/doctor/getAllMyPatients" rel="noopener noreferrer">
             <button className="btn btn-primary"> View All My Patients </button>
             </a>
@@ -87,6 +87,9 @@ function DoctorHome() {
           </a>
           <a href="/doctor/uploadPatientHealthRecords" rel="noopener noreferrer">
               <button className="btn btn-primary">Upload Patient Health Record</button>
+          </a>
+          <a href="/doctor/contracts" rel="./components/doctor/viewEmploymentContract.js">
+            <button className="btn btn-primary"> Contracts </button>
           </a>
         </div>
       </header>

@@ -5,7 +5,7 @@ const userController = require('../controllers/UserController')
 
 const patientRoutes = new Router();
 patientRoutes.get('/viewAvailableAppointments/:id', patientController.viewAvailableAppointments);
-
+patientRoutes.get('/notifi', userController.getNotifications)
 patientRoutes.get('/getAmountInWallet', patientController.getAmountInWallet)
 patientRoutes.post("/createSession",patientController.checkoutSession)
 patientRoutes.put('/updatePassword', userController.changePassword)
