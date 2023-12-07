@@ -6,6 +6,7 @@ const packageModel = require("../Models/Packages.js");
 const appointmentModel = require("../Models/Appointments.js");
 const PrescriptionsModel = require("../Models/Prescriptions.js");
 const notificationModel = require('../Models/notifications.js')
+const followUpModel = require("../Models/FollowUpRequests.js");
 const multer = require("multer");
 const fs = require("fs");
 const familyMembersAcc = require("../Models/familyMembersAccount.js");
@@ -165,9 +166,6 @@ const addFamilyMember = async (req, res) => {
     }
   };
   
-
- 
-
 //working fine testing fine
 const viewFamilyMembers = async (req, res) => {
   try {
@@ -328,10 +326,10 @@ async function doctorPrice(patientID, doctorUsername) {
     const package = await packageModel.findOne({ type: patient.package });
     //console.log(`package in function is ${package}`);
     sessionPrice = sessionPrice * (1 - package.sessionDiscount);
+    sessionPrice = Number(sessionPrice.toFixed(1));
   }
   return sessionPrice;
 }
-
 
 async function viewDoctorDetails(doctor, patientID) {
   //const patient = patientModel.findOneAndDelete({username: patientUsername})
@@ -778,6 +776,7 @@ const appointmentsForDoc = async (req, res) => {
   const doctor = await doctorModel.findById(doctorID);
   const appointments = await appointmentModel.find({ doctor: doctor });
 };
+
 //farah
 const withdrawFromWallet = async (req, res) => {
   const token = req.cookies.jwt;
@@ -929,6 +928,41 @@ function properDateAndTime(dateAndTime){
   const hour = date.getUTCHours()
   const minute = date.getMinutes()
   return `${day}/${month}/${year} at ${hour}:${minute}`
+}
+const requestFollowUp = async(req, res) => {
+  const doctorid = req.body.doctorid;
+  const prevAppointmentid = req.body.appointmentid;
+  const followUpAppId = req.body.followAppId;
+  
+  try{
+  const doctor = await doctorModel.findById(doctorid);
+  const prevAppointment = await appointmentModel.findById(prevAppointmentid);
+
+  const matchingTimeSlot = doctor.availableTimeSlots.find(slot => slot._id == followUpAppId);
+  const startTime = matchingTimeSlot.startTime;
+  const endTime = matchingTimeSlot.endTime;
+   
+  const [startHour, startMinute] = startTime.split(":").map(Number);
+  const [endHour, endMinute] = endTime.split(":").map(Number);
+
+  const duration = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
+
+  const followUp = new followUpModel({
+    patient: prevAppointment.patient,
+    patientName: prevAppointment.patientName, // Replace with the actual patient name
+    doctor: doctorid,   // Replace with the actual doctor ID
+    date: matchingTimeSlot.date, // Replace with the actual date
+    duration: duration, // Replace with the actual duration
+    pastAppointement:prevAppointmentid
+    // Status will default to 'pending' if not provided
+  });
+  await followUp.save();
+  
+  res.status(200).send("FollowUp Scheduled Successfully")
+  } catch (error) {
+  console.error(error);
+  res.status(500).send("An error occurred while requesting a follow-up");
+  }
 }
 
 const uploadMedicalHistory = async (req, res) => {
@@ -1165,6 +1199,8 @@ const viewPatientAppointments = async (req, res) => {
     const formattedAppointments = appointments.map((appointment) => {
       return {
         id: appointment._id,
+        patientName: appointment.patientName,
+        doctorid: appointment.doctor._id,
         doctor: appointment.doctor.name,
         date: appointment.date,
         duration: appointment.duration,
@@ -1323,4 +1359,5 @@ module.exports = {
   viewMedicalHistory,
   removeMedicalHistory,
   properDateAndTime,
-};
+  requestFollowUp,
+}
