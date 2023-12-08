@@ -52,7 +52,7 @@ class DoctorService {
     return await http.post("/contract", contract);
   }
 
-  async FilteredAppointments(doctorid, date, status) {
+  async FilteredAppointments(date, status) {
     const queryParams = {};
 
     if (date) {

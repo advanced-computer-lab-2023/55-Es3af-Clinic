@@ -688,7 +688,7 @@ const addPrescription = async (req, res) => {
   });
 
   const medicine = req.body
-  console.log(medicine)
+  //console.log(medicine)
   const patientID = req.params.id
   var medicines = []
   if(medicine){
