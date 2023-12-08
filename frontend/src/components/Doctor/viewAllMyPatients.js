@@ -2,6 +2,10 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import DoctorService from "../../services/doctorService";
+import { Route } from "react-router-dom";
+import AddPrescription from "./addPrescription";
+
+
 
 
 const MyPatientList = (props) => {
@@ -177,13 +181,9 @@ const MyPatientList = (props) => {
                   >
                     View Medical History
                   </button>
-                  <button
-                    className="btn btn-primary"
-                    id="addPrescription"
-                    onClick={() => viewMedicalHistory(patient._id)}
-                  >
-                    Add Prescription
-                  </button>
+                  <a href={`/doctor/addPrescription/${patient._id}`} rel="noopener noreferrer">
+                    <button className="btn btn-primary">Add Prescription</button>
+                  </a>
                 </div>
               </div>
             );

@@ -41,6 +41,7 @@ class UserService {
   getNotification(type){
     return http.get(`/${type}/notifi`)
   }
+
 }
 
 export default new UserService();

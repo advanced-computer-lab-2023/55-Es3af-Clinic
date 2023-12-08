@@ -704,19 +704,36 @@ const addPrescription = async (req, res) => {
     }
   });
 
-  const {patientID, med, dosage, duration} = req.body
-  const medID = await mediceneModel.findOne({Name: med})
-  const newPrescription = new prescription({
-    patient: patientID,
-    medicine: {
-      medID: medID._id,
-      dosage: dosage,
-      duration: duration
-    },
-    doctor: id,
-  })
-  newPrescription.save().catch((err) => {console.error(err)})
-  res.status(200).send('Prescription added successfully')
+  const medicine = req.body
+  console.log(medicine)
+  const patientID = req.params.id
+  var medicines = []
+  if(medicine){
+      for(var med of medicine){
+        const medID = await mediceneModel.findOne({Name: med.name})
+        if(!medID) {
+          res.status(200).send(`${med.name} is not available in the pharmacy`)
+          return
+      }
+        else if(medID.quantity == 0) {
+          res.status(200).send('This medicine is out of stock')
+          return
+        }
+        medicines.push({
+          medID: medID,
+          dosage: med.dosage,
+          duration: med.duration
+        })
+    }
+    const newPrescription = new prescription({
+      patient: patientID,
+      medicine: medicines,
+      doctor: id,
+    })
+    newPrescription.save().catch((err) => {console.error(err)})
+    res.status(200).send('Prescription added successfully')
+  }
+  else res.status(200).send('There is no medicine added')
 
 }
 

@@ -15,12 +15,14 @@ import AddTimeSlots from './addTimeSlots';
 import UploadPatientHealthRecords from './uploadPatientHealthRecords';
 import MyContractList from './viewEmploymentContract.js';
 import Navbar from "../navbar.js";
+import AddPrescription from './addPrescription.js'
 
 
 
 function DoctorPage() {
   return (
     <Routes>
+      <Route path ="/addPrescription/:id" element={<AddPrescription/>}/>
       <Route path="/" element={<DoctorHome />} />
       <Route path='/updatePassword' element = {<UpdatePassword/>} />
       <Route path="/getAllMyPatients" element={< MyPatientList/>} />
