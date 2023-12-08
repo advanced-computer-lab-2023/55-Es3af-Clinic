@@ -53,9 +53,24 @@
 
 .member-banner {
   position: fixed;
-  bottom: 50%;
+  bottom: 30%;
   left: 10%;
   width: 80%;
+  background: #282c34;
+  color: white;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  gap: 10px;
+}
+.member-banner2 {
+  position:fixed;
+  top:auto;
+  left:auto;
+  width: 70%;
   background: #282c34;
   color: white;
   padding: 10px;
@@ -108,5 +123,30 @@
   align-items: center;
   justify-content: flex-end; /* Align to the right */
   margin-right: 20px; /* Adjust margin as needed */
+}
+.close-icon {
+  position: absolute;
+  top: 5px;
+  right: 15px;
+  cursor: pointer;
+  font-size: 20px;
+  color: #fff;
+}
+/* Add this to your CSS or style section */
+.btn-cancel {
+  background-color: red;
+  color: white;
+  border: none;
+  right: 2px;
+  outline: none;
+  border-radius: 10px;
+}
+
+.btn-cancel:hover {
+  background-color: darkred;
+}
+.cancel-button-container {
+  display: flex;
+  justify-content: flex-end;
 }
 
