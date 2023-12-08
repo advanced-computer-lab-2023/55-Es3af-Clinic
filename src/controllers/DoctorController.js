@@ -163,27 +163,15 @@ const viewHealthRecords = async (req, res) => {
 
   try {
     const token = req.cookies.jwt;
-    let id;
-
+    var id;
     jwt.verify(token, "supersecret", (err, decodedToken) => {
       if (err) {
         res.status(401).json({ message: "You are not logged in." });
       } else {
         id = decodedToken.name;
-        proceedWithViewHealthRecords(req, res, id, patientId);
       }
     });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      status: "error",
-      message: "Internal Server Error",
-    });
-  }
-};
-
-const proceedWithViewHealthRecords = async (req, res, doctorId, patientId) => {
-  try {
+    const doctorId = id;
     const doctor = await doctorModel.findById(doctorId);
     if (!doctor) {
       return res.status(404).json({
@@ -192,21 +180,25 @@ const proceedWithViewHealthRecords = async (req, res, doctorId, patientId) => {
       });
     }
 
-    const patient = await patientModel.findById(patientId);
-    if (!patient) {
+    const healthRecords = await healthRecord.find({ patient: patientId });
+    // const patient = await patientModel.findById(patientId);
+
+    // .populate('healthRecords');
+
+    // console.log(patient)
+
+    if (!healthRecords) {
       return res.status(404).json({
         status: "fail",
         message: "Patient not found",
       });
     }
 
-    const medicalHistory = patient.medicalHistory;
-
     const Appointment = await appointment.findOne({
       doctor: doctorId,
       patient: patientId,
     });
-
+    // console.log(Appointment)
     if (!Appointment) {
       return res.status(404).json({
         status: "fail",
@@ -214,32 +206,23 @@ const proceedWithViewHealthRecords = async (req, res, doctorId, patientId) => {
       });
     }
 
-    // Extract file data from medical history and send them in the response
-    const fileData = medicalHistory.map((record) => ({
-      name: record.name, // Assuming 'name' is the field storing the file name
-      contentType: record.contentType,
-      data: record.data, // Assuming 'data' is the field storing the binary data
-    }));
+    // const healthRecords = patient.healthRecords;
+    console.log(healthRecords);
 
-    // Send the file data in the response
     res.status(200).json({
       status: "success",
       data: {
-        healthRecords: fileData,
+        healthRecords,
+        // patient
       },
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      status: "error",
-      message: "Internal Server Error",
-    });
+    // res.status(400).json({
+    //   message: err.message,
+    // });
+    console.log(err);
   }
 };
-
-
-
-
 
 //View a list of all my patients:
 const getAllMyPatients = async (req, res) => {
@@ -700,7 +683,7 @@ const viewMedicalHistory = async (req, res) => {
       }
     });
     const doctorId = id;    
-    const patientsWithDoneAppointments = await appointmentModel.find({
+    const patientsWithDoneAppointments = await appointment.find({
       doctor: doctorId,
       status: 'done',
     }).distinct('patient');
