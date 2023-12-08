@@ -700,7 +700,8 @@ const getAmountInWallet = async (req, res) => {
     const decodedToken = jwt.verify(token, "supersecret");
     const userId = decodedToken.name;
     const patient = await patientModel.findById(userId);
-    return res.status(200).send(patient.amountInWallet.toString() + " EGP");
+    const amnt= Number(patient.amountInWallet.toFixed(1));
+    return res.status(200).send(amnt.toString() + " EGP");
   } catch (error) {
     console.error(error);
     return res
