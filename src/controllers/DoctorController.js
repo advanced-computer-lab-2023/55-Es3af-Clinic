@@ -11,6 +11,8 @@ const jwt = require("jsonwebtoken");
 const upload = multer({ dest: "uploads/" });
 const mediceneModel = require('../Models/Medicine.js');
 const prescription = require("../Models/Prescriptions.js");
+const followUps = require("../Models/FollowUpRequests.js");
+
 // const Patient = JSON.parse(fs.readFileSync('./data/patient.json'));
 // const Doctors = JSON.parse(fs.readFileSync('./data/doctor.json'));
 
@@ -747,7 +749,7 @@ const cancelAppointment = async (req, res) => {
 
 const acceptOrRevokeFollowUp = async (req, res) => {
   try {
-    const { followUpId, accept } = req.body; // Assuming followUpId and accept boolean are provided in the request
+    const { followUpId } = req.body;
 
     // Find the follow-up request
     const followUp = await followUps.findById(followUpId)
@@ -760,7 +762,7 @@ const acceptOrRevokeFollowUp = async (req, res) => {
 
     if (accept === true) {
       // Accepted: Create a new appointment from the follow-up request
-      const newAppointment = await appointments.create({
+      const newAppointment = await appointment.create({
         patient: followUp.patient._id,
         patientName: followUp.patient.name,
         doctor: followUp.doctor._id,
