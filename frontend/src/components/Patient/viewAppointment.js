@@ -137,8 +137,13 @@ const ViewAppointments = () => {
         </button>
       </div>
       <div className="appointments-container" style={{ maxHeight: '530px', overflowY: 'auto' }}>
-          {appointments.length > 0 ? (
-            appointments.map((appointment) => {
+  {appointments.length > 0 ? (
+    appointments
+      .sort((a, b) => {
+        // Define the order of statuses: pending, done, canceled
+        const order = { pending: 0, done: 1, canceled: 2 };
+        return order[a.status] - order[b.status];
+      }).map((appointment) => {
               return (
                 <div
                   className="card"
@@ -173,6 +178,17 @@ const ViewAppointments = () => {
                       >
                         Request a FollowUp
                       </button>
+                    )}
+                    {appointment.status === "pending" && (
+                        <div className="cancel-button-container">
+                      <button className="btn-cancel"
+                      style={{marginInlineEnd:0}} 
+                        //onClick={() => handleFollowUpRequest(appointment._id,appointment.doctor._id)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+
                     )}
                   </div>
                 </div>

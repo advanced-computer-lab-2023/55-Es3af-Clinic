@@ -132,5 +132,21 @@
   font-size: 20px;
   color: #fff;
 }
+/* Add this to your CSS or style section */
+.btn-cancel {
+  background-color: red;
+  color: white;
+  border: none;
+  right: 2px;
+  outline: none;
+  border-radius: 10px;
+}
 
+.btn-cancel:hover {
+  background-color: darkred;
+}
+.cancel-button-container {
+  display: flex;
+  justify-content: flex-end;
+}
 
