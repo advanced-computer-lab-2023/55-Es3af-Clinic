@@ -8,8 +8,9 @@ const prescriptionSchema = new Schema({
     autoRemove: true,
   },
   medicine: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'medicine',
+    medID: {type: mongoose.Schema.Types.ObjectId, ref: 'medicine'},
+    dosage: String, //7abayten ba3d el akl, etc
+    duration: String //1 day, 1 month, etc
   }],
   doctor: {
     type: mongoose.Schema.Types.ObjectId,
@@ -20,11 +21,12 @@ const prescriptionSchema = new Schema({
     type: String,
     enum: ["filled", "unfilled"],
     required: true,
+    default: "unfilled"
   },
-  date: {
-    type: Date,
-    required: true,
-  }
+  // date: {
+  //   type: Date,
+  //   required: true,
+  // }
 });
 
 const prescription = mongoose.model("prescription", prescriptionSchema);

@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt");
 const { createToken } = require("../utils/auth.js");
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
+const notificationModel = require('../Models/notifications.js')
+const patientController = require('./PatientController.js')
 
 const createUser = async (req, res) => {
   //add a new user to the database with
@@ -207,7 +209,42 @@ const changePassword = async (req, res) => {
   res.status(200).send(message)
 };
 
+const getNotifications = async(req, res) => {
+  const token = req.cookies.jwt;
+  var id = ''
+  jwt.verify(token, "supersecret", (err, decodedToken) => {
+    if (err) {
+      console.log('You are not logged in.');
+      // res send status 401 you are not logged in
+      res.status(401).json({ message: "You are not logged in." });
+      // res.redirect('/login');
+    } else {
+      id = decodedToken.name;
+      //console.log('got the id')
+    }
+  });
 
+  await notificationModel.find({})
+  .exec()
+  .then((result) => {
+    var userNotification = []
+    //console.log(result)
+    var notifID = 0
+    for(var notifi of result){
+      if(notifi.receivers.includes(id)){
+        //console.log(notifController)
+        notifID++
+        var message = notifi.message
+        var date = patientController.properDateAndTime(notifi.createdAt)
+        userNotification.push({notifID, message, date})
+      }
+    }
+    if(userNotification.length == 0) userNotification.push({notifID, message:'You have no notifications yet', date: ''})
+    //console.log(userNotification)
+    res.status(200).send(userNotification)
+  })
+  .catch((err) => console.error(err))
+}
 
 module.exports = {
   createUser,
@@ -219,4 +256,5 @@ module.exports = {
   forgetPassword,
   changePassword,
   resetPassword,
+  getNotifications,
 };

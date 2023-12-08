@@ -114,6 +114,10 @@ async viewMedicalHistory() {
   }
 }
 
+addPrescription(prescription, id){
+  return http.post(`/doctor/addPrescription/${id}`, prescription)
+}
+
   // async scheduleFollowUpAppointment(appointmentData) {
   //   try {
   //     const response = await http.post(

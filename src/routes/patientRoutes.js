@@ -5,7 +5,7 @@ const userController = require('../controllers/UserController')
 
 const patientRoutes = new Router();
 patientRoutes.get('/viewAvailableAppointments/:id', patientController.viewAvailableAppointments);
-
+patientRoutes.get('/notifi', userController.getNotifications)
 patientRoutes.get('/getAmountInWallet', patientController.getAmountInWallet)
 patientRoutes.post("/createSession",patientController.checkoutSession)
 patientRoutes.put('/updatePassword', userController.changePassword)
@@ -26,6 +26,8 @@ patientRoutes.get("/filterAppointmentsByDateAndStatus", patientController.filter
 //patientRoutes.get("/viewAvailableAppoinments/:id", patientController.viewAvailableAppointments);
 //patientRoutes.get('/', patientController.getAllSpecialities)
 patientRoutes.get('/viewPatientAppointments', patientController.viewPatientAppointments);
+patientRoutes.get('/viewFamilyMembersAppointments', patientController.viewFamilyAppointments);
+patientRoutes.post('/requestFollowUp', patientController.requestFollowUp);
 patientRoutes.post('/uploadMedicalHistory', patientController.uploadMedicalHistory);
 patientRoutes.post("/BookAnAppointment", patientController.BookAnAppointment);
 patientRoutes.get('/viewSubscribedHealthPackages', patientController.viewSubscribedHealthPackages);

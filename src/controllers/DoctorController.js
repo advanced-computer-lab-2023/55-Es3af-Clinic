@@ -9,6 +9,8 @@ const bcrypt = require("bcrypt");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const upload = multer({ dest: "uploads/" });
+const mediceneModel = require('../Models/Medicine.js');
+const prescription = require("../Models/Prescriptions.js");
 // const Patient = JSON.parse(fs.readFileSync('./data/patient.json'));
 // const Doctors = JSON.parse(fs.readFileSync('./data/doctor.json'));
 
@@ -431,50 +433,6 @@ const selectPatient = async (req, res) => {
   }
 };
 
-// const getPassword = async (req, res) => {
-//   try{
-//     const token = req.cookies.jwt;
-//     var id;
-//     jwt.verify(token, 'supersecret', (err ,decodedToken) => {
-//       if (err) {
-//         res.status(401).json({message: "You are not logged in."})
-//       }
-//       else {
-//         id = decodedToken.name;
-//       }
-//     });
-//   const userId = id;
-//   var user = await doctorModel.findById(userId);
-//   res.status(200).send(user.password)
-//   }catch (err) {
-//       res.status(400).json({
-//         message:err.message,
-//       });
-//   }
-// }
-
-// const changePassword = async (req, res) => {
-//   const salt = await bcrypt.genSalt();
-//   const hashedPassword = await bcrypt.hash(req.body.password, salt);
-//   var newPassword = hashedPassword;
-
-//   try {
-//     const token = req.cookies.jwt;
-//     var id;
-//     jwt.verify(token, 'supersecret', (err ,decodedToken) => {
-//       if (err) {
-//         res.status(401).json({message: "You are not logged in."})
-//       }
-//       else {
-//         id = decodedToken.name;
-//       }
-//     });
-//     const userID = id;
-//     await doctorModel.findByIdAndUpdate(userID, { password: newPassword })
-//     res.status(200).send('Password updated successfully')
-//   }
-//   catch (err) { console.error(err) }
-// }
 
 const getAmountInWallet = async (req, res) => {
   try {
@@ -718,6 +676,50 @@ const viewMedicalHistory = async (req, res) => {
   }
 };
 
+const addPrescription = async (req, res) => {
+  const token = req.cookies.jwt;
+  var id;
+  jwt.verify(token, "supersecret", (err, decodedToken) => {
+    if (err) {
+      res.status(401).json({ message: "You are not logged in." });
+    } else {
+      id = decodedToken.name;
+    }
+  });
+
+  const medicine = req.body
+  console.log(medicine)
+  const patientID = req.params.id
+  var medicines = []
+  if(medicine){
+      for(var med of medicine){
+        const medID = await mediceneModel.findOne({Name: med.name})
+        if(!medID) {
+          res.status(200).send(`${med.name} is not available in the pharmacy`)
+          return
+      }
+        else if(medID.quantity == 0) {
+          res.status(200).send('This medicine is out of stock')
+          return
+        }
+        medicines.push({
+          medID: medID,
+          dosage: med.dosage,
+          duration: med.duration
+        })
+    }
+    const newPrescription = new prescription({
+      patient: patientID,
+      medicine: medicines,
+      doctor: id,
+    })
+    newPrescription.save().catch((err) => {console.error(err)})
+    res.status(200).send('Prescription added successfully')
+  }
+  else res.status(200).send('There is no medicine added')
+
+}
+
 module.exports = {
   addDoctor,
   getAllPatients,
@@ -738,4 +740,5 @@ module.exports = {
   scheduleFollowUpAppointment,
   getAppointmentsWithStatusDone,
   viewMedicalHistory,
+  addPrescription,
 };

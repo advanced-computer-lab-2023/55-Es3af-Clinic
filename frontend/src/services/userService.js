@@ -1,13 +1,13 @@
 import http from "./http-common";
 
 class UserService {
-  updatePassword(id, password, type) {
-    if (type === "patient") {
-      return http.put(`/patient/${id}/updatePassword`, { password: password });
-    } else if (type === "doctor") {
-      return http.put(`/doctor/${id}/updatePassword`, { password: password });
-    }
-  }
+  // updatePassword(id, password, type) {
+  //   if (type === "patient") {
+  //     return http.put(`/patient/${id}/updatePassword`, { password: password });
+  //   } else if (type === "doctor") {
+  //     return http.put(`/doctor/${id}/updatePassword`, { password: password });
+  //   }
+  // }
 
   getPassword(id, type) {
     if (type === "patient") {
@@ -18,7 +18,7 @@ class UserService {
   }
 
   login(user) {
-    console.log(user);
+    //console.log(user);
     return http.post("/login", user);
   }
 
@@ -37,6 +37,11 @@ class UserService {
   resetPassword(user, id){
     return http.put(`/resetPassword/${id}`, user);
   }
+
+  getNotification(type){
+    return http.get(`/${type}/notifi`)
+  }
+
 }
 
 export default new UserService();
