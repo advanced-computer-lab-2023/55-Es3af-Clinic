@@ -749,9 +749,8 @@ const cancelAppointment = async (req, res) => {
 
 const acceptOrRevokeFollowUp = async (req, res) => {
   try {
-    const { followUpId } = req.body;
+    const { followUpId, accept } = req.body;
 
-    // Find the follow-up request
     const followUp = await followUps.findById(followUpId)
       .populate('patient')
       .populate('doctor');
@@ -763,27 +762,25 @@ const acceptOrRevokeFollowUp = async (req, res) => {
     if (accept === true) {
       // Accepted: Create a new appointment from the follow-up request
       const newAppointment = await appointment.create({
-        patient: followUp.patient._id,
-        patientName: followUp.patient.name,
-        doctor: followUp.doctor._id,
-        date: followUp.date,
-        duration: followUp.duration,
-        status: 'scheduled', // You might set the status to 'scheduled' or any appropriate value
-        // Add other necessary appointment details
+        patient: followUps.patient._id,
+        doctor: followUps.doctor._id,
+        date: followUps.date,
+        duration: followUps.duration,
+        status: 'pending', // Or any appropriate value
       });
 
       // Remove the scheduled slot from the doctor's available time slots
       const updatedDoctor = await doctorModel.findByIdAndUpdate(
-        followUp.doctor._id,
+        followUps.doctor._id,
         {
-          $pull: { availableTimeSlots: followUp.date },
+          $pull: { availableTimeSlots: followUps.date },
         },
         { new: true }
       );
 
       // Update the follow-up request status to 'accepted'
-      followUp.approvalStatus = 'accepted';
-      await followUp.save();
+      followUps.approvalStatus = 'accepted';
+      await followUps.save();
 
       return res.status(200).json({
         message: 'Follow-up request accepted',
@@ -792,8 +789,8 @@ const acceptOrRevokeFollowUp = async (req, res) => {
       });
     } else {
       // If not accepted, update the follow-up request status to 'rejected'
-      followUp.approvalStatus = 'rejected';
-      await followUp.save();
+      followUps.approvalStatus = 'rejected';
+      await followUps.save();
 
       return res.status(200).json({
         message: 'Follow-up request rejected',
@@ -805,6 +802,7 @@ const acceptOrRevokeFollowUp = async (req, res) => {
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 
 
 
