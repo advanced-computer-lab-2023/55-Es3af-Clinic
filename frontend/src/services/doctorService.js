@@ -134,6 +134,10 @@ addPrescription(prescription, id){
   //     throw error;
   //   }
   // }
+  async cancelAppointment(body){
+    return http.put("/doctor/cancelAppointment", body)
+  }
 }
+
 
 export default new DoctorService();

@@ -722,23 +722,23 @@ const addPrescription = async (req, res) => {
 
 const cancelAppointment = async (req, res) => {
   try {
-    const appointmentId = req.body.appointmentId;
+    const appointmentId = req.body.appointmentid;
 
     // Find the appointment by ID
-    const appointment = await appointmentModel.findById(appointmentId);
+    const appointments = await appointment.findById(appointmentId);
 
     // Check if the appointment exists
-    if (!appointment) {
+    if (!appointments) {
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
     // Update the appointment status to "canceled"
-    appointment.status = 'canceled';
+    appointments.status = 'canceled';
 
     // Save the updated appointment
-    await appointment.save();
+    await appointments.save();
 
-    return res.json({ message: 'Appointment canceled successfully', appointment });
+    return res.json({ message: 'Appointment canceled successfully', appointments });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Internal Server Error' });
