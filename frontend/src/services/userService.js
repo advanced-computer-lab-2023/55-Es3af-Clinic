@@ -18,7 +18,7 @@ class UserService {
   }
 
   login(user) {
-    console.log(user);
+    //console.log(user);
     return http.post("/login", user);
   }
 

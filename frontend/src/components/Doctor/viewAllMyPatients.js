@@ -164,18 +164,25 @@ const MyPatientList = (props) => {
                     Mobile: {patient.mobile}
                   </h3>
                   <button
-                    style={{ width: 200, height: 50, backgroundColor: "#2a5923" }}
+                    className="btn btn-primary"
                     id="updateButton"
                     onClick={() => viewDets(patient)}
                   >
                     View Details
                   </button>
                   <button
-                    style={{ width: 300, height: 50, backgroundColor: "#2a5923" }}
+                    className="btn btn-primary"
                     id="viewMedicalHistoryButton"
                     onClick={() => viewMedicalHistory(patient._id)}
                   >
                     View Medical History
+                  </button>
+                  <button
+                    className="btn btn-primary"
+                    id="addPrescription"
+                    onClick={() => viewMedicalHistory(patient._id)}
+                  >
+                    Add Prescription
                   </button>
                 </div>
               </div>
