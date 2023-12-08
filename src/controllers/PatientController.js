@@ -689,7 +689,6 @@ const getPatients = async (req, res) => {
   res.status(200).send(patients);
 };
 
-
 const getAmountInWallet = async (req, res) => {
   try {
     const token = req.cookies.jwt;
@@ -709,6 +708,7 @@ const getAmountInWallet = async (req, res) => {
       .json({ message: "Invalid token or you are not logged in." });
   }
 };
+
 const subscribeToAHealthPackage = async (req, res) => {
   const packageID = req.body.packageID;
   const patients = req.body.patients;
@@ -935,7 +935,11 @@ const requestFollowUp = async(req, res) => {
   const [endHour, endMinute] = endTime.split(":").map(Number);
 
   const duration = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
-
+  const isThere= await followUpModel.find({pastAppointement:prevAppointmentid, date: matchingTimeSlot.date })
+  if(isThere.length!=0 ){
+    res.status(200).send("You already requested a follow up at this time");
+    return;
+  }
   const followUp = new followUpModel({
     patient: prevAppointment.patient,
     patientName: prevAppointment.patientName, // Replace with the actual patient name
@@ -1067,11 +1071,6 @@ const removeMedicalHistory = async (req, res) => {
   }
 };
 
-
-
-
-
-
 const viewSubscribedHealthPackages = async (req, res) => {
   const token = req.cookies.jwt;
   var id;
@@ -1138,25 +1137,63 @@ const viewSubscribedHealthPackages = async (req, res) => {
   }
 };
 
-// const checkoutSession = async (req,res)=>{
-//   try{
-//     const  lineItems  = req.body.lineItems;
-//     const success_url=req.body.success_url;
-//     const cancel_url= req.body.cancel_url;
-//     const session = await stripe.checkout.sessions.create({
-//       payment_method_types: ['card'],
-//       mode:'payment',
-//       line_items: lineItems,
-//       success_url:success_url,
-//       cancel_url:cancel_url,
-//     })
-//     res.json({url:session.url})
-//   }
-//   catch (error){
-//     console.error(error);
-//     res.status(500).send('Internal Server Error');
-//   }
-// }
+const viewFamilyAppointments = async (req,res)=>{
+  const familyMemberData = [];
+  try{
+    const token = req.cookies.jwt;
+      var id;
+      jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+        if (err) {
+          res.status(401).json({message: "You are not logged in."})
+        }
+        else {
+          id = decodedToken.name;
+        }
+      });
+  const patientId = id;
+  const patient = await patientModel.findById(patientId);
+
+  const familyAppNoAcc= await appointmentModel.find({patient:patientId, patientName: { $ne: patient.name }}).populate("doctor", "name")
+  .exec()
+
+  const familyMemberAcc = await familyMembersAcc.find({
+    patient: patientId,
+  });
+
+  const familyMemberAccRev = await familyMembersAcc.find({
+    Id: patientId,
+  });
+
+  if(familyAppNoAcc.length<=0 && familyMemberAcc.length<=0 && familyMemberAccRev.length<=0){
+    res.status(200).send("You don't have any family members added who have an appointment");
+  }
+  else{
+    familyMemberData.push(familyAppNoAcc);
+
+    for (const member of familyMemberAcc) {
+      const memberAppointments = await appointmentModel.find({
+        patient: member.Id,
+      }).populate("doctor", "name")
+      .exec();
+      familyMemberData.push(...memberAppointments);
+    }
+    for (const memberRev of familyMemberAccRev) {
+      const memberRevAppointments = await appointmentModel.find({
+        patient: memberRev.patient,
+      }).populate("doctor", "name")
+      .exec();
+      familyMemberData.push(...memberRevAppointments);
+    }
+
+    res.status(200).json(familyMemberData);
+  }
+  }
+  catch (error){
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+}
+
 const viewPatientAppointments = async (req, res) => {
     const token = req.cookies.jwt;
       var id;
@@ -1177,7 +1214,7 @@ const viewPatientAppointments = async (req, res) => {
     }
 
     const appointments = await appointmentModel
-      .find({ patient: patientId })
+      .find({ patient: patientId, patientName:patient.name })
       .populate("doctor", "name")
       .exec();
 
@@ -1185,19 +1222,19 @@ const viewPatientAppointments = async (req, res) => {
       return res.status(200).send("No appointments found for this patient.");
     }
 
-    const formattedAppointments = appointments.map((appointment) => {
-      return {
-        id: appointment._id,
-        patientName: appointment.patientName,
-        doctorid: appointment.doctor._id,
-        doctor: appointment.doctor.name,
-        date: appointment.date,
-        duration: appointment.duration,
-        status: appointment.status,
-      };
-    });
+    // const formattedAppointments = appointments.map((appointment) => {
+    //   return {
+    //     id: appointment._id,
+    //     patientName: appointment.patientName,
+    //     doctorid: appointment.doctor._id,
+    //     doctor: appointment.doctor.name,
+    //     date: appointment.date,
+    //     duration: appointment.duration,
+    //     status: appointment.status,
+    //   };
+    // });
 
-    res.status(200).json(formattedAppointments);
+    res.status(200).json(appointments);
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
@@ -1347,5 +1384,6 @@ module.exports = {
   viewAvailableAppointments,
   viewMedicalHistory,
   removeMedicalHistory,
-  requestFollowUp
+  requestFollowUp,
+  viewFamilyAppointments
 };

@@ -26,6 +26,7 @@ patientRoutes.get("/filterAppointmentsByDateAndStatus", patientController.filter
 //patientRoutes.get("/viewAvailableAppoinments/:id", patientController.viewAvailableAppointments);
 //patientRoutes.get('/', patientController.getAllSpecialities)
 patientRoutes.get('/viewPatientAppointments', patientController.viewPatientAppointments);
+patientRoutes.get('/viewFamilyMembersAppointments', patientController.viewFamilyAppointments);
 patientRoutes.post('/requestFollowUp', patientController.requestFollowUp);
 patientRoutes.post('/uploadMedicalHistory', patientController.uploadMedicalHistory);
 patientRoutes.post("/BookAnAppointment", patientController.BookAnAppointment);

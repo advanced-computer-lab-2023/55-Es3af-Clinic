@@ -110,6 +110,12 @@ class PatientService {
   async removeMedicalHistory(medicalHistoryId) {
     return http.delete(`/patient/removeMedicalHistory/${medicalHistoryId}`);
   }
+  async viewFamilyMembersAppointments(){
+    return http.get("/patient/viewFamilyMembersAppointments")
+  }
+  async requestFollowUp(body){
+    return http.post("/patient/requestFollowUp", body)
+  }
   
 }
 
