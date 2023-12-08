@@ -745,6 +745,67 @@ const cancelAppointment = async (req, res) => {
   }
 }
 
+const acceptOrRevokeFollowUp = async (req, res) => {
+  try {
+    const { followUpId, accept } = req.body; // Assuming followUpId and accept boolean are provided in the request
+
+    // Find the follow-up request
+    const followUp = await followUps.findById(followUpId)
+      .populate('patient')
+      .populate('doctor');
+
+    if (!followUp) {
+      return res.status(404).json({ message: 'Follow-up request not found' });
+    }
+
+    if (accept === true) {
+      // Accepted: Create a new appointment from the follow-up request
+      const newAppointment = await appointments.create({
+        patient: followUp.patient._id,
+        patientName: followUp.patient.name,
+        doctor: followUp.doctor._id,
+        date: followUp.date,
+        duration: followUp.duration,
+        status: 'scheduled', // You might set the status to 'scheduled' or any appropriate value
+        // Add other necessary appointment details
+      });
+
+      // Remove the scheduled slot from the doctor's available time slots
+      const updatedDoctor = await doctorModel.findByIdAndUpdate(
+        followUp.doctor._id,
+        {
+          $pull: { availableTimeSlots: followUp.date },
+        },
+        { new: true }
+      );
+
+      // Update the follow-up request status to 'accepted'
+      followUp.approvalStatus = 'accepted';
+      await followUp.save();
+
+      return res.status(200).json({
+        message: 'Follow-up request accepted',
+        newAppointment,
+        updatedDoctor,
+      });
+    } else {
+      // If not accepted, update the follow-up request status to 'rejected'
+      followUp.approvalStatus = 'rejected';
+      await followUp.save();
+
+      return res.status(200).json({
+        message: 'Follow-up request rejected',
+        followUp,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+
+
 module.exports = {
   addDoctor,
   getAllPatients,
@@ -767,4 +828,5 @@ module.exports = {
   viewMedicalHistory,
   addPrescription,
   cancelAppointment,
+  acceptOrRevokeFollowUp,
 };
