@@ -116,7 +116,7 @@ function AddPrescription() {
                     Name: {med.name} <br/>
                     Dosage: {med.dosage} <br/>
                     Duration: {med.duration} <br/>
-                    <button onClick={() => removeMedicine(index)} className="btn btn-primary">
+                    <button onClick={() => removeMedicine(index)} className="btn-cancel">
                       Remove
                     </button>
                   </li>
