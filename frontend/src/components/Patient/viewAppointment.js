@@ -113,6 +113,38 @@ const ViewAppointments = () => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
+  const handleCancel = (appId) => {
+    // Create a new object with the updated appointmentId
+    const updatedBody = {
+      ...body,
+      appointmentid: appId,
+    };
+  
+    // Update the state
+    setBody(updatedBody);
+  };
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Make the asynchronous call after updating the state
+        const response = await PatientService.cancelAppointment(body);
+        console.log(response);
+        alert(response.data.message);
+  
+        // Reload the page
+        window.location.reload();
+      } catch (error) {
+        console.error('Error canceling appointment:', error);
+      }
+    };
+  
+    // Check if appointmentid has been updated
+    if (body.appointmentid !== "") {
+      fetchData();
+    }
+  }, [body.appointmentid, setBody]);
+  
 
   return (
     <div>
@@ -183,7 +215,7 @@ const ViewAppointments = () => {
                         <div className="cancel-button-container">
                       <button className="btn-cancel"
                       style={{marginInlineEnd:0}} 
-                        //onClick={() => handleFollowUpRequest(appointment._id,appointment.doctor._id)}
+                        onClick={() => handleCancel(appointment._id)}
                       >
                         Cancel
                       </button>

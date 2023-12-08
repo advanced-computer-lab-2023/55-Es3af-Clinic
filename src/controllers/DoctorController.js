@@ -720,6 +720,31 @@ const addPrescription = async (req, res) => {
 
 }
 
+const cancelAppointment = async (req, res) => {
+  try {
+    const appointmentId = req.body.appointmentId;
+
+    // Find the appointment by ID
+    const appointment = await appointmentModel.findById(appointmentId);
+
+    // Check if the appointment exists
+    if (!appointment) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    // Update the appointment status to "canceled"
+    appointment.status = 'canceled';
+
+    // Save the updated appointment
+    await appointment.save();
+
+    return res.json({ message: 'Appointment canceled successfully', appointment });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
 module.exports = {
   addDoctor,
   getAllPatients,
@@ -741,4 +766,5 @@ module.exports = {
   getAppointmentsWithStatusDone,
   viewMedicalHistory,
   addPrescription,
+  cancelAppointment,
 };
