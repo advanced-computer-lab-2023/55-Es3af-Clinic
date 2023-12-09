@@ -5,6 +5,8 @@ const userModel = require("../Models/user.js");
 const packageModel = require("../Models/Packages.js");
 const appointmentModel = require("../Models/Appointments.js");
 const PrescriptionsModel = require("../Models/Prescriptions.js");
+const notificationModel = require('../Models/notifications.js')
+const followUpModel = require("../Models/FollowUpRequests.js");
 const multer = require("multer");
 const fs = require("fs");
 const familyMembersAcc = require("../Models/familyMembersAccount.js");
@@ -164,9 +166,6 @@ const addFamilyMember = async (req, res) => {
     }
   };
   
-
- 
-
 //working fine testing fine
 const viewFamilyMembers = async (req, res) => {
   try {
@@ -327,10 +326,10 @@ async function doctorPrice(patientID, doctorUsername) {
     const package = await packageModel.findOne({ type: patient.package });
     //console.log(`package in function is ${package}`);
     sessionPrice = sessionPrice * (1 - package.sessionDiscount);
+    sessionPrice = Number(sessionPrice.toFixed(1));
   }
   return sessionPrice;
 }
-
 
 async function viewDoctorDetails(doctor, patientID) {
   //const patient = patientModel.findOneAndDelete({username: patientUsername})
@@ -690,7 +689,6 @@ const getPatients = async (req, res) => {
   res.status(200).send(patients);
 };
 
-
 const getAmountInWallet = async (req, res) => {
   try {
     const token = req.cookies.jwt;
@@ -702,7 +700,8 @@ const getAmountInWallet = async (req, res) => {
     const decodedToken = jwt.verify(token, "supersecret");
     const userId = decodedToken.name;
     const patient = await patientModel.findById(userId);
-    return res.status(200).send(patient.amountInWallet.toString() + " EGP");
+    const amnt= Number(patient.amountInWallet.toFixed(1));
+    return res.status(200).send(amnt.toString() + " EGP");
   } catch (error) {
     console.error(error);
     return res
@@ -710,6 +709,7 @@ const getAmountInWallet = async (req, res) => {
       .json({ message: "Invalid token or you are not logged in." });
   }
 };
+
 const subscribeToAHealthPackage = async (req, res) => {
   const packageID = req.body.packageID;
   const patients = req.body.patients;
@@ -777,6 +777,7 @@ const appointmentsForDoc = async (req, res) => {
   const doctor = await doctorModel.findById(doctorID);
   const appointments = await appointmentModel.find({ doctor: doctor });
 };
+
 //farah
 const withdrawFromWallet = async (req, res) => {
   const token = req.cookies.jwt;
@@ -878,21 +879,39 @@ const BookAnAppointment = async (req, res) => {
       console.error(err);
     });
 
+    const dateAndTime = properDateAndTime(newAppointment.date)
+
+    const patientMessage = `You have booked an appointment with doctor ${doctor.name} specialized in ${doctor.speciality} on ${dateAndTime}. The total price is ${amount}.`
+    const doctorMessage = `Patient ${name} has booked an appointment with you on ${dateAndTime}. The total price is ${amount}.`
 
     const emailToPatient = await transporter.sendMail({
       from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
       to: patient.email, // list of receivers
       subject: "Booked Appointment", // Subject line
-      text: `You have booked an appointment with doctor ${doctor.name} specialized in ${doctor.speciality} at ${newAppointment.date}. The total price is ${amount}.`, // plain text body
-      html: `<b>You have booked an appointment with doctor ${doctor.name} specialized in ${doctor.speciality} at ${newAppointment.date}. The total price is ${amount}.</b>`, // html body
+      text: patientMessage, // plain text body
+      html: `<b>${patientMessage}</b>`, // html body
     });
+
+    const patientNotif = new notificationModel({
+      receivers: patient._id,
+      message: patientMessage
+    })
+
+    patientNotif.save().catch((err) => {console.error(err)})
+
+    const doctorNotif = new notificationModel({
+      receivers: doctor._id,
+      message: doctorMessage
+    })
+
+    doctorNotif.save().catch((err) => {console.error(err)})
 
     const emailToDoctor = await transporter.sendMail({
       from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
       to: doctor.email, // list of receivers
       subject: "Booked Appointment", // Subject line
-      text: `Patient ${name} has booked an appointment with you at ${newAppointment.date}. The total price is ${amount}.`, // plain text body
-      html: `<b>Patient ${name} has booked an appointment with you at ${newAppointment.date}. The total price is ${amount}.</b>`, // html body
+      text: doctorMessage, // plain text body
+      html: `<b>${doctorMessage}</b>`, // html body
     });
 
     res.status(200).send("Appointment was booked successfully");
@@ -901,6 +920,55 @@ const BookAnAppointment = async (req, res) => {
     res.status(500).send("An error occurred while booking the appointment");
   }
 };
+
+function properDateAndTime(dateAndTime){
+  const date = new Date(dateAndTime)
+  const day = date.getDate()
+  const month = date.getMonth()
+  const year = date.getFullYear()
+  const hour = date.getUTCHours()
+  const minute = date.getMinutes()
+  return `${day}/${month}/${year} at ${hour}:${minute}`
+}
+const requestFollowUp = async(req, res) => {
+  const doctorid = req.body.doctorid;
+  const prevAppointmentid = req.body.appointmentid;
+  const followUpAppId = req.body.followAppId;
+  
+  try{
+  const doctor = await doctorModel.findById(doctorid);
+  const prevAppointment = await appointmentModel.findById(prevAppointmentid);
+
+  const matchingTimeSlot = doctor.availableTimeSlots.find(slot => slot._id == followUpAppId);
+  const startTime = matchingTimeSlot.startTime;
+  const endTime = matchingTimeSlot.endTime;
+   
+  const [startHour, startMinute] = startTime.split(":").map(Number);
+  const [endHour, endMinute] = endTime.split(":").map(Number);
+
+  const duration = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
+  const isThere= await followUpModel.find({pastAppointement:prevAppointmentid, date: matchingTimeSlot.date })
+  if(isThere.length!=0 ){
+    res.status(200).send("You already requested a follow up at this time");
+    return;
+  }
+  const followUp = new followUpModel({
+    patient: prevAppointment.patient,
+    patientName: prevAppointment.patientName, // Replace with the actual patient name
+    doctor: doctorid,   // Replace with the actual doctor ID
+    date: matchingTimeSlot.date, // Replace with the actual date
+    duration: duration, // Replace with the actual duration
+    pastAppointement:prevAppointmentid
+    // Status will default to 'pending' if not provided
+  });
+  await followUp.save();
+  
+  res.status(200).send("FollowUp Scheduled Successfully")
+  } catch (error) {
+  console.error(error);
+  res.status(500).send("An error occurred while requesting a follow-up");
+  }
+}
 
 const uploadMedicalHistory = async (req, res) => {
   upload.array("medicalHistory", 5)(req, res, function (err) {
@@ -1015,11 +1083,6 @@ const removeMedicalHistory = async (req, res) => {
   }
 };
 
-
-
-
-
-
 const viewSubscribedHealthPackages = async (req, res) => {
   const token = req.cookies.jwt;
   var id;
@@ -1086,25 +1149,63 @@ const viewSubscribedHealthPackages = async (req, res) => {
   }
 };
 
-// const checkoutSession = async (req,res)=>{
-//   try{
-//     const  lineItems  = req.body.lineItems;
-//     const success_url=req.body.success_url;
-//     const cancel_url= req.body.cancel_url;
-//     const session = await stripe.checkout.sessions.create({
-//       payment_method_types: ['card'],
-//       mode:'payment',
-//       line_items: lineItems,
-//       success_url:success_url,
-//       cancel_url:cancel_url,
-//     })
-//     res.json({url:session.url})
-//   }
-//   catch (error){
-//     console.error(error);
-//     res.status(500).send('Internal Server Error');
-//   }
-// }
+const viewFamilyAppointments = async (req,res)=>{
+  const familyMemberData = [];
+  try{
+    const token = req.cookies.jwt;
+      var id;
+      jwt.verify(token, 'supersecret', (err ,decodedToken) => {
+        if (err) {
+          res.status(401).json({message: "You are not logged in."})
+        }
+        else {
+          id = decodedToken.name;
+        }
+      });
+  const patientId = id;
+  const patient = await patientModel.findById(patientId);
+
+  const familyAppNoAcc= await appointmentModel.find({patient:patientId, patientName: { $ne: patient.name }}).populate("doctor", "name")
+  .exec()
+
+  const familyMemberAcc = await familyMembersAcc.find({
+    patient: patientId,
+  });
+
+  const familyMemberAccRev = await familyMembersAcc.find({
+    Id: patientId,
+  });
+
+  if(familyAppNoAcc.length<=0 && familyMemberAcc.length<=0 && familyMemberAccRev.length<=0){
+    res.status(200).send("You don't have any family members added who have an appointment");
+  }
+  else{
+    familyMemberData.push(familyAppNoAcc);
+
+    for (const member of familyMemberAcc) {
+      const memberAppointments = await appointmentModel.find({
+        patient: member.Id,
+      }).populate("doctor", "name")
+      .exec();
+      familyMemberData.push(...memberAppointments);
+    }
+    for (const memberRev of familyMemberAccRev) {
+      const memberRevAppointments = await appointmentModel.find({
+        patient: memberRev.patient,
+      }).populate("doctor", "name")
+      .exec();
+      familyMemberData.push(...memberRevAppointments);
+    }
+
+    res.status(200).json(familyMemberData);
+  }
+  }
+  catch (error){
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+}
+
 const viewPatientAppointments = async (req, res) => {
     const token = req.cookies.jwt;
       var id;
@@ -1125,7 +1226,7 @@ const viewPatientAppointments = async (req, res) => {
     }
 
     const appointments = await appointmentModel
-      .find({ patient: patientId })
+      .find({ patient: patientId, patientName:patient.name })
       .populate("doctor", "name")
       .exec();
 
@@ -1133,17 +1234,19 @@ const viewPatientAppointments = async (req, res) => {
       return res.status(200).send("No appointments found for this patient.");
     }
 
-    const formattedAppointments = appointments.map((appointment) => {
-      return {
-        id: appointment._id,
-        doctor: appointment.doctor.name,
-        date: appointment.date,
-        duration: appointment.duration,
-        status: appointment.status,
-      };
-    });
+    // const formattedAppointments = appointments.map((appointment) => {
+    //   return {
+    //     id: appointment._id,
+    //     patientName: appointment.patientName,
+    //     doctorid: appointment.doctor._id,
+    //     doctor: appointment.doctor.name,
+    //     date: appointment.date,
+    //     duration: appointment.duration,
+    //     status: appointment.status,
+    //   };
+    // });
 
-    res.status(200).json(formattedAppointments);
+    res.status(200).json(appointments);
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
@@ -1265,6 +1368,59 @@ const viewAvailableAppointments = async (req, res) => {
   }
 };
 
+const cancelAppointment = async (req, res) => {
+  try {
+    const appointmentId = req.body.appointmentid;
+    // Find the appointment by ID
+    const appointment = await appointmentModel.findById(appointmentId);
+
+    // Check if the appointment exists
+    if (!appointment) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    // Update the appointment status to "canceled"
+    appointment.status = 'canceled';
+
+    // Save the updated appointment
+    await appointment.save();
+
+    return res.json({ message: 'Appointment canceled successfully', appointment });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+const viewPrescriptionDetails = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: 'You are not logged in.' });
+      } else {
+        id = decodedToken.name;
+      }
+    });
+
+    const patientId = id;
+    const prescriptionId = req.params.prescriptionId; 
+    const prescription = await PrescriptionsModel.findById(prescriptionId);
+    
+    console.log(patientId);
+    
+    if (!prescription) {
+      return res.status(404).send('Prescription not found');
+    }
+
+    res.status(200).send(prescription);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
 module.exports = {
   addFamilyMember,
   viewFamilyMembers,
@@ -1293,4 +1449,9 @@ module.exports = {
   viewAvailableAppointments,
   viewMedicalHistory,
   removeMedicalHistory,
-};
+  properDateAndTime,
+  requestFollowUp,
+  viewFamilyAppointments,
+  cancelAppointment,
+  viewPrescriptionDetails,
+}

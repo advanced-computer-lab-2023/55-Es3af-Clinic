@@ -103,7 +103,7 @@ function PatientHome() {
       <Navbar />
       <header className="App-header">
         <div className="payment-buttons">
-          <h5 className="top-right-button">Amount In Wallet: {result} </h5>
+          <h5 >Amount In Wallet: {result} </h5>
           <a href="/patient/familyMembers" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Family Members </button>
             </a>

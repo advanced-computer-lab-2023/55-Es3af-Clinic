@@ -88,6 +88,9 @@ function Login(props) {
           <a href="/chat" rel="noopener noreferrer">
             Chat          
             </a>
+          <a href="http://localhost:4000" rel="noopener noreferrer">
+              Go to Pharmacy
+            </a>
         </form>
       </div>
     </div>

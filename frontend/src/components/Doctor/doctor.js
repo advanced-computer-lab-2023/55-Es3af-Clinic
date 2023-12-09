@@ -15,12 +15,14 @@ import AddTimeSlots from './addTimeSlots';
 import UploadPatientHealthRecords from './uploadPatientHealthRecords';
 import MyContractList from './viewEmploymentContract.js';
 import Navbar from "../navbar.js";
+import AddPrescription from './addPrescription.js'
 
 
 
 function DoctorPage() {
   return (
     <Routes>
+      <Route path ="/addPrescription/:id" element={<AddPrescription/>}/>
       <Route path="/" element={<DoctorHome />} />
       <Route path='/updatePassword' element = {<UpdatePassword/>} />
       <Route path="/getAllMyPatients" element={< MyPatientList/>} />
@@ -60,7 +62,7 @@ function DoctorHome() {
       <Navbar />
       <header className="App-header">
         <div>
-        <h5 className="top-right-button">Amount In Wallet: {result} </h5>
+        <h5 >Amount In Wallet: {result} </h5>
           <a href="/doctor/getAllMyPatients" rel="noopener noreferrer">
             <button className="btn btn-primary"> View All My Patients </button>
             </a>

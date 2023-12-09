@@ -2,9 +2,12 @@ import UserService from "../services/userService";
 //import "./App.css";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import NotificationIcon from "./notificationBell";
+import { useState } from "react";
 
 const Navbar = () => {
   let navigate = useNavigate();
+  const [hasNotifications, setHasNotifications] = useState(true);
   async function logout() {
     UserService.logout()
       .then((res) => {
@@ -29,6 +32,9 @@ const Navbar = () => {
           </button>
         </li>
       </ul>
+      <div className="notification-icon-wrapper">
+      <NotificationIcon hasNotifications={hasNotifications} />
+      </div>
     </nav>
   );
 };

@@ -265,6 +265,9 @@ function BookAnAppointment() {
 
        {appointmentBanner && (
     <div className="member-banner">
+      <div className="close-icon" onClick={() => setAppointmentBanner(false)}>
+      &times; {/* Unicode "times" character (×) */}
+      </div>
       {doctorHasAppointments ? (
         appointments.map((appointment) => (
               <div

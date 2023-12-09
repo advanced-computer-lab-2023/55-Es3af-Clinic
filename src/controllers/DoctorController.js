@@ -9,6 +9,10 @@ const bcrypt = require("bcrypt");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const upload = multer({ dest: "uploads/" });
+const mediceneModel = require('../Models/Medicine.js');
+const prescription = require("../Models/Prescriptions.js");
+const followUps = require("../Models/FollowUpRequests.js");
+
 // const Patient = JSON.parse(fs.readFileSync('./data/patient.json'));
 // const Doctors = JSON.parse(fs.readFileSync('./data/doctor.json'));
 
@@ -237,10 +241,6 @@ const proceedWithViewHealthRecords = async (req, res, doctorId, patientId) => {
   }
 };
 
-
-
-
-
 //View a list of all my patients:
 const getAllMyPatients = async (req, res) => {
   try {
@@ -448,50 +448,6 @@ const selectPatient = async (req, res) => {
   }
 };
 
-// const getPassword = async (req, res) => {
-//   try{
-//     const token = req.cookies.jwt;
-//     var id;
-//     jwt.verify(token, 'supersecret', (err ,decodedToken) => {
-//       if (err) {
-//         res.status(401).json({message: "You are not logged in."})
-//       }
-//       else {
-//         id = decodedToken.name;
-//       }
-//     });
-//   const userId = id;
-//   var user = await doctorModel.findById(userId);
-//   res.status(200).send(user.password)
-//   }catch (err) {
-//       res.status(400).json({
-//         message:err.message,
-//       });
-//   }
-// }
-
-// const changePassword = async (req, res) => {
-//   const salt = await bcrypt.genSalt();
-//   const hashedPassword = await bcrypt.hash(req.body.password, salt);
-//   var newPassword = hashedPassword;
-
-//   try {
-//     const token = req.cookies.jwt;
-//     var id;
-//     jwt.verify(token, 'supersecret', (err ,decodedToken) => {
-//       if (err) {
-//         res.status(401).json({message: "You are not logged in."})
-//       }
-//       else {
-//         id = decodedToken.name;
-//       }
-//     });
-//     const userID = id;
-//     await doctorModel.findByIdAndUpdate(userID, { password: newPassword })
-//     res.status(200).send('Password updated successfully')
-//   }
-//   catch (err) { console.error(err) }
-// }
 
 const getAmountInWallet = async (req, res) => {
   try {
@@ -700,7 +656,7 @@ const viewMedicalHistory = async (req, res) => {
       }
     });
     const doctorId = id;    
-    const patientsWithDoneAppointments = await appointmentModel.find({
+    const patientsWithDoneAppointments = await appointment.find({
       doctor: doctorId,
       status: 'done',
     }).distinct('patient');
@@ -735,6 +691,186 @@ const viewMedicalHistory = async (req, res) => {
   }
 };
 
+const addPrescription = async (req, res) => {
+  const token = req.cookies.jwt;
+  var id;
+  jwt.verify(token, "supersecret", (err, decodedToken) => {
+    if (err) {
+      res.status(401).json({ message: "You are not logged in." });
+    } else {
+      id = decodedToken.name;
+    }
+  });
+
+  const medicine = req.body
+  //console.log(medicine)
+  const patientID = req.params.id
+  var medicines = []
+  if(medicine){
+      for(var med of medicine){
+        const medID = await mediceneModel.findOne({Name: med.name})
+        if(!medID) {
+          res.status(200).send(`${med.name} is not available in the pharmacy`)
+          return
+      }
+        else if(medID.quantity == 0) {
+          res.status(200).send('This medicine is out of stock')
+          return
+        }
+        medicines.push({
+          medID: medID,
+          dosage: med.dosage,
+          duration: med.duration
+        })
+    }
+    const newPrescription = new prescription({
+      patient: patientID,
+      medicine: medicines,
+      doctor: id,
+    })
+    newPrescription.save().catch((err) => {console.error(err)})
+    res.status(200).send('Prescription added successfully')
+  }
+  else res.status(200).send('There is no medicine added')
+
+}
+
+const cancelAppointment = async (req, res) => {
+  try {
+    const appointmentId = req.body.appointmentid;
+
+    // Find the appointment by ID
+    const appointments = await appointment.findById(appointmentId);
+
+    // Check if the appointment exists
+    if (!appointments) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    // Update the appointment status to "canceled"
+    appointments.status = 'canceled';
+
+    // Save the updated appointment
+    await appointments.save();
+
+    return res.json({ message: 'Appointment canceled successfully', appointments });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+const acceptOrRevokeFollowUp = async (req, res) => {
+  try {
+    const { followUpId, accept } = req.body;
+
+    const followUp = await followUps.findById(followUpId);
+
+    if (!followUp) {
+      return res.status(404).json({ message: 'Follow-up request not found' });
+    }
+
+    const patient = await patientModel.findById(followUps.patient.id);
+    const doctor = await doctorModel.findById(followUps.doctor.id);
+
+    if (!patient || !doctor) {
+      return res.status(404).json({ message: 'Patient or doctor not found' });
+    }
+
+    if (accept === true) {
+      const newAppointment = new appointment({
+        PatientId: followUps.patient,
+        PatientName: followUps.patientName,
+        DoctorId: followUps.doctor,
+        Date: followUps.date,
+        Duration: followUps.duration,
+        Status: 'pending',
+      });
+
+      await docAvailableSlots.deleteMany({ DoctorId: followUps.doctor.id, Date: followUps.date });
+
+      await newAppointment.save();
+
+      followUp.approvalStatus = 'accepted';
+      await followUps.save();
+
+      return res.status(200).json({
+        message: 'Follow-up request accepted',
+        newAppointment,
+      });
+    } else {
+      followUps.approvalStatus = 'rejected';
+      await followUps.save();
+
+      return res.status(200).json({
+        message: 'Follow-up request rejected',
+        followUp,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+
+const getAllPrescriptions = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    let doctorId;
+
+    jwt.verify(token, 'supersecret', (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: 'You are not logged in.' });
+      } else {
+        doctorId = decodedToken.name;
+      }
+    });
+
+    //Remove the usage of populate, use findbyId since it's just doctor id. 
+    const prescriptions = await prescriptionModel.find({ doctor: doctorId })
+      .populate('patient', 'name') // Assuming patient ID is stored in prescriptions and is populated
+      .populate('medicine.medID', 'Name'); // Assuming medicine ID is stored in prescriptions and is populated
+
+    if (!prescriptions || prescriptions.length === 0) {
+      return res.status(404).json({ message: 'No prescriptions found for this doctor.' });
+    }
+
+    const prescriptionsWithStatus = prescriptions.map(prescription => {
+      const filledStatus = prescription.medicine.map(med => {
+        return {
+          name: med.medID.Name,
+          dosage: med.dosage,
+          duration: med.duration,
+          filled: med.medID.quantity > 0, // Assuming quantity indicates availability in the pharmacy
+        };
+      });
+
+      return {
+        patient: prescription.patient.name,
+        prescriptions: filledStatus,
+      };
+    });
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        prescriptions: prescriptionsWithStatus,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      status: 'error',
+      message: 'Internal Server Error',
+    });
+  }
+};
+
+
+
+
+
 module.exports = {
   addDoctor,
   getAllPatients,
@@ -755,4 +891,8 @@ module.exports = {
   scheduleFollowUpAppointment,
   getAppointmentsWithStatusDone,
   viewMedicalHistory,
+  addPrescription,
+  cancelAppointment,
+  acceptOrRevokeFollowUp,
+  getAllPrescriptions,
 };
