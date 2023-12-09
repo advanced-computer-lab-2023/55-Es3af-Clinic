@@ -814,7 +814,7 @@ const acceptOrRevokeFollowUp = async (req, res) => {
 };
 
 
-const prescriptionModel = require('../Models/Prescriptions.js');
+//const prescriptionModel = require('../Models/Prescriptions.js');
 
 const getAllPrescriptions = async (req, res) => {
   try {
@@ -848,7 +848,7 @@ const getAllPrescriptions = async (req, res) => {
           filled: med.medID.quantity > 0 ? 'filled' : 'unfilled', 
         };
       });
-      
+
       return {
         patient: prescription.patient.name,
         prescriptions: filledStatus,
