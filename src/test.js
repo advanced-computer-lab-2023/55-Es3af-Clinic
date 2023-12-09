@@ -7,6 +7,7 @@ const{router}=require("../src/routes/main")
 const patientController = require('./controllers/PatientController');
 const userController = require('./controllers/UserController');
 const {auth} = require("./utils/auth");
+const http =require("http")
 
 
 //require("dotenv").config();
@@ -23,9 +24,28 @@ mongoose.connect(MongoURI, {dbName: 'Clinic'})
 .then(()=>{
   console.log("MongoDB is now connected!")
 // Starting server
- app.listen(port, () => {
+ const server = app.listen(port, () => {
     console.log(`Listening to requests on http://localhost:${port}`);
   })
+  const socketIO = require('socket.io')(server, {
+    cors: {
+        origin: "http://localhost:3000"
+    }
+  });
+  socketIO.on('connection', (socket) => {
+    console.log(`⚡: ${socket.id} user just connected!`);
+  
+    //sends the message to all the users on the server
+    socket.on('message', (data) => {
+      console.log(data)
+      // Relaing the message to all listeners
+      socketIO.emit(`messageResponse${data.targetId}`, data);
+    });
+  
+    socket.on('disconnect', () => {
+      console.log('🔥: A user disconnected');
+    });
+  });
 })
 .catch(err => console.log(err));
 
@@ -41,9 +61,10 @@ app.use(cookieParser());
 app.use("/login"  ,userController.login);
 app.put('/forgetPassword', userController.forgetPassword);
 //app.use(auth);
-
-
 app.use("/", router);
+
+
+
 
 app.get('/getSpec', patientController.getAllSpecialities)
 
