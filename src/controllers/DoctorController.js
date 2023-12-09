@@ -165,15 +165,27 @@ const viewHealthRecords = async (req, res) => {
 
   try {
     const token = req.cookies.jwt;
-    var id;
+    let id;
+
     jwt.verify(token, "supersecret", (err, decodedToken) => {
       if (err) {
         res.status(401).json({ message: "You are not logged in." });
       } else {
         id = decodedToken.name;
+        proceedWithViewHealthRecords(req, res, id, patientId);
       }
     });
-    const doctorId = id;
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
+  }
+};
+
+const proceedWithViewHealthRecords = async (req, res, doctorId, patientId) => {
+  try {
     const doctor = await doctorModel.findById(doctorId);
     if (!doctor) {
       return res.status(404).json({
@@ -182,25 +194,21 @@ const viewHealthRecords = async (req, res) => {
       });
     }
 
-    const healthRecords = await healthRecord.find({ patient: patientId });
-    // const patient = await patientModel.findById(patientId);
-
-    // .populate('healthRecords');
-
-    // console.log(patient)
-
-    if (!healthRecords) {
+    const patient = await patientModel.findById(patientId);
+    if (!patient) {
       return res.status(404).json({
         status: "fail",
         message: "Patient not found",
       });
     }
 
+    const medicalHistory = patient.medicalHistory;
+
     const Appointment = await appointment.findOne({
       doctor: doctorId,
       patient: patientId,
     });
-    // console.log(Appointment)
+
     if (!Appointment) {
       return res.status(404).json({
         status: "fail",
@@ -208,21 +216,26 @@ const viewHealthRecords = async (req, res) => {
       });
     }
 
-    // const healthRecords = patient.healthRecords;
-    console.log(healthRecords);
+    // Extract file data from medical history and send them in the response
+    const fileData = medicalHistory.map((record) => ({
+      name: record.name, // Assuming 'name' is the field storing the file name
+      contentType: record.contentType,
+      data: record.data, // Assuming 'data' is the field storing the binary data
+    }));
 
+    // Send the file data in the response
     res.status(200).json({
       status: "success",
       data: {
-        healthRecords,
-        // patient
+        healthRecords: fileData,
       },
     });
   } catch (err) {
-    // res.status(400).json({
-    //   message: err.message,
-    // });
-    console.log(err);
+    console.error(err);
+    res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
   }
 };
 
