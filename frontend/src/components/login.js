@@ -24,7 +24,6 @@ function Login(props) {
 
     UserService.login(user)
       .then((response) => {
-        
         switch (response.data.__t) {
           
           case "doctor":
@@ -85,12 +84,15 @@ function Login(props) {
           <a href="/register" rel="noopener noreferrer">
             Register as Patient
           </a>
-          <a href="/chat" rel="noopener noreferrer">
-            Chat          
+          <a href="/doctorchat" rel="noopener noreferrer">
+            Select a Doctor to Chat with          
             </a>
           <a href="http://localhost:4000" rel="noopener noreferrer">
               Go to Pharmacy
             </a>
+            <a href="/patientchat" rel="noopener noreferrer">
+            Select a Patient to Chat with          
+            </a> 
         </form>
       </div>
     </div>

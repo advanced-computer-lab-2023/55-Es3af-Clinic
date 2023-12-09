@@ -39,8 +39,7 @@ mongoose.connect(MongoURI, {dbName: 'Clinic'})
     socket.on('message', (data) => {
       console.log(data)
       // Relaing the message to all listeners
-      console.log("emitting")
-      socket.emit(`messageResponse`, data);
+      socketIO.sockets.emit(`messageResponse`, data);
     });
   
     socket.on('disconnect', () => {
