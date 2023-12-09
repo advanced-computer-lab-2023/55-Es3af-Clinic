@@ -827,6 +827,7 @@ const getAllPrescriptions = async (req, res) => {
       }
     });
 
+    //Remove the usage of populate, use findbyId since it's just doctor id. 
     const prescriptions = await prescriptionModel.find({ doctor: doctorId })
       .populate('patient', 'name') // Assuming patient ID is stored in prescriptions and is populated
       .populate('medicine.medID', 'Name'); // Assuming medicine ID is stored in prescriptions and is populated
