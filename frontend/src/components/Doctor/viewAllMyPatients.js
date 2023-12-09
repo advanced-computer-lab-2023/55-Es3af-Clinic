@@ -10,6 +10,8 @@ import AddPrescription from "./addPrescription";
 
 const MyPatientList = (props) => {
   const [patients, setPatients] = useState([]);
+  const [loading, setLoading] = useState(true); 
+
 
   useEffect(() => {
     retrievePatients();
@@ -27,9 +29,11 @@ const MyPatientList = (props) => {
       })
       .catch((e) => {
         console.log(e);
+      })
+      .finally(() => {
+        setLoading(false); 
       });
   };
-
 
   const formatDateOfBirth = (dateOfBirth) => {
     const date = new Date(dateOfBirth);
@@ -38,8 +42,6 @@ const MyPatientList = (props) => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
-
-  
 
   const viewDets = (patient) => {
     const contentContainer = document.getElementById('contentContainer');
@@ -149,7 +151,9 @@ const MyPatientList = (props) => {
   return (
     <div>
       <div className="App-header" id="contentContainer">
-        {patients.length > 0 ? (
+      {loading ? (
+          <h2>Loading...</h2>
+        ) : patients.length > 0 ? (
           patients.map((patient) => {
             return (
               <div
