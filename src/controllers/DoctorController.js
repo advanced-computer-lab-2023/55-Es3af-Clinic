@@ -764,46 +764,43 @@ const acceptOrRevokeFollowUp = async (req, res) => {
   try {
     const { followUpId, accept } = req.body;
 
-    const followUp = await followUps.findById(followUpId)
-      .populate('patient')
-      .populate('doctor');
+    const followUp = await followUps.findById(followUpId);
 
     if (!followUp) {
       return res.status(404).json({ message: 'Follow-up request not found' });
     }
 
+    const patient = await patientModel.findById(followUp.patient.id);
+    const doctor = await doctorModel.findById(followUp.doctor.id);
+
+    if (!patient || !doctor) {
+      return res.status(404).json({ message: 'Patient or doctor not found' });
+    }
+
     if (accept === true) {
-      // Accepted: Create a new appointment from the follow-up request
-      const newAppointment = await appointment.create({
-        patient: followUps.patient._id,
-        doctor: followUps.doctor._id,
-        date: followUps.date,
-        duration: followUps.duration,
-        status: 'pending', // Or any appropriate value
+      const newAppointment = new appointment({
+        PatientId: followUp.patient,
+        PatientName: followUp.patientName,
+        DoctorId: followUp.doctor,
+        Date: followUp.date,
+        Duration: followUp.duration,
+        Status: 'pending',
       });
 
-      // Remove the scheduled slot from the doctor's available time slots
-      const updatedDoctor = await doctorModel.findByIdAndUpdate(
-        followUps.doctor._id,
-        {
-          $pull: { availableTimeSlots: followUps.date },
-        },
-        { new: true }
-      );
+      await docAvailableSlots.deleteMany({ DoctorId: followUp.doctor.id, Date: followUp.date });
 
-      // Update the follow-up request status to 'accepted'
-      followUps.approvalStatus = 'accepted';
-      await followUps.save();
+      await newAppointment.save();
+
+      followUp.approvalStatus = 'accepted';
+      await followUp.save();
 
       return res.status(200).json({
         message: 'Follow-up request accepted',
         newAppointment,
-        updatedDoctor,
       });
     } else {
-      // If not accepted, update the follow-up request status to 'rejected'
-      followUps.approvalStatus = 'rejected';
-      await followUps.save();
+      followUp.approvalStatus = 'rejected';
+      await followUp.save();
 
       return res.status(200).json({
         message: 'Follow-up request rejected',
@@ -815,6 +812,7 @@ const acceptOrRevokeFollowUp = async (req, res) => {
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 
 
 
