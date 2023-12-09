@@ -1392,6 +1392,35 @@ const cancelAppointment = async (req, res) => {
   }
 }
 
+const viewPrescriptionDetails = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: 'You are not logged in.' });
+      } else {
+        id = decodedToken.name;
+      }
+    });
+
+    const patientId = id;
+    const prescriptionId = req.params.prescriptionId; 
+    const prescription = await PrescriptionsModel.findById(prescriptionId);
+    
+    console.log(patientId);
+    
+    if (!prescription) {
+      return res.status(404).send('Prescription not found');
+    }
+
+    res.status(200).send(prescription);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
 module.exports = {
   addFamilyMember,
   viewFamilyMembers,
@@ -1424,4 +1453,5 @@ module.exports = {
   requestFollowUp,
   viewFamilyAppointments,
   cancelAppointment,
+  viewPrescriptionDetails,
 }
