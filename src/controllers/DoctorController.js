@@ -770,8 +770,8 @@ const acceptOrRevokeFollowUp = async (req, res) => {
       return res.status(404).json({ message: 'Follow-up request not found' });
     }
 
-    const patient = await patientModel.findById(followUp.patient.id);
-    const doctor = await doctorModel.findById(followUp.doctor.id);
+    const patient = await patientModel.findById(followUps.patient.id);
+    const doctor = await doctorModel.findById(followUps.doctor.id);
 
     if (!patient || !doctor) {
       return res.status(404).json({ message: 'Patient or doctor not found' });
@@ -779,28 +779,28 @@ const acceptOrRevokeFollowUp = async (req, res) => {
 
     if (accept === true) {
       const newAppointment = new appointment({
-        PatientId: followUp.patient,
-        PatientName: followUp.patientName,
-        DoctorId: followUp.doctor,
-        Date: followUp.date,
-        Duration: followUp.duration,
+        PatientId: followUps.patient,
+        PatientName: followUps.patientName,
+        DoctorId: followUps.doctor,
+        Date: followUps.date,
+        Duration: followUps.duration,
         Status: 'pending',
       });
 
-      await docAvailableSlots.deleteMany({ DoctorId: followUp.doctor.id, Date: followUp.date });
+      await docAvailableSlots.deleteMany({ DoctorId: followUps.doctor.id, Date: followUps.date });
 
       await newAppointment.save();
 
       followUp.approvalStatus = 'accepted';
-      await followUp.save();
+      await followUps.save();
 
       return res.status(200).json({
         message: 'Follow-up request accepted',
         newAppointment,
       });
     } else {
-      followUp.approvalStatus = 'rejected';
-      await followUp.save();
+      followUps.approvalStatus = 'rejected';
+      await followUps.save();
 
       return res.status(200).json({
         message: 'Follow-up request rejected',
