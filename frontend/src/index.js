@@ -12,10 +12,6 @@ import Login from './components/login';
 import ForgetPassword from './components/forgetPassword'
 import ResetPassword from './components/resertPassword';
 import ChatApp from './components/chatPage';
-import socketIO from 'socket.io-client';
-//import page that i want to test
-console.log("connecting")
-const socket = socketIO.connect('http://localhost:8000');
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -30,7 +26,7 @@ root.render(
     <Route path="/forgetPassword" element={<ForgetPassword/>} />
     <Route path="/resetPassword/:id" element={<ResetPassword/>} />
     <Route path="/login" element={<Login />} />
-    <Route path="/chat" element={<ChatApp socket={socket}/>}/>
+    <Route path="/chat" element={<ChatApp />}/>
     </Routes>
   </BrowserRouter>
 );
