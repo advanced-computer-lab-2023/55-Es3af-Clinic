@@ -814,6 +814,59 @@ const acceptOrRevokeFollowUp = async (req, res) => {
 };
 
 
+const getAllPrescriptions = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    let doctorId;
+
+    jwt.verify(token, 'supersecret', (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: 'You are not logged in.' });
+      } else {
+        doctorId = decodedToken.name;
+      }
+    });
+
+    const prescriptions = await prescriptionModel.find({ doctor: doctorId })
+      .populate('patient', 'name') // Assuming patient ID is stored in prescriptions and is populated
+      .populate('medicine.medID', 'Name'); // Assuming medicine ID is stored in prescriptions and is populated
+
+    if (!prescriptions || prescriptions.length === 0) {
+      return res.status(404).json({ message: 'No prescriptions found for this doctor.' });
+    }
+
+    const prescriptionsWithStatus = prescriptions.map(prescription => {
+      const filledStatus = prescription.medicine.map(med => {
+        return {
+          name: med.medID.Name,
+          dosage: med.dosage,
+          duration: med.duration,
+          filled: med.medID.quantity > 0, // Assuming quantity indicates availability in the pharmacy
+        };
+      });
+
+      return {
+        patient: prescription.patient.name,
+        prescriptions: filledStatus,
+      };
+    });
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        prescriptions: prescriptionsWithStatus,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      status: 'error',
+      message: 'Internal Server Error',
+    });
+  }
+};
+
+
 
 
 
@@ -840,4 +893,5 @@ module.exports = {
   addPrescription,
   cancelAppointment,
   acceptOrRevokeFollowUp,
+  getAllPrescriptions,
 };
