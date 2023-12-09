@@ -49,7 +49,6 @@ doctorRouter.route('/viewMedicalHistory').get(doctorController.viewMedicalHistor
 doctorRouter.route('/cancelAppointment').put(doctorController.cancelAppointment);
 doctorRouter.put('/acceptOrRevokeFollowUp', doctorController.acceptOrRevokeFollowUp);
 
-
 // router.route('/getDoctors').get(doctorController.getAllDoctors);
 // router.route('/getDoctor/:id').patch(doctorController.updateEmail);
 
