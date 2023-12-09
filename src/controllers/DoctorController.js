@@ -814,6 +814,8 @@ const acceptOrRevokeFollowUp = async (req, res) => {
 };
 
 
+const prescriptionModel = require('../Models/Prescriptions.js');
+
 const getAllPrescriptions = async (req, res) => {
   try {
     const token = req.cookies.jwt;
@@ -827,8 +829,7 @@ const getAllPrescriptions = async (req, res) => {
       }
     });
 
-    //Remove the usage of populate, use findbyId since it's just doctor id. 
-    const prescriptions = await prescriptionModel.find({ doctor: doctorId })
+    const prescriptions = await prescription.find({ doctor: doctorId })
       .populate('patient', 'name') // Assuming patient ID is stored in prescriptions and is populated
       .populate('medicine.medID', 'Name'); // Assuming medicine ID is stored in prescriptions and is populated
 
@@ -837,21 +838,23 @@ const getAllPrescriptions = async (req, res) => {
     }
 
     const prescriptionsWithStatus = prescriptions.map(prescription => {
+      // Map through each prescription
       const filledStatus = prescription.medicine.map(med => {
+        // For each medicine in the prescription, create a modified structure
         return {
           name: med.medID.Name,
           dosage: med.dosage,
           duration: med.duration,
-          filled: med.medID.quantity > 0, // Assuming quantity indicates availability in the pharmacy
+          filled: med.medID.quantity > 0 ? 'filled' : 'unfilled', 
         };
       });
-
+      
       return {
         patient: prescription.patient.name,
         prescriptions: filledStatus,
       };
     });
-
+   
     res.status(200).json({
       status: 'success',
       data: {
@@ -866,9 +869,6 @@ const getAllPrescriptions = async (req, res) => {
     });
   }
 };
-
-
-
 
 
 module.exports = {
