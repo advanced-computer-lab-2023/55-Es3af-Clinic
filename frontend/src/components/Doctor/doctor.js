@@ -23,7 +23,7 @@ function DoctorPage() {
   return (
     <Routes>
       <Route path ="/addPrescription/:id" element={<AddPrescription/>}/>
-      
+      {/*<Route path="/getAllPrescriptions" element={<ViewPrescriptions />} />*/}
       <Route path="/" element={<DoctorHome />} />
       <Route path='/updatePassword' element = {<UpdatePassword/>} />
       <Route path="/getAllMyPatients" element={< MyPatientList/>} />
