@@ -6,12 +6,15 @@ import RequestDoctor from "../RequestDoctor";
 
 const DoctorsList = (props) => {
   const [doctor, setDoctor] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     retrieveMembers();
   }, []);
 
   const retrieveMembers = () => {
+    setLoading(true); // Set loading state to true when fetching data
+
     AdminService.viewDoctorData()
       .then((response) => {
         console.log(response.data);
@@ -23,6 +26,9 @@ const DoctorsList = (props) => {
       })
       .catch((e) => {
         console.log(e);
+      })
+      .finally(() => {
+        setLoading(false); // Set loading state to false when data is fetched (success or error)
       });
   };
 
@@ -45,6 +51,7 @@ const DoctorsList = (props) => {
         console.log(error);
       });
   };
+
   const rejectDoctor = (id) => {
     AdminService.rejectDoctorRequest(id)
       .then((response) => {
@@ -57,55 +64,51 @@ const DoctorsList = (props) => {
   };
 
   return (
-    <div>
-      {doctor.length > 0 ? (
-        doctor.map((doctor) => {
-          return (
-            <div
-              className="card"
-              key={doctor._id}
-              style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
-            >
-              <div className="card-body">
-                <h3 className="card-title" style={{ color: "white" }}>
-                  Name: {doctor.name}
-                </h3>
-                <h3 className="card-title" style={{ color: "white" }}>
-                  email: {doctor.email}
-                </h3>
-                <h3 className="card-title" style={{ color: "white" }}>
-                  dateOfBirth: {formatDateOfBirth(doctor.dateOfBirth)}
-                </h3>
-                <h3 className="card-title" style={{ color: "white" }}>
-                  Hourly Rate: {doctor.hourlyRate}
-                </h3>
-                <h3 className="card-title" style={{ color: "white" }}>
-                  Affiliation: {doctor.affiliation}
-                </h3>
-                {/* ... (other doctor info) */}
-                <button
-                  type="button"
-                  className="btn btn-success"
-                  onClick={() => acceptDoctor(doctor._id)}
-                >
-                  Accept Doctor
-                </button>
-                <button
-                type="button"
-                className="btn btn-danger"
-                onClick={() => rejectDoctor(doctor._id)}
+    <div className="App">
+      <header className="App-header">
+        {loading ? ( // Show a loading message or spinner while data is being fetched
+          <div>Loading...</div>
+        ) : doctor.length > 0 ? (
+          doctor.map((doctor) => {
+            return (
+              <div
+                className="card"
+                key={doctor._id}
+                style={{ width: "450px", backgroundColor: "#282c34", margin: "10px", color: "white" }}
               >
-                Reject Doctor
-              </button>
+                <div className="card-body">
+                  <h3 className="card-title">Name: {doctor.name}</h3>
+                  <h3 className="card-title">Email: {doctor.email}</h3>
+                  <h3 className="card-title">
+                    Date of Birth: {formatDateOfBirth(doctor.dateOfBirth)}
+                  </h3>
+                  <h3 className="card-title">Hourly Rate: {doctor.hourlyRate}</h3>
+                  <h3 className="card-title">Affiliation: {doctor.affiliation}</h3>
+                  {/* ... (other doctor info) */}
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={() => acceptDoctor(doctor._id)}
+                  >
+                    Accept Doctor
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    onClick={() => rejectDoctor(doctor._id)}
+                  >
+                    Reject Doctor
+                  </button>
+                </div>
               </div>
-            </div>
-          );
-        })
-      ) : (
-        <div>
-          <h2>No Doctors</h2>
-        </div>
-      )}
+            );
+          })
+        ) : (
+          <div>
+            <h2>No Doctors</h2>
+          </div>
+        )}
+      </header>
     </div>
   );
 };

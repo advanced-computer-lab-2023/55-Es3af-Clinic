@@ -1,68 +1,50 @@
-import React from "react";
-import { FaBell } from "react-icons/fa"; // Assuming you want to use a bell icon
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { FaBell } from "react-icons/fa";
 import userService from "../services/userService";
+import "../NotificationIcon.css"; // Import the CSS file for styling
 
 const NotificationIcon = ({ hasNotifications }) => {
   const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const currentURL = window.location.href;
-  const [notifications, setNotifications] = useState([])
-  //console.log(currentURL)
   const parts = currentURL.split("/");
-  //console.log(parts)
   var userType = parts[3];
 
-  // var notifications = [
-  //   // // Your list of notifications
-  //   { notifID: 1, message: "Notification 1" },
-  //   { notifID: 2, message: "Notification 2" },
-  //   // Add more notifications as needed
-  // ];
   const toggleNotifications = async () => {
     setShowNotifications(!showNotifications);
-    await userService.getNotification(userType)
-    .then((result) => {
-      setNotifications(result.data)
-      //console.log(notifications)
-    })
-    .catch((err) => console.error(err))
-    
+    await userService
+      .getNotification(userType)
+      .then((result) => {
+        setNotifications(result.data);
+      })
+      .catch((err) => console.error(err));
   };
 
-
-
   return (
-    <div>
+    <div className="notification-icon-container">
       {hasNotifications ? (
         <div
-          style={{
-            position: "relative",
-            color: showNotifications ? "#cccccc" : "white",
-          }}
+          className={`notification-icon ${showNotifications ? "active" : ""}`}
           onClick={toggleNotifications}
         >
           <FaBell size={30} />
-          <div
-            style={{
-              position: "absolute",
-              top: -5,
-              right: -5,
-              background: "red",
-              borderRadius: "50%",
-              width: 10,
-              height: 10,
-            }}
-          />
+          <div className="notification-badge" />
         </div>
       ) : (
         <FaBell size={30} />
       )}
       {showNotifications && (
-        <div style={{ border: "1px solid #ccc", marginTop: 10, padding: 10 }}>
+        <div className="notification-dropdown">
           <h3>Notifications</h3>
-          {notifications.map((notification) => (
-            <div key={notification.notifID}>{notification.message}<br/>{notification.date}</div>
-          ))}
+          <ul>
+            {notifications.map((notification) => (
+              <li key={notification.notifID}>
+                {notification.message}
+                <br />
+                {notification.date}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>

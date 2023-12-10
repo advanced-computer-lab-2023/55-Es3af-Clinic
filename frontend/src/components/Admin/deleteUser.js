@@ -33,14 +33,14 @@ function DeleteAdmin() {
       <header className="App-header">
         <form className="App-header" >
           <div className="form-group">
-            <label htmlFor="InputId">Admin ID</label>
+            <label htmlFor="InputId">User ID</label>
             <input
               type="text"
               className="form-control"
               id="id"
               name="id"
               value={user.id}
-              placeholder="Enter ID to delete"
+              placeholder="Enter user ID to delete"
               onChange={handleInputChange}
             ></input>
           </div>

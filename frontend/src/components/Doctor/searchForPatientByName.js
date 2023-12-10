@@ -6,7 +6,8 @@ import DoctorService from "../../services/doctorService";
 function SearchPatient() {
   const [results, setResults] = useState([]);
   const [name, setName] = useState('');
-  // const doctorId = "6525afac114367999aba79df";
+  const [searched, setSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -14,14 +15,20 @@ function SearchPatient() {
 
   const search = async (event) => {
     event.preventDefault();
+    setLoading(true);
+
     try {
       const response = await DoctorService.SearchPatientByName(name);
       setResults(response.data.data.patients);
     } catch (error) {
       console.error("Error searching for patients:", error.message);
       // Add logic to handle and display the error
+    } finally {
+      setLoading(false);
+      setSearched(true);
     }
   };
+
   const formatDateOfBirth = (dateOfBirth) => {
     const date = new Date(dateOfBirth);
     const day = date.getDate();
@@ -29,8 +36,7 @@ function SearchPatient() {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
-  
-  
+
   return (
     <div className="App">
       <header className="App-header">
@@ -50,50 +56,41 @@ function SearchPatient() {
           <button type="submit" className="btn btn-primary">
             Search
           </button>
-          <p>Results</p>
-          {results.length > 0 ? (
+          <p></p>
+
+          {loading && <h2>Loading...</h2>}
+
+          {!loading && searched && results.length > 0 ? (
             results.map((result) => (
-             <div
+              <div
                 className="card"
                 key={result._id}
                 style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
-            >
+              >
                 <div className="card-body">
                   <h3 className="card-title" style={{ color: "white" }}>
                     Name: {result.name}
-                    </h3>
-                    <h3 className="card-title" style={{ color: "white" }}>
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
                     Email: {result.email}
-                    </h3>
-                    <h3 className="card-title" style={{ color: "white" }}>
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
                     Date Of Birth: {formatDateOfBirth(result.dateOfBirth)}
-                    </h3>
-                    <h3 className="card-title" style={{ color: "white" }}>
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
                     Gender:{result.gender}
-                    </h3>  
-                    <h3 className="card-title" style={{ color: "white" }}>
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
                     Mobile:{result.mobile}
-                    </h3>
-                  {/* <a
-                    href={`/doctor/searchPatientByName?name=${result.name}`}
-                    rel="noopener noreferrer"
-                  > */}
-                   {/* <h3 className="card-title" style={{ color: "white" }}>
-                    <button className="btn btn-primary"
-                    id="updateButton"
-                    onClick={()=> (result)}>
-                      View Details</button>
-                      </h3> */}
-                  {/* </a> */}
+                  </h3>
                 </div>
               </div>
-        ))
-          ) : (
+            ))
+          ) : !loading && searched && results.length === 0 ? (
             <div>
               <h2>No patients found</h2>
             </div>
-          )}
-
+          ) : null}
         </form>
       </header>
     </div>

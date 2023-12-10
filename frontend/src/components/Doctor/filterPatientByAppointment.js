@@ -4,25 +4,26 @@ import { useState } from "react";
 import DoctorService from "../../services/doctorService";
 
 function FilteredPatientsByAppointments() {
-    const [results, setResults] = useState([]);
-    const [searchPerformed, setSearchPerformed] = useState(false);
-  
-    const search = async (event) => {
-      event.preventDefault();
-  
-      const date = event.target.date.value;
-      // const doctorId = "6525afac114367999aba79df"; // Set the doctorId
-  
-      // Call the filterPatient function and pass doctorId and date as parameters
-      try {
-        const response = await DoctorService.filterPatient(date);
-        setResults(response.data.data.patients);
-        setSearchPerformed(true);
-      } catch (error) {
-        console.error("Error fetching filtered patients:", error.message);
-      }
+  const [results, setResults] = useState([]);
+  const [searchPerformed, setSearchPerformed] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const search = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+
+    const date = event.target.date.value;
+
+    try {
+      const response = await DoctorService.filterPatient(date);
+      setResults(response.data.data.patients);
+      setSearchPerformed(true);
+    } catch (error) {
+      console.error("Error fetching filtered patients:", error.message);
+    } finally {
+      setLoading(false);
     }
-  
+  };
 
   return (
     <div className="App">
@@ -41,8 +42,11 @@ function FilteredPatientsByAppointments() {
           <button type="submit" className="btn btn-primary">
             Search
           </button>
-          <p>results</p>
-          {results.length > 0 || !searchPerformed ? (
+          <p></p>
+
+          {loading ? (
+            <h2>Loading...</h2>
+          ) : results.length > 0 || !searchPerformed ? (
             results.map((result) => {
               return (
                 <div
@@ -54,7 +58,7 @@ function FilteredPatientsByAppointments() {
                     <h3 className="card-title" style={{ color: "white" }}>
                       Patient Name: {result.name}
                     </h3>
-                     <h3 className="card-title" style={{ color: "white" }}>
+                    <h3 className="card-title" style={{ color: "white" }}>
                       Gender: {result.gender}
                     </h3>
                     <h3 className="card-title" style={{ color: "white" }}>
@@ -62,7 +66,7 @@ function FilteredPatientsByAppointments() {
                     </h3>
                     <h3 className="card-title" style={{ color: "white" }}>
                       Health Records: {result.healthRecords}
-                    </h3> 
+                    </h3>
                   </div>
                 </div>
               );

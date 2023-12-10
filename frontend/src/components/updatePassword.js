@@ -96,7 +96,7 @@ function UpdatePassword() {
                   className="form-control"
                   id="newPassword"
                   value={password}
-                  placeholder="Enter new Password"
+                  placeholder="Enter New Password"
                   onChange={handleInputChange}
                 ></input>
                 <p style={{ color: 'red' }}>{message}</p>

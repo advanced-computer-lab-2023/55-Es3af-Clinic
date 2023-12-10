@@ -55,7 +55,5 @@ doctorRouter.route('/getAllPrescriptions').get(doctorController.getAllPrescripti
 
 //.post(doctorController.createPatient);
 // router.route('/:name').get(doctorController.getPatientByName);
-// router.route('/').get(DoctorController.getAllTours).post(DoctorController.createTour);
-// router.route('/:id').get(DoctorController.getTour).patch(DoctorController.updateTour).delete(DoctorController.deleteTour);
 
 module.exports = { doctorRouter };
