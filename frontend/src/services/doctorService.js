@@ -137,7 +137,19 @@ addPrescription(prescription, id){
   async cancelAppointment(body){
     return http.put("/doctor/cancelAppointment", body)
   }
+  
+  async getAllPrescriptions() {
+    try {
+      const response = await http.get("/doctor/getAllPrescriptions");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }
+
+
 
 
 export default new DoctorService();
