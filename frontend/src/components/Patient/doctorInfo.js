@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 
 
 const DoctorInfo = (props) => {
-    console.log('7aga')
+    //console.log('7aga')
   const { id } = useParams()
   console.log(id)
   const temp = {

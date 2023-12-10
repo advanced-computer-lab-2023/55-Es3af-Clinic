@@ -11,8 +11,9 @@ import AdminPage from './components/Admin/admin';
 import Login from './components/login';
 import ForgetPassword from './components/forgetPassword'
 import ResetPassword from './components/resertPassword';
-//import page that i want to test
-
+import DoctorSelectPage from "./components/DoctorSelectorPage"
+import PatientSelectPage from "./components/PatientSelectorPage"
+import ChatApp from './components/chatPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -27,6 +28,9 @@ root.render(
     <Route path="/forgetPassword" element={<ForgetPassword/>} />
     <Route path="/resetPassword/:id" element={<ResetPassword/>} />
     <Route path="/login" element={<Login />} />
+    <Route path="/chat" element={<ChatApp />}/>
+    <Route path="/doctorchat" element={<DoctorSelectPage/>}/>
+    <Route path="/patientchat" element={<PatientSelectPage/>}/>
     </Routes>
   </BrowserRouter>
 );

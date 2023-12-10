@@ -1,4 +1,3 @@
-// Create a react component to view a doctor's contracts
 import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
@@ -7,6 +6,8 @@ import doctorService from "../../services/doctorService";
 
 const MyContractList = (props) => {
     const [contracts, setContracts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
   
     useEffect( () => {
       console.log("useEffect called")
@@ -26,11 +27,12 @@ const MyContractList = (props) => {
         })
         .catch((e) => {
           console.log(e);
+        }).finally(() => {
+          setLoading(false);
         });
     };
   
     const update = (contract) => {
-      // Implement your update logic here
       console.log("Updating contract:", contract);
     };
 
@@ -51,7 +53,9 @@ const MyContractList = (props) => {
     return (
       <div>
         <div className="App-header" id="contentContainer">
-          {contracts.length > 0 ? (
+        {loading ? (
+          <h2>Loading...</h2>
+        ) : contracts.length > 0 ? (
             contracts.map((contract) => {
               return (
                 <div 

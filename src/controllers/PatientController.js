@@ -1368,6 +1368,114 @@ const viewAvailableAppointments = async (req, res) => {
   }
 };
 
+const cancelAppointment = async (req, res) => {
+  try {
+    const appointmentId = req.body.appointmentid;
+    // Find the appointment by ID
+    const appointment = await appointmentModel.findById(appointmentId);
+
+    // Check if the appointment exists
+    if (!appointment) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    // Update the appointment status to "canceled"
+    appointment.status = 'canceled';
+
+    // Save the updated appointment
+    await appointment.save();
+
+    return res.json({ message: 'Appointment canceled successfully', appointment });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+const viewPrescriptionDetails = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, 'supersecret', (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: 'You are not logged in.' });
+      } else {
+        id = decodedToken.name;
+      }
+    });
+
+    const patientId = id;
+    const prescriptionId = req.params.prescriptionId; 
+    const prescription = await PrescriptionsModel.findById(prescriptionId);
+    
+    console.log(patientId);
+    
+    if (!prescription) {
+      return res.status(404).send('Prescription not found');
+    }
+
+    res.status(200).send(prescription);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+
+//needs debugging, postman not working
+const getAllPrescriptionsForPatient = async (req, res) => {
+  try {
+      const token = req.cookies.jwt;
+      let patientId;
+  
+      jwt.verify(token, 'supersecret', (err, decodedToken) => {
+        if (err) {
+          res.status(401).json({ message: 'You are not logged in.' });
+        } else {
+          patientId = decodedToken.name;
+        }
+      });
+
+    const prescriptions = await PrescriptionsModel.find({ patient: patientId })
+      .populate('doctor', 'name') // Assuming doctor ID is stored in prescriptions and is populated
+      .populate('medicine.medID', 'Name'); // Assuming medicine ID is stored in prescriptions and is populated
+
+    if (!prescriptions || prescriptions.length === 0) {
+      return res.status(404).json({ message: 'No prescriptions found for this patient.' });
+    }
+
+    const prescriptionsWithStatus = prescriptions.map(prescription => {
+      const filledStatus = prescription.medicine.map(med => {
+        return {
+          name: med.medID.Name,
+          dosage: med.dosage,
+          duration: med.duration,
+          filled: med.medID.quantity > 0 ? 'filled' : 'unfilled', 
+        };
+      });
+
+      return {
+        doctor: prescription.doctor.name,
+        prescriptions: filledStatus,
+      };
+    });
+   
+    res.status(200).json({
+      status: 'success',
+      data: {
+        prescriptions: prescriptionsWithStatus,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      status: 'error',
+      message: 'Internal Server Error',
+    });
+  }
+};
+
+
 module.exports = {
   addFamilyMember,
   viewFamilyMembers,
@@ -1399,4 +1507,7 @@ module.exports = {
   properDateAndTime,
   requestFollowUp,
   viewFamilyAppointments,
+  cancelAppointment,
+  viewPrescriptionDetails,
+  getAllPrescriptionsForPatient,
 }

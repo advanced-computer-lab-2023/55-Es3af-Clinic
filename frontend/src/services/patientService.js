@@ -116,6 +116,9 @@ class PatientService {
   async requestFollowUp(body){
     return http.post("/patient/requestFollowUp", body)
   }
+  async cancelAppointment(body){
+    return http.put("/patient/cancelAppointment", body)
+  }
   
 }
 

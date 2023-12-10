@@ -52,7 +52,7 @@ class DoctorService {
     return await http.post("/contract", contract);
   }
 
-  async FilteredAppointments(doctorid, date, status) {
+  async FilteredAppointments(date, status) {
     const queryParams = {};
 
     if (date) {
@@ -114,6 +114,10 @@ async viewMedicalHistory() {
   }
 }
 
+addPrescription(prescription, id){
+  return http.post(`/doctor/addPrescription/${id}`, prescription)
+}
+
   // async scheduleFollowUpAppointment(appointmentData) {
   //   try {
   //     const response = await http.post(
@@ -130,6 +134,10 @@ async viewMedicalHistory() {
   //     throw error;
   //   }
   // }
+  async cancelAppointment(body){
+    return http.put("/doctor/cancelAppointment", body)
+  }
 }
+
 
 export default new DoctorService();
