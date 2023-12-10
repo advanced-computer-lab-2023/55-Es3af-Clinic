@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import PatientService from "../../services/patientService";
 
 const DoctorsList = (props) => {
+  const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -11,6 +12,7 @@ const DoctorsList = (props) => {
   }, []);
 
   const retrieveMembers = () => {
+    setLoading(true);
     PatientService.viewDoctors()
         .then((response) => {
         console.log(response.data);
@@ -24,10 +26,27 @@ const DoctorsList = (props) => {
       })
       .catch((e) => {
         console.log(e);
+      })
+      .finally(() => {
+        setLoading(false); 
       });
   };
   return (
     <div>
+      {loading ? (
+        <div class="preloader">
+            <div class="loader">
+                <div class="loader-outter"></div>
+                <div class="loader-inner"></div>
+
+                <div class="indicator"> 
+                    <svg width="16px" height="12px">
+                        <polyline id="back" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
+                        <polyline id="front" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </div>      ) : (
       <div className="App-header">
         {users.length > 0 ? (
           users.map((user) => {
@@ -63,6 +82,7 @@ const DoctorsList = (props) => {
           </div>
         )}
       </div>
+        )}
     </div>
   );
 

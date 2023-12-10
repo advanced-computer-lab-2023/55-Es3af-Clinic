@@ -1,38 +1,44 @@
-import React, { useState } from 'react';
-import doctorService from '../../services/doctorService';
-import '../../App.css'; // Import your global styles
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from "react";
+import doctorService from "../../services/doctorService";
+import "../../App.css"; // Import your global styles
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const AddTimeSlots = () => {
-  const [date, setDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [message, setMessage] = useState('');
+  const [date, setDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleAddTimeSlot = async () => {
     try {
       const existingTimeSlots = await doctorService.getTimeSlots();
 
       const isTimeSlotExist = existingTimeSlots.some(
-        (slot) => slot.date === date && slot.startTime === startTime && slot.endTime === endTime
+        (slot) =>
+          slot.date === date &&
+          slot.startTime === startTime &&
+          slot.endTime === endTime
       );
 
       if (isTimeSlotExist) {
-        setMessage('Time slot already added');
+        setMessage("Time slot already added");
       } else {
         const response = await doctorService.addTimeSlots({
           availableTimeSlots: [{ date, startTime, endTime }],
         });
 
-        if (response && response.status === 'success') {
-          setMessage('Time slots added successfully');
+        if (response && response.status === "success") {
+          setMessage("Time slots added successfully");
         } else {
-          setMessage('Error adding time slots');
+          setMessage("Error adding time slots");
         }
       }
     } catch (error) {
-      console.error('Error checking time slots or adding time slots:', error.message);
-      setMessage('Error adding time slots');
+      console.error(
+        "Error checking time slots or adding time slots:",
+        error.message
+      );
+      setMessage("Error adding time slots");
     }
   };
 
@@ -44,6 +50,7 @@ const AddTimeSlots = () => {
           <label>Date:</label>
           <input
             type="text"
+            placeholder="mm/dd/yyyy"
             value={date}
             onChange={(e) => setDate(e.target.value)}
             className="form-control"
@@ -70,7 +77,11 @@ const AddTimeSlots = () => {
           />
         </div>
 
-        <button type="button" onClick={handleAddTimeSlot} className="btn btn-primary">
+        <button
+          type="button"
+          onClick={handleAddTimeSlot}
+          className="btn btn-primary"
+        >
           Add Time Slot
         </button>
 
