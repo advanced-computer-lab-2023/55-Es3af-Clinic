@@ -2,16 +2,13 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import DoctorService from "../../services/doctorService";
-import { Route } from "react-router-dom";
-
-
-
+import ReactDOM from 'react-dom';
 
 const MyPatientList = (props) => {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true); 
 
-  const [medicalHistory, setMedicalHistory] = useState([]);
+  //const [medicalHistory, setMedicalHistory] = useState([]);
 
   useEffect(() => {
     retrievePatients();
@@ -103,66 +100,111 @@ const MyPatientList = (props) => {
  const viewMedicalHistory = async (patient) => {
   // Extract medical history from the patient object
   try {
+    setLoading(true)
     const response = await DoctorService.viewHealthRecords(patient);
     const medicalHistoryData = response.result;
-    console.log(response.result)
-    setMedicalHistory(medicalHistoryData);
-    viewHist();
+    setLoading(false)
+    viewHist(medicalHistoryData);
   } catch (error) {
     console.error('Error fetching medical history:', error.message);
   }
-
 }
 
   // Render the view after fetching the medical history
-  const viewHist = () => {
-    console.log(medicalHistory)
-  const contentContainer = document.getElementById('contentContainer');
-  contentContainer.innerHTML = `
-    <div className="App">
-      <header className="App-header">
-        <div>
-          <h2>Medical History</h2>
-          ${medicalHistory.medicalHistoryPDF.length > 0 && (
-            `<div>
-              <h3>PDF Files</h3>
-              <ul>
-                ${medicalHistory.medicalHistoryPDF.map((pdf, index) => (
-                  `<li key=${index}>
-                    ${pdf.name}
-                    <iframe src="data:application/pdf;base64,${arrayBufferToBase64(pdf.data.data)}"  width="800" height="600"></iframe>
-                  </li>`
-                )).join('')}
-              </ul>
-            </div>`
-          )}
+  const viewHist = (medicalHistory) => {
+    console.log(medicalHistory);
   
-          ${medicalHistory.medicalHistoryImage.length > 0 && (
-            `<div>
-              <h3>Image Files</h3>
-              <ul>
-                ${medicalHistory.medicalHistoryImage.map((image, index) => (
-                  `<li key=${index}>
-                    ${image.name}
-                    <img
-                      src="data:${image.contentType};base64,${arrayBufferToBase64(image.data.data)}"
-                      alt=${image.Name} 
-                      style={{ width: "200px", height: "200px", color: "white" }}
-                    />
-                  </li>`
-                )).join('')}
-              </ul>
-            </div>`
-          )}
+    // Create a new container element
+    const newContainer = document.createElement('div');
+    newContainer.id = 'contentContainer'; // Set the same ID as the original container
+  
+    // Append the new container to the parent
+    const parentContainer = document.getElementById('contentContainer').parentElement;
+    parentContainer.appendChild(newContainer);
+  
+    // Use ReactDOM.render to render JSX into the new container
+    ReactDOM.render(
+      <div className="App">
+        <header className="App-header">
+        <div>
+            {loading ? (
+              <div className="preloader">
+                <div class="loader">
+                <div class="loader-outter"></div>
+                <div class="loader-inner"></div>
 
-          ${medicalHistory.medicalHistoryPDF.length === 0 && medicalHistory.medicalHistoryImage.length === 0 && (
-            `<p>No medical history available.</p>`
-          )}
-        </div>
-      </header>
-    </div>
-  `;
-};
+                <div class="indicator">
+                  <svg width="16px" height="12px">
+                    <polyline
+                      id="back"
+                      points="1 6 4 6 6 11 10 1 12 6 15 6"
+                    ></polyline>
+                    <polyline
+                      id="front"
+                      points="1 6 4 6 6 11 10 1 12 6 15 6"
+                    ></polyline>
+                  </svg>
+                </div>
+              </div>
+              </div>
+            ) : (
+              <>
+              <div
+              className="close-icon"
+              onClick={() => window.location.reload()}
+            >
+              &times; {/* Unicode "times" character (×) */}
+            </div>
+                <h2>Medical History</h2>
+                {medicalHistory.medicalHistoryPDF.length > 0 && (
+                  <div>
+                    <h3>PDF Files</h3>
+                    <ul>
+                      {medicalHistory.medicalHistoryPDF.map((pdf, index) => (
+                        <li key={index}>
+                          {pdf.name}
+                          <iframe src={`data:application/pdf;base64,${arrayBufferToBase64(pdf.data.data)}`} width="800" height="600"></iframe>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+  
+                {medicalHistory.medicalHistoryImage.length > 0 && (
+                  <div>
+                    <h3>Image Files</h3>
+                    <ul>
+                      {medicalHistory.medicalHistoryImage.map((image, index) => (
+                        <li key={index}>
+                          {image.name}
+                          <img
+                            src={`data:${image.contentType};base64,${arrayBufferToBase64(image.data.data)}`}
+                            alt={image.Name}
+                            style={{ width: "200px", height: "200px", color: "white" }}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+  
+                {medicalHistory.medicalHistoryPDF.length === 0 && medicalHistory.medicalHistoryImage.length === 0 && (
+                  <p>No medical history available.</p>
+                )}
+              </>
+            )}
+          </div>
+        </header>
+      </div>,
+      newContainer
+    );
+  
+    // Remove the original container
+    const originalContainer = document.getElementById('contentContainer');
+    originalContainer.parentElement.removeChild(originalContainer);
+  };
+  
+  
 
   
 
@@ -226,8 +268,26 @@ const MyPatientList = (props) => {
     <div>
       <div className="App-header" id="contentContainer">
       {loading ? (
-          <h2>Loading...</h2>
-        ) : patients.length > 0 ? (
+            <div class="preloader">
+              <div class="loader">
+                <div class="loader-outter"></div>
+                <div class="loader-inner"></div>
+
+                <div class="indicator">
+                  <svg width="16px" height="12px">
+                    <polyline
+                      id="back"
+                      points="1 6 4 6 6 11 10 1 12 6 15 6"
+                    ></polyline>
+                    <polyline
+                      id="front"
+                      points="1 6 4 6 6 11 10 1 12 6 15 6"
+                    ></polyline>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          ) : patients.length > 0 ? (
           patients.map((patient) => {
             return (
               <div
