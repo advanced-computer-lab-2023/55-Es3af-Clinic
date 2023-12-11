@@ -105,9 +105,9 @@ class DoctorService {
       throw error;
     }
   }
-async viewMedicalHistory() {
+async viewHealthRecords(patientId) {
   try {
-    const response = await http.get('/doctor/viewMedicalHistory');
+    const response = await http.get(`/doctor/viewHealthRecords/${patientId}`);
     return response.data;
   } catch (error) {
     throw error;

@@ -163,7 +163,7 @@ const performUpdate = async (req, res, id) => {
 
 //view information and health records of patient registered with me:
 const viewHealthRecords = async (req, res) => {
-  const patientId = req.query.patientId; // Patient's ID
+  const patientId = req.params.patientId; // Patient's ID
 
   try {
     const token = req.cookies.jwt;
@@ -219,19 +219,35 @@ const proceedWithViewHealthRecords = async (req, res, doctorId, patientId) => {
     }
 
     // Extract file data from medical history and send them in the response
-    const fileData = medicalHistory.map((record) => ({
-      name: record.name, // Assuming 'name' is the field storing the file name
-      contentType: record.contentType,
-      data: record.data, // Assuming 'data' is the field storing the binary data
-    }));
+    // const fileData = medicalHistory.map((record) => ({
+    //   name: record.name, // Assuming 'name' is the field storing the file name
+    //   contentType: record.contentType,
+    //   data: record.data, // Assuming 'data' is the field storing the binary data
+    // }));
+    let pdfList = [];
+    let imageList = [];
 
+    for (let history of medicalHistory) {
+      const type = history.contentType;
+      if (type === 'application/pdf') {
+        pdfList.push(history);
+      } else {
+        imageList.push(history);
+      }
+    }
+
+    let result = {
+      medicalHistoryPDF: pdfList,
+      medicalHistoryImage: imageList
+    };
+    return res.status(200).json({ result: result, success: true });
     // Send the file data in the response
-    res.status(200).json({
-      status: "success",
-      data: {
-        healthRecords: fileData,
-      },
-    });
+    // res.status(200).json({
+    //   status: "success",
+    //   data: {
+    //     healthRecords: fileData,
+    //   },
+    // });
   } catch (err) {
     console.error(err);
     res.status(500).json({
@@ -644,52 +660,52 @@ const getAppointmentsWithStatusDone = async (req, res) => {
 };
 
 
-const viewMedicalHistory = async (req, res) => {
-  try {
-    const token = req.cookies.jwt;
-    var id;
-    jwt.verify(token, "supersecret", (err, decodedToken) => {
-      if (err) {
-        res.status(401).json({ message: "You are not logged in." });
-      } else {
-        id = decodedToken.name;
-      }
-    });
-    const doctorId = id;    
-    const patientsWithDoneAppointments = await appointment.find({
-      doctor: doctorId,
-      status: 'done',
-    }).distinct('patient');
+// const viewMedicalHistory = async (req, res) => {
+//   try {
+//     const token = req.cookies.jwt;
+//     var id;
+//     jwt.verify(token, "supersecret", (err, decodedToken) => {
+//       if (err) {
+//         res.status(401).json({ message: "You are not logged in." });
+//       } else {
+//         id = decodedToken.name;
+//       }
+//     });
+//     const doctorId = id;    
+//     const patientsWithDoneAppointments = await appointment.find({
+//       doctor: doctorId,
+//       status: 'done',
+//     }).distinct('patient');
 
-    const medicalHistories = await patientModel.find({
-      _id: { $in: patientsWithDoneAppointments },
-    }, 'medicalHistory');
+//     const medicalHistories = await patientModel.find({
+//       _id: { $in: patientsWithDoneAppointments },
+//     }, 'medicalHistory');
 
-    let pdfList = [];
-    let imageList = [];
+//     let pdfList = [];
+//     let imageList = [];
 
-    medicalHistories.forEach((patient) => {
-      patient.medicalHistory.forEach((history) => {
-        const type = history.contentType;
-        if (type === 'application/pdf') {
-          pdfList.push(history);
-        } else {
-          imageList.push(history);
-        }
-      });
-    });
+//     medicalHistories.forEach((patient) => {
+//       patient.medicalHistory.forEach((history) => {
+//         const type = history.contentType;
+//         if (type === 'application/pdf') {
+//           pdfList.push(history);
+//         } else {
+//           imageList.push(history);
+//         }
+//       });
+//     });
 
-    let result = {
-      medicalHistoryPDF: pdfList,
-      medicalHistoryImage: imageList,
-    };
+//     let result = {
+//       medicalHistoryPDF: pdfList,
+//       medicalHistoryImage: imageList,
+//     };
 
-    return res.status(200).json({ result, success: true });
-  } catch (error) {
-    console.error('Error getting medical history', error.message);
-    return res.status(500).json({ message: 'Internal Server Error', success: false });
-  }
-};
+//     return res.status(200).json({ result, success: true });
+//   } catch (error) {
+//     console.error('Error getting medical history', error.message);
+//     return res.status(500).json({ message: 'Internal Server Error', success: false });
+//   }
+// };
 
 const addPrescription = async (req, res) => {
   const token = req.cookies.jwt;
@@ -838,7 +854,6 @@ module.exports = {
   uploadPatientHealthRec,
   scheduleFollowUpAppointment,
   getAppointmentsWithStatusDone,
-  viewMedicalHistory,
   addPrescription,
   cancelAppointment,
   acceptOrRevokeFollowUp,

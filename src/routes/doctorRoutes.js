@@ -24,7 +24,7 @@ doctorRouter
   .route("/createAppointment")
   .post(doctorController.createAppointment);
 doctorRouter
-  .route("/viewHealthRecords")
+  .route("/viewHealthRecords/:patientId")
   .get(doctorController.viewHealthRecords);
 doctorRouter
   .route("/searchPatientByName")
@@ -45,7 +45,7 @@ doctorRouter.route("/scheduleFollowUpAppointment").post(doctorController.schedul
 
 //doctorRouter.route("/followupAppointment").post(doctorController.followupAppointment); 
 doctorRouter.route('/getAppointmentsWithStatusDone').get(doctorController.getAppointmentsWithStatusDone);
-doctorRouter.route('/viewMedicalHistory').get(doctorController.viewMedicalHistory);
+// doctorRouter.route('/viewMedicalHistory').get(doctorController.viewMedicalHistory);
 doctorRouter.route('/cancelAppointment').put(doctorController.cancelAppointment);
 doctorRouter.put('/acceptOrRevokeFollowUp', doctorController.acceptOrRevokeFollowUp);
 

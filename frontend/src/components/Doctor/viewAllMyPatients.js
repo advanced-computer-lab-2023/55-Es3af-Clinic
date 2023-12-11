@@ -3,13 +3,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import DoctorService from "../../services/doctorService";
 import { Route } from "react-router-dom";
-import AddPrescription from "./addPrescription";
 
 
 
 
 const MyPatientList = (props) => {
   const [patients, setPatients] = useState([]);
+  const [medicalHistory, setMedicalHistory] = useState([]);
 
   useEffect(() => {
     retrievePatients();
@@ -18,16 +18,17 @@ const MyPatientList = (props) => {
   const retrievePatients = () => {
     DoctorService.getAllMyPatients()
       .then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         if (Array.isArray(response.data.data.patients)) {
           setPatients(response.data.data.patients);
-        } else {
-          console.log("Data is not an array:", response.data);
-        }
+        } 
+        // else {
+        //   console.log("Data is not an array:", response.data);
+        // }
       })
-      .catch((e) => {
-        console.log(e);
-      });
+      // .catch((e) => {
+      //   console.log(e);
+      // });
   };
 
 
@@ -39,7 +40,15 @@ const MyPatientList = (props) => {
     return `${day}/${month}/${year}`;
   };
 
-  
+  const arrayBufferToBase64 = (buffer) => {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  };
 
   const viewDets = (patient) => {
     const contentContainer = document.getElementById('contentContainer');
@@ -85,6 +94,73 @@ const MyPatientList = (props) => {
       </div>
     `;
   };
+
+
+ const viewMedicalHistory = async (patient) => {
+  // Extract medical history from the patient object
+  try {
+    const response = await DoctorService.viewHealthRecords(patient);
+    const medicalHistoryData = response.result;
+    console.log(response.result)
+    setMedicalHistory(medicalHistoryData);
+    viewHist();
+  } catch (error) {
+    console.error('Error fetching medical history:', error.message);
+  }
+
+}
+
+  // Render the view after fetching the medical history
+  const viewHist = () => {
+    console.log(medicalHistory)
+  const contentContainer = document.getElementById('contentContainer');
+  contentContainer.innerHTML = `
+    <div className="App">
+      <header className="App-header">
+        <div>
+          <h2>Medical History</h2>
+          ${medicalHistory.medicalHistoryPDF.length > 0 && (
+            `<div>
+              <h3>PDF Files</h3>
+              <ul>
+                ${medicalHistory.medicalHistoryPDF.map((pdf, index) => (
+                  `<li key=${index}>
+                    ${pdf.name}
+                    <iframe src="data:application/pdf;base64,${arrayBufferToBase64(pdf.data.data)}"  width="800" height="600"></iframe>
+                  </li>`
+                )).join('')}
+              </ul>
+            </div>`
+          )}
+  
+          ${medicalHistory.medicalHistoryImage.length > 0 && (
+            `<div>
+              <h3>Image Files</h3>
+              <ul>
+                ${medicalHistory.medicalHistoryImage.map((image, index) => (
+                  `<li key=${index}>
+                    ${image.name}
+                    <img
+                      src="data:${image.contentType};base64,${arrayBufferToBase64(image.data.data)}"
+                      alt=${image.Name} 
+                      style={{ width: "200px", height: "200px", color: "white" }}
+                    />
+                  </li>`
+                )).join('')}
+              </ul>
+            </div>`
+          )}
+
+          ${medicalHistory.medicalHistoryPDF.length === 0 && medicalHistory.medicalHistoryImage.length === 0 && (
+            `<p>No medical history available.</p>`
+          )}
+        </div>
+      </header>
+    </div>
+  `;
+};
+
+  
 
   // const scheduleFollowUpAppointment = async () => {
   //   try {
@@ -141,10 +217,6 @@ const MyPatientList = (props) => {
   //   `;
   // };
 
-  
-  const viewMedicalHistory = (patientId) => {
-    console.log(`View Medical History for patient with ID: ${patientId}`);
-  };
 
   return (
     <div>
