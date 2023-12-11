@@ -15,7 +15,8 @@ import AddTimeSlots from './addTimeSlots';
 import UploadPatientHealthRecords from './uploadPatientHealthRecords';
 import MyContractList from './viewEmploymentContract.js';
 import Navbar from "../navbar.js";
-import AddPrescription from './addPrescription.js'
+import AddPrescription from './addPrescription.js';
+import ViewAllPrescriptions from './viewAllPrescriptions.js';
 
 
 
@@ -23,6 +24,7 @@ function DoctorPage() {
   return (
     <Routes>
       <Route path ="/addPrescription/:id" element={<AddPrescription/>}/>
+      <Route path="/getAllPrescriptions" element={<ViewAllPrescriptions />} />
       <Route path="/" element={<DoctorHome />} />
       <Route path='/updatePassword' element = {<UpdatePassword/>} />
       <Route path="/getAllMyPatients" element={< MyPatientList/>} />
@@ -48,7 +50,7 @@ function DoctorHome() {
     const fetchData = async () => {
       try {
         const response = await doctorService.getAmountInWallet();
-        const amountInWalletResult = response.data; 
+        const amountInWalletResult = response.data;   
         setResult(amountInWalletResult);
       } catch (error) {
         console.error(error);
@@ -75,6 +77,9 @@ function DoctorHome() {
             <a href="/doctor/searchPatientByName" rel="noopener noreferrer">
             <button className="btn btn-primary"> Search for Patient by Name </button>
           </a>
+          <a href="/doctor/getAllPrescriptions" rel="noopener noreferrer">
+          <button className="btn btn-primary">View All Prescriptions</button>
+        </a>
           <a href="/doctor/filterAppointmentsByDateAndStatus" rel="noopener noreferrer">
             <button className="btn btn-primary"> Filter Appointments by Date and Status </button>
           </a>

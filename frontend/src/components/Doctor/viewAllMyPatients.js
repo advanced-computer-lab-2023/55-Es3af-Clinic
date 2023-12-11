@@ -9,6 +9,8 @@ import { Route } from "react-router-dom";
 
 const MyPatientList = (props) => {
   const [patients, setPatients] = useState([]);
+  const [loading, setLoading] = useState(true); 
+
   const [medicalHistory, setMedicalHistory] = useState([]);
 
   useEffect(() => {
@@ -26,11 +28,13 @@ const MyPatientList = (props) => {
         //   console.log("Data is not an array:", response.data);
         // }
       })
-      // .catch((e) => {
-      //   console.log(e);
-      // });
+      .catch((e) => {
+        console.log(e);
+      })
+      .finally(() => {
+        setLoading(false); 
+      });
   };
-
 
   const formatDateOfBirth = (dateOfBirth) => {
     const date = new Date(dateOfBirth);
@@ -221,7 +225,9 @@ const MyPatientList = (props) => {
   return (
     <div>
       <div className="App-header" id="contentContainer">
-        {patients.length > 0 ? (
+      {loading ? (
+          <h2>Loading...</h2>
+        ) : patients.length > 0 ? (
           patients.map((patient) => {
             return (
               <div

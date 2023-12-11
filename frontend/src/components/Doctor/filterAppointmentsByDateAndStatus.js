@@ -103,7 +103,7 @@ function FilteredAppointments() {
           <button type="submit" className="btn btn-primary">
             Search
           </button>
-          <p>results</p>
+          <p></p>
           {results.length > 0 || !searchPerformed ? (
           results.map((result) => {
             return (

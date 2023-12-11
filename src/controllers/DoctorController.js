@@ -9,9 +9,10 @@ const bcrypt = require("bcrypt");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const upload = multer({ dest: "uploads/" });
-const mediceneModel = require('../Models/Medicine.js');
+const mediceneModel = require("../Models/Medicine.js");
 const prescription = require("../Models/Prescriptions.js");
 const followUps = require("../Models/FollowUpRequests.js");
+const packageModel = require("../Models/Packages.js");
 
 // const Patient = JSON.parse(fs.readFileSync('./data/patient.json'));
 // const Doctors = JSON.parse(fs.readFileSync('./data/doctor.json'));
@@ -316,14 +317,14 @@ const searchPatientByName = async (req, res) => {
     });
     const doctorId = id;
     const doctor = await doctorModel.findById(doctorId);
-    
+
     if (!doctor) {
       res.status(404).json({
         message: "Doctor not found",
       });
       return;
     }
-    const appointments = await appointment.find({ doctor: doctor._id});
+    const appointments = await appointment.find({ doctor: doctor._id });
     const patientIds = appointments.map((appointment) => appointment.patient);
     const patients = await patientModel.find({
       _id: { $in: patientIds },
@@ -464,7 +465,6 @@ const selectPatient = async (req, res) => {
   }
 };
 
-
 const getAmountInWallet = async (req, res) => {
   try {
     const token = req.cookies.jwt;
@@ -477,8 +477,9 @@ const getAmountInWallet = async (req, res) => {
     const userId = decodedToken.name;
 
     const doctor = await doctorModel.findById(userId);
+    const amnt = Number(doctor.amountInWallet.toFixed(1));
 
-    return res.status(200).send(doctor.amountInWallet.toString() + " EGP");
+    return res.status(200).send(amnt.toString() + " EGP");
   } catch (error) {
     console.error(error);
     return res
@@ -607,7 +608,7 @@ const scheduleFollowUpAppointment = async (req, res) => {
     // Create the follow-up appointment
     const newAppointment = await appointment.create({
       doctor: doctorId,
-      patient: patientId, 
+      patient: patientId,
       patientName: patientName,
       date: selectedDate,
       status: "scheduled", // Initial status for the appointment
@@ -641,24 +642,26 @@ const scheduleFollowUpAppointment = async (req, res) => {
 const getAppointmentsWithStatusDone = async (req, res) => {
   try {
     const patientsWithDoneAppointments = await Patient.find({
-      'appointments.status': 'done',
+      "appointments.status": "done",
     }).populate({
-      path: 'appointments',
-      match: { status: 'done' },
+      path: "appointments",
+      match: { status: "done" },
     });
 
     const appointments = patientsWithDoneAppointments.reduce(
-      (allAppointments, patient) => [...allAppointments, ...patient.appointments],
+      (allAppointments, patient) => [
+        ...allAppointments,
+        ...patient.appointments,
+      ],
       []
     );
 
     return res.status(200).json({ appointments });
   } catch (error) {
-    console.error('Error fetching appointments:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching appointments:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 // const viewMedicalHistory = async (req, res) => {
 //   try {
@@ -718,122 +721,231 @@ const addPrescription = async (req, res) => {
     }
   });
 
-  const medicine = req.body
+  const medicine = req.body;
   //console.log(medicine)
-  const patientID = req.params.id
-  var medicines = []
-  if(medicine){
-      for(var med of medicine){
-        const medID = await mediceneModel.findOne({Name: med.name})
-        if(!medID) {
-          res.status(200).send(`${med.name} is not available in the pharmacy`)
-          return
+  const patientID = req.params.id;
+  var medicines = [];
+  if (medicine) {
+    for (var med of medicine) {
+      const medID = await mediceneModel.findOne({ Name: med.name });
+      if (!medID) {
+        res.status(200).send(`${med.name} is not available in the pharmacy`);
+        return;
+      } else if (medID.quantity == 0) {
+        res.status(200).send("This medicine is out of stock");
+        return;
       }
-        else if(medID.quantity == 0) {
-          res.status(200).send('This medicine is out of stock')
-          return
-        }
-        medicines.push({
-          medID: medID,
-          dosage: med.dosage,
-          duration: med.duration
-        })
+      medicines.push({
+        medID: medID,
+        dosage: med.dosage,
+        duration: med.duration,
+      });
     }
     const newPrescription = new prescription({
       patient: patientID,
       medicine: medicines,
       doctor: id,
-    })
-    newPrescription.save().catch((err) => {console.error(err)})
-    res.status(200).send('Prescription added successfully')
-  }
-  else res.status(200).send('There is no medicine added')
+    });
+    newPrescription.save().catch((err) => {
+      console.error(err);
+    });
+    res.status(200).send("Prescription added successfully");
+  } else res.status(200).send("There is no medicine added");
+};
 
+async function doctorPrice(patientID, doctorUsername) {
+  let sessionPrice;
+  const doctor = await doctorModel.findOne({ username: doctorUsername });
+  //console.log(`doctor in function is ${doctor}`);
+  sessionPrice = doctor.hourlyRate * 1.1;
+  //console.log(`patient ID in function ${patientID}`);
+  const patient = await patientModel.findById(patientID);
+  //console.log(`patient in function is ${patient}`);
+  if (patient.package !== "none") {
+    const package = await packageModel.findOne({ type: patient.package });
+    //console.log(`package in function is ${package}`);
+    sessionPrice = sessionPrice * (1 - package.sessionDiscount);
+    sessionPrice = Number(sessionPrice.toFixed(1));
+  }
+  return sessionPrice;
 }
 
 const cancelAppointment = async (req, res) => {
   try {
     const appointmentId = req.body.appointmentid;
-
+    let alertM = "";
     // Find the appointment by ID
     const appointments = await appointment.findById(appointmentId);
 
     // Check if the appointment exists
     if (!appointments) {
-      return res.status(404).json({ message: 'Appointment not found' });
+      return res.status(404).json({ message: "Appointment not found" });
     }
 
     // Update the appointment status to "canceled"
-    appointments.status = 'canceled';
-
-    // Save the updated appointment
+    appointments.status = "canceled";
     await appointments.save();
+    const appointmentTime = appointments.date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const endt = new Date(
+      appointments.date.getTime() + appointments.duration * 60000
+    );
+    const end = endt.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    await doctorModel.findOneAndUpdate(
+      { _id: appointments.doctor },
+      {
+        $push: {
+          availableTimeSlots: {
+            date: appointments.date,
+            startTime: appointmentTime,
+            endTime: end,
+          },
+        },
+      }
+    );
+    const twentyFourHoursFromNow = new Date();
+    twentyFourHoursFromNow.setHours(twentyFourHoursFromNow.getHours() + 24);
 
-    return res.json({ message: 'Appointment canceled successfully', appointments });
+    if (appointments.date >= twentyFourHoursFromNow) {
+      const patient = await patientModel.findById(appointments.patient);
+      const doctor = await doctorModel.findById(appointments.doctor);
+      const price = await doctorPrice(appointments.patient, doctor.username);
+
+      patient.amountInWallet += price;
+      await patient.save();
+
+      alertM =
+        "A total of " +
+        price.toString() +
+        "EGP was refunded to the patient's wallet";
+    }
+    alertM = "Appointment canceled successfully \n" + alertM;
+    return res.json({ message: alertM, appointments });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
 
 const acceptOrRevokeFollowUp = async (req, res) => {
   try {
     const { followUpId, accept } = req.body;
 
-    const followUp = await followUps.findById(followUpId)
-      .populate('patient')
-      .populate('doctor');
+    const followUp = await followUps.findById(followUpId);
 
     if (!followUp) {
-      return res.status(404).json({ message: 'Follow-up request not found' });
+      return res.status(404).json({ message: "Follow-up request not found" });
+    }
+
+    const patient = await patientModel.findById(followUps.patient.id);
+    const doctor = await doctorModel.findById(followUps.doctor.id);
+
+    if (!patient || !doctor) {
+      return res.status(404).json({ message: "Patient or doctor not found" });
     }
 
     if (accept === true) {
-      // Accepted: Create a new appointment from the follow-up request
-      const newAppointment = await appointment.create({
-        patient: followUps.patient._id,
-        doctor: followUps.doctor._id,
-        date: followUps.date,
-        duration: followUps.duration,
-        status: 'pending', // Or any appropriate value
+      const newAppointment = new appointment({
+        PatientId: followUps.patient,
+        PatientName: followUps.patientName,
+        DoctorId: followUps.doctor,
+        Date: followUps.date,
+        Duration: followUps.duration,
+        Status: "pending",
       });
 
-      // Remove the scheduled slot from the doctor's available time slots
-      const updatedDoctor = await doctorModel.findByIdAndUpdate(
-        followUps.doctor._id,
-        {
-          $pull: { availableTimeSlots: followUps.date },
-        },
-        { new: true }
-      );
+      await docAvailableSlots.deleteMany({
+        DoctorId: followUps.doctor.id,
+        Date: followUps.date,
+      });
 
-      // Update the follow-up request status to 'accepted'
-      followUps.approvalStatus = 'accepted';
+      await newAppointment.save();
+
+      followUp.approvalStatus = "accepted";
       await followUps.save();
 
       return res.status(200).json({
-        message: 'Follow-up request accepted',
+        message: "Follow-up request accepted",
         newAppointment,
-        updatedDoctor,
       });
     } else {
-      // If not accepted, update the follow-up request status to 'rejected'
-      followUps.approvalStatus = 'rejected';
+      followUps.approvalStatus = "rejected";
       await followUps.save();
 
       return res.status(200).json({
-        message: 'Follow-up request rejected',
+        message: "Follow-up request rejected",
         followUp,
       });
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
+//const prescriptionModel = require('../Models/Prescriptions.js');
 
+const getAllPrescriptions = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    let doctorId;
 
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        doctorId = decodedToken.name;
+      }
+    });
+
+    const prescriptions = await prescription
+      .find({ doctor: doctorId })
+      .populate("patient", "name") // Assuming patient ID is stored in prescriptions and is populated
+      .populate("medicine.medID", "Name"); // Assuming medicine ID is stored in prescriptions and is populated
+
+    if (!prescriptions || prescriptions.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No prescriptions found for this doctor." });
+    }
+
+    const prescriptionsWithStatus = prescriptions.map((prescription) => {
+      // Map through each prescription
+      const filledStatus = prescription.medicine.map((med) => {
+        // For each medicine in the prescription, create a modified structure
+        return {
+          name: med.medID.Name,
+          dosage: med.dosage,
+          duration: med.duration,
+          filled: med.medID.quantity > 0 ? "filled" : "unfilled",
+        };
+      });
+
+      return {
+        patient: prescription.patient.name,
+        prescriptions: filledStatus,
+      };
+    });
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        prescriptions: prescriptionsWithStatus,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
+  }
+};
 
 module.exports = {
   addDoctor,
@@ -857,4 +969,5 @@ module.exports = {
   addPrescription,
   cancelAppointment,
   acceptOrRevokeFollowUp,
+  getAllPrescriptions,
 };
