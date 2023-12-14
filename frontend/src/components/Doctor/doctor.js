@@ -17,7 +17,8 @@ import MyContractList from './viewEmploymentContract.js';
 import Navbar from "../navbar.js";
 import AddPrescription from './addPrescription.js';
 import ViewAllPrescriptions from './viewAllPrescriptions.js';
-
+import PatientSelectorPage from "../PatientSelectorPage.js";
+import DoctorChat from "../doctorChat"
 
 
 function DoctorPage() {
@@ -38,6 +39,8 @@ function DoctorPage() {
       <Route path="/addTimeSlots" element={<AddTimeSlots />} /> 
       <Route path="/uploadPatientHealthRecords" element={<UploadPatientHealthRecords/>} /> 
       <Route path ="/contracts" element={<MyContractList/>}/>
+      <Route path="/patientSelector" element={<PatientSelectorPage/>}/>
+      <Route path="/doctorChat" element={<DoctorChat />} />
     </Routes>
   );
 }
@@ -97,6 +100,9 @@ function DoctorHome() {
           </a>
           <a href="/doctor/contracts" rel="./components/doctor/viewEmploymentContract.js">
             <button className="btn btn-primary"> Contracts </button>
+          </a>
+          <a href="/doctor/patientSelector" rel="noopener noreferrer">
+            <button className="btn btn-primary"> Select Patient to Chat With </button>
           </a>
         </div>
       </header>

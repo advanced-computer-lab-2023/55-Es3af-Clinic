@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import adminService from '../services/adminService';
 import Home from './gohome';
-const SelectorPage = () => {
+const PatientSelectorPage = () => {
   const [options, setOptions] = useState([]);
   const [selectedOption, setSelectedOption] = useState('');
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ const SelectorPage = () => {
   const handleRedirect = () => {
     if (selectedOption) {
       // Redirect to /chat with the selected option's Id as a query parameter
-      navigate(`/chat?id=${encodeURIComponent(selectedOption)}&type=Doctor`);
+      navigate(`/doctor/doctorChat?id=${encodeURIComponent(selectedOption)}`);
     }
   };
 
@@ -46,4 +46,4 @@ const SelectorPage = () => {
   );
 };
 
-export default SelectorPage;
+export default PatientSelectorPage;
