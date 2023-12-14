@@ -23,6 +23,8 @@ import AvailableAppointments from "./viewAvailableAppointments";
 import ViewMedicalHistory from './viewMedicalHistory';
 import Navbar from "../navbar";
 import PatientNav from "../patientNav";
+import DoctorSelectorPage from "../DoctorSelectorPage.js"
+import PatientChat from "../patientChat.js"
 
 
 function PatientPage() {
@@ -48,6 +50,8 @@ function PatientPage() {
       <Route path="/searchBySpecDate" element= {<FilterDoctors />} />
       <Route path="/viewAvailableAppointments" element= {<AvailableAppointments />} />
       <Route path="/viewMedicalHistory" element={<ViewMedicalHistory />} /> 
+      <Route path="/doctorSelector" element={<DoctorSelectorPage/>}/>
+      <Route path="/patientChat" element={<PatientChat />} />
     </Routes>
   );
 }
@@ -157,6 +161,9 @@ function PatientHome() {
           </a>
           <a href="/patient/viewSubscribedPackages" rel="noopener noreferrer">
             <button className="btn btn-primary"> View Subscribed Health Packages </button>
+          </a>
+          <a href="/patient/doctorSelector" rel="noopener noreferrer">
+            <button className="btn btn-primary"> Select Doctor to Chat With </button>
           </a>
         </div>
       </header>

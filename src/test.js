@@ -8,6 +8,7 @@ const patientController = require('./controllers/PatientController');
 const userController = require('./controllers/UserController');
 const {auth} = require("./utils/auth");
 const http =require("http")
+const { Server } = require("socket.io");
 
 
 //require("dotenv").config();
@@ -27,27 +28,37 @@ mongoose.connect(MongoURI, {dbName: 'Clinic'})
  const server = app.listen(port, () => {
     console.log(`Listening to requests on http://localhost:${port}`);
   })
-  const socketIO = require('socket.io')(server, {
+
+  const socketIO = new Server(server, {
     cors: {
-        origin: "http://localhost:3000"
-    }
+      origin: "http://localhost:3000"
+  }
   });
-  socketIO.on('connection', (socket) => {
-    console.log(`⚡: ${socket.id} user just connected!`);
   
-    //sends the message to all the users on the server
-    socket.on('message', (data) => {
-      console.log(data)
-      // Relaing the message to all listeners
-      socketIO.sockets.emit(`messageResponse`, data);
+  
+  socketIO.on("connection", (socket) => {
+    console.log(`User Connected:  ${socket.id}`);
+  
+  
+    socket.on("join", async (senderId, receiverId) => {
+      // Join a room with a unique identifier for the conversation
+      const room = `${senderId}-${receiverId}`;
+      console.log(room)
+      await socket.join(room);
+      console.log(`User ${senderId} joined the chat with ${receiverId}`);
     });
+    
   
-    socket.on('disconnect', () => {
-      console.log('🔥: A user disconnected');
+    socket.on("send_message", data => {
+      console.log(data.senderId, data.receiverId, data.inputMessage, data.room , "in backend");
+      console.log(data.room, "in send")
+      // Emit the message to the specific room
+      socket.to(data.room).emit("receive_message", { senderId: data.senderId, receiverId: data.receiverId, message: data.inputMessage });
     });
   });
 })
 .catch(err => console.log(err));
+
 
 app.use(
   cors({

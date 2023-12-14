@@ -84,12 +84,6 @@ function Login(props) {
           <a href="/register" rel="noopener noreferrer">
             Register as Patient
           </a>
-          <a href="/doctorchat" rel="noopener noreferrer">
-            Select a Doctor to Chat with          
-            </a>
-            <a href="/patientchat" rel="noopener noreferrer">
-            Select a Patient to Chat with          
-            </a> 
         </form>
       </div>
     </div>
