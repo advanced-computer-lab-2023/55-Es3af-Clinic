@@ -17,12 +17,11 @@ const PatientNav = () => {
         console.log(e);
       });
   }
-  
+
   const home = () => {
     navigate("../", { replace: true });
-   
   };
-  
+
   return (
     <nav className="navbar navbar-dark bg-primary">
       <ul className="nav">
@@ -45,23 +44,19 @@ const PatientNav = () => {
               home();
             }}
           >
-            home
+            Home
           </button>
         </li>
         <li className="nav-item">
-        <a href="http://localhost:4000/patient" rel="noopener noreferrer">
-          <button
-            className="nav-link"
-            style={{ color: "white" }}
-           
-          >
-            Pharmacy
-          </button>
+          <a href="http://localhost:4000/patient" rel="noopener noreferrer">
+            <button className="nav-link" style={{ color: "white" }}>
+              Pharmacy
+            </button>
           </a>
         </li>
       </ul>
       <div className="notification-icon-wrapper">
-      <NotificationIcon hasNotifications={hasNotifications} />
+        <NotificationIcon hasNotifications={hasNotifications} />
       </div>
     </nav>
   );

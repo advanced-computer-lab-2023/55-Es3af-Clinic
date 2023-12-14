@@ -17,10 +17,9 @@ const Home = () => {
         console.log(e);
       });
   }
-  
+
   const home = () => {
     navigate("../", { replace: true });
-   
   };
   return (
     <nav className="navbar navbar-dark bg-primary">
@@ -44,12 +43,12 @@ const Home = () => {
               home();
             }}
           >
-            home
+            Home
           </button>
         </li>
       </ul>
       <div className="notification-icon-wrapper">
-      <NotificationIcon hasNotifications={hasNotifications} />
+        <NotificationIcon hasNotifications={hasNotifications} />
       </div>
     </nav>
   );

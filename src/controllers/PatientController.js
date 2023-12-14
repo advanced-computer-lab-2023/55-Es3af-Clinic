@@ -984,7 +984,6 @@ const uploadMedicalHistory = async (req, res) => {
     } else if (err) {
       return res.status(500).json(err);
     }
-
     const username = req.body.username;
     const newMedicalHistory = req.files.map((file) => {
       return {

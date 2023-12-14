@@ -343,3 +343,20 @@
   font-size: 24px;
   margin-right: 5px;
 }
+.chat-button {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #007bff; /* Change the background color as needed */
+  text-decoration: none;
+}
+
+.chat-button:hover {
+  background-color: #0056b3; /* Change the hover background color as needed */
+}

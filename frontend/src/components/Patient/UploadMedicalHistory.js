@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import Home from '../gohome';
+import React, { useState } from "react";
+import axios from "axios";
+import Home from "../gohome";
 
 function UploadMedicalHistory() {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
   const [files, setFiles] = useState([]);
 
   const handleUsernameChange = (event) => {
@@ -18,23 +18,28 @@ function UploadMedicalHistory() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData();
-    formData.append('username', username);
+    formData.append("username", username);
     if (files && files.length) {
       for (let i = 0; i < files.length; i++) {
-        formData.append('medicalHistory', files[i]);
+        formData.append("medicalHistory", files[i]);
       }
       try {
-        await axios.post('http://localhost:8000/patient/uploadMedicalHistory', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        alert('Medical history uploaded successfully');
+        await axios.post(
+          "http://localhost:8000/patient/uploadMedicalHistory",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        alert("Medical history uploaded successfully");
       } catch (error) {
-        alert('Error uploading medical history');
+        console.log(error);
+        alert("Error uploading medical history");
       }
     } else {
-      alert('No files selected for upload.');
+      alert("No files selected for upload.");
     }
   };
 
