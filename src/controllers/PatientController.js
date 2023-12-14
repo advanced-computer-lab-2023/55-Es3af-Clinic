@@ -625,8 +625,9 @@ const viewPrescriptions = async (req, res) => {
   });
 
   //console.log(`Patient is ${id}`);
-  PrescriptionsModel.findById(id)
+  PrescriptionsModel.find({ patient: id })
     .populate("doctor", "name -_id -__t")
+    .populate("medicine.medID", "Name")
     .exec()
     .then((result) => {
       if (Object.keys(result).length === 0) {
@@ -672,10 +673,9 @@ const filterprescriptionsbydatestatusdoctor = async (req, res) => {
         filter.doctor = doctor1.id;
       }
     }
-    const prescription = await PrescriptionsModel.find(filter).populate(
-      "doctor",
-      "name -_id -__t"
-    );
+    const prescription = await PrescriptionsModel.find(filter)
+      .populate("doctor", "name -_id -__t")
+      .populate("medicine.medID", "Name");
     res.status(200).send(prescription);
   } catch (err) {
     console.error(err);

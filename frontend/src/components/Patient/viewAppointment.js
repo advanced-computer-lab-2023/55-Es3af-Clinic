@@ -152,9 +152,6 @@ const ViewAppointments = () => {
   return (
     <div>
       <Home />
-      <div className="back-button" onClick={() => navigate("/patient")}>
-        <IoIosArrowBack size={38} /> Back
-      </div>
       {loading ? (
         <div class="preloader">
           <div class="loader">

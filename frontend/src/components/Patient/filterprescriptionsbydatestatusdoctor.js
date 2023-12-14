@@ -15,14 +15,12 @@ function FilteredPrescriptionList() {
     const doctor = event.target.doctor.value;
     const status = event.target.status.value;
     //const patientid = "654bed1dbe07a9603f5b4030";
-    
 
     const response = await PatientService.FilteredPrescriptionList(
       date,
       doctor,
       status
     );
-
     setResults(response.data);
     setSearchPerformed(true);
   };
@@ -47,58 +45,63 @@ function FilteredPrescriptionList() {
               id="doctor"
               name="doctor"
               placeholder="enter doctor name"
-              
             />
             <input
-            type="string"
-            className="form-control"
-            id="status"
-            name="status"
-            placeholder="enter status" />
+              type="string"
+              className="form-control"
+              id="status"
+              name="status"
+              placeholder="enter status"
+            />
 
             <input
-            type="date"
-            className="form-control"
-            id="date"
-            name="date"
-            placeholder="enter date" />
-
+              type="date"
+              className="form-control"
+              id="date"
+              name="date"
+              placeholder="enter date"
+            />
           </div>
           <button type="submit" className="btn btn-primary">
             Search
           </button>
           <p>results</p>
           {results.length > 0 || !searchPerformed ? (
-          results.map((result) => {
-            return (
-              <div
-                className="card"
-                key={result._id}
-                style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
-              >
-                <div className="card-body">
-                <h3 className="card-title" style={{ color: "white" }}>
-                      Medicine: {result.medicine}
+            results.map((result) => {
+              return (
+                <div
+                  className="card"
+                  key={result._id}
+                  style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
+                >
+                  <div className="card-body">
+                    <h3 className="card-title" style={{ color: "white" }}>
+                      Medicines:{" "}
+                      {result.medicine.map((med, index) => (
+                        <span key={index}>
+                          {med.medID.Name}
+                          {index < result.medicine.length - 1 ? ", " : ""}
+                        </span>
+                      ))}
                     </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                   Doctor: {result.doctor}
-                  </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                   Status: {result.status}
-                  </h3>
-                  <h3 className="card-title" style={{ color: "white" }}>
-                   Date: {formatDateOfBirth(result.date)}
-                  </h3>
+                    <h3 className="card-title" style={{ color: "white" }}>
+                      Doctor: {result.doctor.name}
+                    </h3>
+                    <h3 className="card-title" style={{ color: "white" }}>
+                      Status: {result.status}
+                    </h3>
+                    <h3 className="card-title" style={{ color: "white" }}>
+                      Date: {formatDateOfBirth(result.date)}
+                    </h3>
                   </div>
-              </div>
-            );
-          })
-        ) : (
-          <div>
-            <h2>No Prescriptions found</h2>
-          </div>
-        )}
-          
+                </div>
+              );
+            })
+          ) : (
+            <div>
+              <h2>No Prescriptions found</h2>
+            </div>
+          )}
         </form>
       </header>
     </div>
