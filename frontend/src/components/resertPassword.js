@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import userService from "../services/userService";
 import { useParams } from "react-router-dom";
+import Home from "./gohome";
 
 function ResetPassword() {
 
@@ -54,6 +55,7 @@ function ResetPassword() {
 
   return (
     <div className="App">
+      <Home />
       <header className="App-header">
           <div className="form-group">
             <label htmlFor="InputPassword">New Password</label>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
 import PatientService from "../../services/patientService";
+import Home from "../gohome";
 //import "./ViewAppointments.css"; // Import your CSS file for styling
 
 const ViewAppointments = () => {
@@ -150,6 +151,7 @@ const ViewAppointments = () => {
 
   return (
     <div>
+      <Home />
       <div className="back-button" onClick={() => navigate("/patient")}>
         <IoIosArrowBack size={38} /> Back
       </div>

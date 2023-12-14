@@ -2,6 +2,7 @@ import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import packageService from "../services/packageService";
+import Home from "./gohome";
 
 function UpdatePackage() {
   const initialPackageState = {
@@ -46,6 +47,7 @@ function UpdatePackage() {
 
   return (
     <div className="App">
+      <Home />
       <header className="App-header">
         <form className="App-header" onSubmit={update}>
           <div className="form-group">

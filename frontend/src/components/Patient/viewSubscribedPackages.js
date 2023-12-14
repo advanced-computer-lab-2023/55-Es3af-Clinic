@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PatientService from '../../services/patientService';
 import MemberService from "../../services/familyMemberService";
 import { useNavigate } from "react-router-dom";
+import Home from '../gohome';
 
 function ViewSubscribedPackagesPage() {
   const intialBody = {
@@ -80,6 +81,7 @@ function ViewSubscribedPackagesPage() {
 
   return (
     <div>
+      <Home />
       <div className="App-header">
         <h2>Subscribed Health Packages</h2>
         <ul>

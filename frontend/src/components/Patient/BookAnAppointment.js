@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import patientService from "../../services/patientService";
 import { useNavigate } from "react-router-dom";
 import MemberService from "../../services/familyMemberService";
+import Home from "../gohome";
 
 function BookAnAppointment() {
   const intialBody = {
@@ -221,6 +222,7 @@ function BookAnAppointment() {
   }
   return (
     <div className="App">
+      <Home />
       <header className="App-header">
         <form className="App-header" onSubmit={search}>
           <div className="form-group">

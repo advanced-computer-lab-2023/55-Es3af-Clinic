@@ -6,6 +6,7 @@ import DeletePackage from "./deletePackage";
 import PkgList from "../viewPackages"
 // import PackageServiceService from "../services/packageService";
 import UpdatePackage from "../updatePackage";
+import Home from "../gohome";
 function PackagePage() {
   return (
     <Routes>
@@ -25,6 +26,7 @@ function PackagePage() {
 function PackageHome() {
   return (
     <div className="App">
+      <Home />
       <header className="App-header">
         <div>
           <a href="/admin/packages/createPackage" rel="noopener noreferrer">

@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState, useEffect } from "react";
 import doctorService from "../../services/doctorService";
 import { useParams } from "react-router-dom";
+import Home from '../gohome';
 //import bcrypt from "bcrypt";
 
 
@@ -59,6 +60,7 @@ function AddPrescription() {
 
     return (
         <div className="App">
+          <Home />
         <header className="App-header">
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             {/* Left side */}

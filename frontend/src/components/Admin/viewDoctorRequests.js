@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import AdminService from "../../services/adminService";
 import RequestDoctor from "../RequestDoctor";
+import Home from "../gohome";
 
 const DoctorsList = (props) => {
   const [doctor, setDoctor] = useState([]);
@@ -65,6 +66,7 @@ const DoctorsList = (props) => {
 
   return (
     <div className="App">
+      <Home />
       <header className="App-header">
         {loading ? ( // Show a loading message or spinner while data is being fetched
           <div>Loading...</div>

@@ -2,6 +2,7 @@ import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import PackageService from "../services/packageService";
+import Home from "./gohome";
 
 const PkgList = (props) => {
   const [users, setUsers] = useState([]);
@@ -29,6 +30,7 @@ const PkgList = (props) => {
   };
   return (
     <div>
+      <Home />
       <div className="App-header">
         {users.length > 0 ? (
           users.map((user) => { const sessionDiscountPercentage = user.sessionDiscount * 100;

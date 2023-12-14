@@ -22,6 +22,7 @@ import ViewAppointments from "./viewAppointment";
 import AvailableAppointments from "./viewAvailableAppointments";
 import ViewMedicalHistory from './viewMedicalHistory';
 import Navbar from "../navbar";
+import PatientNav from "../patientNav";
 
 
 function PatientPage() {
@@ -100,7 +101,7 @@ function PatientHome() {
 
   return (
     <div className="App">
-      <Navbar />
+      <PatientNav />
       <header className="App-header">
         <div className="payment-buttons">
           <h5 >Amount In Wallet: {result} </h5>

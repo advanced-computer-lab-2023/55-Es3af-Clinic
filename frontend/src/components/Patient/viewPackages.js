@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import PackageService from "../../services/packageService";
 import MemberService from "../../services/familyMemberService";
 import patientService from "../../services/patientService";
+import Home from "../gohome";
 
 
 const PkgListP = (props) => {
@@ -247,6 +248,7 @@ const PkgListP = (props) => {
   }
   return (
     <div>
+      <Home />
       <div className="App-header">
         {users.length > 0 ? (
           users.map((user) => { const sessionDiscountPercentage = user.sessionDiscount * 100;

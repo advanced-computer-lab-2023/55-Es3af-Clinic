@@ -2,6 +2,7 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import AdminService from "../../services/adminService";
+import Home from "../gohome";
 
 function DeleteAdmin() {
   const initialUserState = {
@@ -30,6 +31,7 @@ function DeleteAdmin() {
 
   return (
     <div className="App">
+      <Home />
       <header className="App-header">
         <form className="App-header" >
           <div className="form-group">

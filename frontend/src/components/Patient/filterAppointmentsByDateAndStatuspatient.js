@@ -2,6 +2,7 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import patientService from "../../services/patientService";
+import Home from "../gohome";
 
 function FilteredAppointmentsList() {
   const [results, setResults] = useState([]);
@@ -39,6 +40,7 @@ function FilteredAppointmentsList() {
 
   return (
     <div className="App">
+      <Home />
       <header className="App-header">
         <form className="App-header" onSubmit={search}>
           <div className="form-group">

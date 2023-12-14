@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PatientService from "../../services/patientService";
+import Home from "../gohome";
 
 function ViewMedicalHistory() {
 
@@ -41,6 +42,7 @@ function ViewMedicalHistory() {
 
     return (
         <div className="App">
+          <Home />
         <header className="App-header">
         <div>
           <h2>Medical History</h2>

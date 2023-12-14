@@ -2,6 +2,7 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState, useEffect } from "react";
 import doctorService from "../../services/doctorService";
+import Home from "../gohome";
 
 function FilteredAppointments() {
   const intialBody = {
@@ -75,6 +76,7 @@ function FilteredAppointments() {
 
   return (
     <div className="App">
+      <Home />
       <header className="App-header">
         <form className="App-header" onSubmit={search}>
           <div className="form-group">

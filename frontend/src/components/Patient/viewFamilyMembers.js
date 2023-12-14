@@ -2,6 +2,7 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import MemberService from "../../services/familyMemberService";
+import Home from "../gohome";
 
 const MembersList = (props) => {
   const [users, setUsers] = useState([]);
@@ -37,6 +38,7 @@ const MembersList = (props) => {
 
   return (
     <div>
+      <Home />
       <div className="App-header">
         {users.length > 0 ? (
           users.map((user) => {

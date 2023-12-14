@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import doctorService from "../../services/doctorService";
 import "../../App.css"; // Import your global styles
 import "bootstrap/dist/css/bootstrap.min.css";
+import Home from "../gohome";
 
 const AddTimeSlots = () => {
   const [date, setDate] = useState("");
@@ -44,6 +45,7 @@ const AddTimeSlots = () => {
 
   return (
     <div className="App-header">
+      <Home />
       <h2>Add Available Time Slots</h2>
       <form>
         <div className="form-group">

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import adminService from '../services/adminService';
+import Home from './gohome';
 const SelectorPage = () => {
   const [options, setOptions] = useState([]);
   const [selectedOption, setSelectedOption] = useState('');
@@ -32,6 +33,7 @@ const SelectorPage = () => {
 
   return (
     <div>
+      <Home />
       <h1>Selector Page</h1>
       <select onChange={handleOptionChange} value={selectedOption}>
         <option value="" disabled>Select an option</option>

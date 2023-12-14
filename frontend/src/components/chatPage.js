@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import socketIO from "socket.io-client";
+import Home from "./gohome";
 
 function ChatApp() {
   //import page that i want to test
@@ -71,6 +72,7 @@ function ChatApp() {
 
   return (
     <div className="chat-app">
+      <Home />
       <div className="chat-messages">
         {messages.map((message) => (
           <div key={message.id} className="message">

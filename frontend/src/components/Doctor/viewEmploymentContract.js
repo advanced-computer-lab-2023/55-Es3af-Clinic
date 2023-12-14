@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import DoctorService from "../../services/doctorService";
 import doctorService from "../../services/doctorService";
+import Home from "../gohome";
 
 const MyContractList = (props) => {
     const [contracts, setContracts] = useState([]);
@@ -52,6 +53,7 @@ const MyContractList = (props) => {
   
     return (
       <div>
+        <Home />
         <div className="App-header" id="contentContainer">
         {loading ? (
           <h2>Loading...</h2>

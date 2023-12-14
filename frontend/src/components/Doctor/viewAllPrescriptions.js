@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import DoctorService from "../../services/doctorService";
+import Home from "../gohome";
 
 const ViewAllPrescriptions = () => {
   const [prescriptions, setPrescriptions] = useState([]);
@@ -34,6 +35,7 @@ const ViewAllPrescriptions = () => {
 
   return (
     <div>
+      <Home />
       <h1>All Prescriptions</h1>
       {loading ? (
         <p>Loading...</p>

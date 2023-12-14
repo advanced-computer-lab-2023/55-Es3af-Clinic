@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import DoctorService from "../../services/doctorService";
 import ReactDOM from 'react-dom';
+import Home from "../gohome";
 
 const MyPatientList = (props) => {
   const [patients, setPatients] = useState([]);
@@ -266,6 +267,7 @@ const MyPatientList = (props) => {
 
   return (
     <div>
+      <Home />
       <div className="App-header" id="contentContainer">
       {loading ? (
             <div class="preloader">

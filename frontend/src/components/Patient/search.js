@@ -4,6 +4,7 @@ import { useState } from "react";
 import PatientService from "../../services/patientService";
 import DoctorInfo from "./doctorInfo";
 import { Link } from "react-router-dom";
+import Home from "../gohome";
 
 
 function SearchDoctor() {
@@ -40,6 +41,7 @@ function SearchDoctor() {
 
   return (
     <div className="App">
+      <Home />
       <header className="App-header">
         <form className="App-header" onSubmit= {search}>
           <div className="form-group">

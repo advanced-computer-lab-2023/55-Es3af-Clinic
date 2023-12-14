@@ -2,6 +2,7 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import PatientService from "../../services/patientService";
+import Home from "../gohome";
 
 const DoctorsList = (props) => {
   const [loading, setLoading] = useState(false);
@@ -33,6 +34,7 @@ const DoctorsList = (props) => {
   };
   return (
     <div>
+      <Home />
       {loading ? (
         <div class="preloader">
             <div class="loader">
@@ -53,7 +55,7 @@ const DoctorsList = (props) => {
             // const doctorID = user._id.valueOf()
             // console.log(doctorID)
             return (
-
+              
               <div
                 className="card"
                 key={user.id}
