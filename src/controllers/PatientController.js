@@ -625,11 +625,11 @@ const viewPrescriptions = async (req, res) => {
   });
 
   //console.log(`Patient is ${id}`);
-  PrescriptionsModel.findById(id)
+  PrescriptionsModel.find({patient: id})
     .populate("doctor", "name -_id -__t")
     .exec()
     .then((result) => {
-      if (Object.keys(result).length === 0) {
+      if (!result) {
         res.status(200).send("You don't have any prescriptions added");
       } else {
         res.status(200).send(result);
