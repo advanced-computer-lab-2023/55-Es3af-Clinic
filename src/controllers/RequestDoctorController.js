@@ -7,11 +7,13 @@ const mongoose = require('mongoose');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const docReq = require('../Models/RequestDoctor.js')
+const userModel = require('../Models/user.js')
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const { createToken } = require("../utils/auth.js");
 
 const requestDoctor = async (req, res) => {
+  console.log(req.body)
     try {
 
         const salt = await bcrypt.genSalt();
@@ -55,21 +57,27 @@ const requestDoctor = async (req, res) => {
           };
         }
       }
-  
-      await newDoctor.save();
-      newDoctor.save().catch(err => console.log(err));
-      const token = createToken(newDoctor._id);
-      const maxAge = 3 * 24 * 60 * 60;
+      const checkUser = await userModel.findOne({username: req.body.username})
+      const checkRequest = await docReq.findOne({username: req.body.username})
+      //console.log(checkRequest)
+      if(checkUser || checkRequest){
+        res.status(200).send('Username is already taken choose another one')
+      }
+      else {
+        await newDoctor.save();
+        newDoctor.save().catch(err => console.log(err));
+        const token = createToken(newDoctor._id);
+        const maxAge = 3 * 24 * 60 * 60;
 
-      res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
-      res.status(200).send(newDoctor);
-      
+        res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+        res.status(200).send('Request sent successfully');
+      }
     } catch (error) {
       console.error(error);
       res.status(400).send({ error: 'Error during registration.' });
     }
   };
-  
+
   module.exports = { requestDoctor };
 //     userModel.findOne({username: req.body.username})
 //     .exec()

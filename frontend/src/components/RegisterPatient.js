@@ -43,8 +43,8 @@ function RegisterPatient() {
     // no need to console log response data, only for testing
     RegisterPatientService.registerPatient(patient)
       .then((response) => {
-        console.log(response.data);
-        alert("Patient Registered successfully");
+        //console.log(response.data);
+        alert(response.data);
         window.location="http://localhost:3000/"
       })
       .catch((e) => {

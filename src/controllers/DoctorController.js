@@ -13,6 +13,8 @@ const mediceneModel = require("../Models/Medicine.js");
 const prescription = require("../Models/Prescriptions.js");
 const followUps = require("../Models/FollowUpRequests.js");
 const packageModel = require("../Models/Packages.js");
+const nodemailer = require('nodemailer')
+const notificationModel = require('../Models/notifications.js')
 
 // const Patient = JSON.parse(fs.readFileSync('./data/patient.json'));
 // const Doctors = JSON.parse(fs.readFileSync('./data/doctor.json'));
@@ -770,7 +772,24 @@ async function doctorPrice(patientID, doctorUsername) {
   return sessionPrice;
 }
 
+function properDateAndTime(dateAndTime) {
+  const date = new Date(dateAndTime);
+  const day = date.getDate();
+  const month = date.getMonth();
+  const year = date.getFullYear();
+  const hour = date.getUTCHours()+1;
+  const minute = date.getMinutes();
+  return `${day}/${month}/${year} at ${hour}:${minute}`;
+}
+
 const cancelAppointment = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "55es3afclinicpharmacy@gmail.com",
+      pass: "itqq jnfy kirk druf",
+    },
+  });
   try {
     const appointmentId = req.body.appointmentid;
     let alertM = "";
@@ -812,17 +831,47 @@ const cancelAppointment = async (req, res) => {
     twentyFourHoursFromNow.setHours(twentyFourHoursFromNow.getHours() + 24);
 
     if (appointments.date >= twentyFourHoursFromNow) {
-      const patient = await patientModel.findById(appointments.patient);
-      const doctor = await doctorModel.findById(appointments.doctor);
-      const price = await doctorPrice(appointments.patient, doctor.username);
+        const patient = await patientModel.findById(appointments.patient);
+        const doctor = await doctorModel.findById(appointments.doctor);
+        const price = await doctorPrice(appointments.patient, doctor.username);
 
-      patient.amountInWallet += price;
-      await patient.save();
+        patient.amountInWallet += price;
+        await patient.save();
 
-      alertM =
-        "A total of " +
-        price.toString() +
-        "EGP was refunded to the patient's wallet";
+        alertM =
+          "A total of " +
+          price.toString() +
+          "EGP was refunded to the patient's wallet";
+
+          const dateAndTime = properDateAndTime(appointments.date)
+          const patientMessage = `Doctor ${doctor.name} cancelled your appointment on ${dateAndTime}. A total of ${price.toString()}  EGP was refunded to your wallet`
+          const doctorMessage = `You cancelled your appointment with Patient ${patient.name} on ${dateAndTime}.`
+  
+          const emailToPatient = await transporter.sendMail({
+            from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+            to: patient.email, // list of receivers
+            subject: "Cancelled Appointment", // Subject line
+            text: patientMessage, // plain text body
+            html: `<b>${patientMessage}</b>`, // html body
+          });
+          const patientNotif = new notificationModel({
+            receivers: patient._id,
+            message: patientMessage
+          })
+          patientNotif.save().catch()
+  
+          const emailToDoctor = await transporter.sendMail({
+            from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+            to: doctor.email, // list of receivers
+            subject: "Cancelled Appointment", // Subject line
+            text: doctorMessage, // plain text body
+            html: `<b>${doctorMessage}</b>`, // html body
+          });
+          const doctorNotif = new notificationModel({
+            receivers: doctor._id,
+            message: doctorMessage
+          })
+          doctorNotif.save().catch()
     }
     alertM = "Appointment canceled successfully \n" + alertM;
     return res.json({ message: alertM, appointments });
@@ -922,13 +971,14 @@ const getAllPrescriptions = async (req, res) => {
           name: med.medID.Name,
           dosage: med.dosage,
           duration: med.duration,
-          filled: med.medID.quantity > 0 ? "filled" : "unfilled",
+          //filled: med.medID.quantity > 0 ? "filled" : "unfilled",
         };
       });
 
       return {
         patient: prescription.patient.name,
         prescriptions: filledStatus,
+        status: prescription.status
       };
     });
 

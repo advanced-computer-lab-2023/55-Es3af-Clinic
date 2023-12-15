@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Home from '../gohome';
 
 function UploadPatientHealthRecords() {
   const [username, setUsername] = useState('');
@@ -39,6 +40,7 @@ function UploadPatientHealthRecords() {
 
   return (
     <div className="App">
+      <Home/>
       <header className="App-header">
         <form className="App-header" onSubmit={handleSubmit}>
           <div className="form-group">

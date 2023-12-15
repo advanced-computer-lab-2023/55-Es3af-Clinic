@@ -31,51 +31,53 @@ function EditDoctor() {
   }
 
   return (
-    <div className="App-header" id="contentContainer">
+    <div>
       <Home />
-      <div className="card" style={{ width: 550, backgroundColor: "#282c34", margin: 10 }}>
-        <div className="card-body">
-          <h2 style={{ color: "white" }}>Update Doctor</h2>
-          <form onSubmit={update}>
-            <div className="form-group">
-              <label style={{ color: "white" }}>Email:</label>
-              <input
-                type="text"
-                className="form-control"
-                name="email"
-                value={doctor.email}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="form-group">
-              <label style={{ color: "white" }}>Hourly Rate:</label>
-              <input
-                type="number"
-                className="form-control"
-                name="hourlyRate"
-                value={doctor.hourlyRate}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="form-group">
-              <label style={{ color: "white" }}>Affiliation:</label>
-              <input
-                type="text"
-                className="form-control"
-                name="affiliation"
-                value={doctor.affiliation}
-                onChange={handleInputChange}
-              />
-            </div>
-            <button type="submit" className="btn btn-primary">
-              Update
-            </button>
-          </form>
-          {isUpdated && (
-            <div className="alert alert-success" style={{ color: "white" }}>
-              Doctor updated successfully!
-            </div>
-          )}
+      <div className="App-header" id="contentContainer">
+        <div className="card" style={{ width: 550, backgroundColor: "#282c34", margin: 10 }}>
+          <div className="card-body">
+            <h2 style={{ color: "white" }}>Update Doctor</h2>
+            <form onSubmit={update}>
+              <div className="form-group">
+                <label style={{ color: "white" }}>Email:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="email"
+                  value={doctor.email}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="form-group">
+                <label style={{ color: "white" }}>Hourly Rate:</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="hourlyRate"
+                  value={doctor.hourlyRate}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="form-group">
+                <label style={{ color: "white" }}>Affiliation:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="affiliation"
+                  value={doctor.affiliation}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <button type="submit" className="btn btn-primary">
+                Update
+              </button>
+            </form>
+            {isUpdated && (
+              <div className="alert alert-success" style={{ color: "white" }}>
+                Doctor updated successfully!
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

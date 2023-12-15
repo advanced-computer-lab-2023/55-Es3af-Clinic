@@ -44,14 +44,15 @@ const AddTimeSlots = () => {
   };
 
   return (
-    <div className="App-header">
+    <div className="App">
       <Home />
+      <header className="App-header">
       <h2>Add Available Time Slots</h2>
       <form>
         <div className="form-group">
           <label>Date:</label>
           <input
-            type="text"
+            type="date"
             placeholder="mm/dd/yyyy"
             value={date}
             onChange={(e) => setDate(e.target.value)}
@@ -62,7 +63,7 @@ const AddTimeSlots = () => {
         <div className="form-group">
           <label>Start Time:</label>
           <input
-            type="text"
+            type="time"
             value={startTime}
             onChange={(e) => setStartTime(e.target.value)}
             className="form-control"
@@ -72,7 +73,7 @@ const AddTimeSlots = () => {
         <div className="form-group">
           <label>End Time:</label>
           <input
-            type="text"
+            type="time"
             value={endTime}
             onChange={(e) => setEndTime(e.target.value)}
             className="form-control"
@@ -89,6 +90,7 @@ const AddTimeSlots = () => {
 
         {message && <p>{message}</p>}
       </form>
+      </header>
     </div>
   );
 };

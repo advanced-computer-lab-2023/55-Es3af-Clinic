@@ -71,23 +71,18 @@ const ViewAllPrescriptions = () => {
                   <h3 style={{ color: "white" }}>
                     Patient: {prescription.patient}
                   </h3>
-                  <div className="medicine-details">
+                  <div className="medicine-details" style={{ color: "white" }}>
+                    <ul>
                     {prescription.prescriptions.map((medicine, i) => (
-                      <div key={i} className="medicine">
-                        <h4 style={{ color: "white" }}>
-                          Medicine Name: {medicine.name}
-                        </h4>
-                        <p style={{ color: "white" }}>
-                          Dosage: {medicine.dosage}
-                        </p>
-                        <p style={{ color: "white" }}>
-                          Duration: {medicine.duration}
-                        </p>
-                        <p style={{ color: "white" }}>
-                          Status: {medicine.filled}
-                        </p>
-                      </div>
+                            <li key={i}>
+                            <strong>Name: </strong> {medicine.name}<br/>
+                            <strong>Dosage: </strong> {medicine.dosage}<br/>
+                            <strong>Duration: </strong> {medicine.duration}<br/>
+                            {i < prescription.prescriptions.length - 1 ? <hr/> : ""}
+                          </li>
                     ))}
+                    </ul>
+                    <strong>Status: </strong> {prescription.status}
                   </div>
                 </div>
               </div>

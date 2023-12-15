@@ -23,6 +23,7 @@ const DoctorRegistration = () => {
   });
 
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -67,6 +68,7 @@ const DoctorRegistration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
 
     try {
       const form = new FormData();
@@ -74,6 +76,8 @@ const DoctorRegistration = () => {
       // Append form data fields
       for (const key in formData) {
         form.append(key, formData[key]);
+        console.log(key)
+        console.log(form)
       }
 
       // Append IDdoc file
@@ -90,6 +94,9 @@ const DoctorRegistration = () => {
       for (const file of fileData.MedicalLicenses) {
         form.append('MedicalLicenses', file);
       }
+      for (let pair of form.entries()) {
+        console.log(pair[0] + ', ' + pair[1]);
+      }
 
       const response = await axios.post('http://localhost:8000/requestDoctor/', form, {
         headers: {
@@ -97,7 +104,8 @@ const DoctorRegistration = () => {
         },
       });
 
-      console.log(response.data); // Handle the response as needed
+      //console.log(response.data); // Handle the response as needed
+      alert(response.data)
     } catch (error) {
       console.error('Error during registration:', error);
 
@@ -113,79 +121,187 @@ const DoctorRegistration = () => {
         console.error('Request setup error:', error.message);
       }
     }
+    finally{setLoading(false)}
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <form className="App-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="InputName">Name</label>
-            <input
-              type="text"
-              className="form-control"
-              id="name"
-              name="name"
-              value={formData.name}
-              placeholder="Enter Name"
-              onChange={handleChange}
-            />
+    <div>
+      {loading ? (
+        <div class="preloader">
+            <div class="loader">
+                <div class="loader-outter"></div>
+                <div class="loader-inner"></div>
+
+                <div class="indicator"> 
+                    <svg width="16px" height="12px">
+                        <polyline id="back" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
+                        <polyline id="front" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </div>) :(
+          <div className="App">
+            <header className="App-header">
+              <form className="App-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="InputName">Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    placeholder="Enter Name"
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="InputEmail">Email</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    placeholder="Enter Email"
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="InputUsername">Username</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="username"
+                    name="username"
+                    value={formData.username}
+                    placeholder="Enter Username"
+                    onChange={handleChange}
+                  ></input>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="InputPassword1">Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    placeholder="Enter Password"
+                    onChange={handleChange}
+                  ></input>
+                  <p style={{ color: 'red' }}>{message}</p>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="InputDateOfBirth">Date Of Birth</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="dateOfBirth"
+                    name="dateOfBirth"
+                    value={formData.dateOfBirth}
+                    placeholder="dateOfBirth"
+                    onChange={handleChange}
+                  ></input>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="InputHourlyRate">Hourly Rate</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="hourlyRate"
+                    name="hourlyRate"
+                    value={formData.hourlyRate}
+                    placeholder="Enter Hourly Rate"
+                    onChange={handleChange}
+                  ></input>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="InputAffiliation">Affiliation</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="affiliation"
+                    name="affiliation"
+                    value={formData.affiliation}
+                    placeholder="Enter Affiliation"
+                    onChange={handleChange}
+                  ></input>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="InputEducationBackground">Education Background</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="educationBackground"
+                    name="educationBackground"
+                    value={formData.educationBackground}
+                    placeholder="Enter Education Background"
+                    onChange={handleChange}
+                  ></input>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="InputSpeciality">Speciality</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="speciality"
+                    name="speciality"
+                    value={formData.speciality}
+                    placeholder="Enter Speciality"
+                    onChange={handleChange}
+                  ></input>
+                </div>
+
+                {/* Add other form elements with similar styling as above */}
+
+                <div className="form-group">
+                  <label htmlFor="IDdoc">ID Document</label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    id="IDdoc"
+                    name="IDdoc"
+                    onChange={handleFileChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="MedicalLicenses">Medical Licenses</label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    id="MedicalLicenses"
+                    name="MedicalLicenses"
+                    onChange={handleMedicalLicensesChange}
+                    multiple
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="MedicalDegree">Medical Degree</label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    id="MedicalDegree"
+                    name="MedicalDegree"
+                    onChange={handleFileChange}
+                  />
+                </div>
+
+                <button type="submit" className="btn btn-primary">
+                  Request
+                </button>
+              </form>
+            </header>
           </div>
-
-          <div className="form-group">
-            <label htmlFor="InputEmail">Email</label>
-            <input
-              type="email"
-              className="form-control"
-              id="email"
-              name="email"
-              value={formData.email}
-              placeholder="Enter Email"
-              onChange={handleChange}
-            />
-          </div>
-
-          {/* Add other form elements with similar styling as above */}
-
-          <div className="form-group">
-            <label htmlFor="IDdoc">ID Document</label>
-            <input
-              type="file"
-              className="form-control"
-              id="IDdoc"
-              name="IDdoc"
-              onChange={handleFileChange}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="MedicalLicenses">Medical Licenses</label>
-            <input
-              type="file"
-              className="form-control"
-              id="MedicalLicenses"
-              name="MedicalLicenses"
-              onChange={handleMedicalLicensesChange}
-              multiple
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="MedicalDegree">Medical Degree</label>
-            <input
-              type="file"
-              className="form-control"
-              id="MedicalDegree"
-              name="MedicalDegree"
-              onChange={handleFileChange}
-            />
-          </div>
-
-          <button type="submit" className="btn btn-primary">
-            Request
-          </button>
-        </form>
-      </header>
+        )}
     </div>
   );
 };

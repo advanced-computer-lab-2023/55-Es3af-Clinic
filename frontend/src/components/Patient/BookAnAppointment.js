@@ -145,7 +145,7 @@ function BookAnAppointment() {
         ...body,
         appointmentid: body.appointmentid, // Make sure to set the correct value
       };
-
+      setLoading(true)
       const response = await patientService.withdrawFromWallet(updatedBody);
       if (response.data.localeCompare("Amount deducted successfully") === 0) {
         patientService
@@ -155,7 +155,10 @@ function BookAnAppointment() {
           })
           .catch((e) => {
             console.log(e);
-          });
+          })
+          .finally(() => {
+            setLoading(false)
+          })
       } else {
         alert(response.data);
       }

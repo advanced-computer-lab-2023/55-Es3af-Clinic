@@ -101,9 +101,7 @@ function AddPrescription() {
                 <button onClick={addMedicine} className="btn btn-primary">
                   Add Medicine
                 </button>
-                <button onClick={addPrescription} className="btn btn-primary">
-                  Add Prescription
-                </button>
+
               </div>
               <p style={{ color: 'red' }}>{message2}</p>
               <p style={{ color: 'white' }}>{message}</p>
@@ -123,6 +121,9 @@ function AddPrescription() {
                     </button>
                   </li>
                 ))}
+                <button onClick={addPrescription} className="btn btn-primary">
+                  Add Prescription
+                </button>
               </ul>
             </div>
           </div>

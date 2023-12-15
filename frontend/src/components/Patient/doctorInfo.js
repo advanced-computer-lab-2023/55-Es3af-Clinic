@@ -14,12 +14,14 @@ const DoctorInfo = (props) => {
     name: "",
   }
   const [doctor, setDoctor] = useState(temp);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     viewInfo();
   }, []);
 
   const viewInfo = () => {
-    console.log('view info called')
+    //console.log('view info called')
+    setLoading(true)
     PatientService.viewDocInfo(id)
       .then((response) => {
         console.log(response);
@@ -27,7 +29,10 @@ const DoctorInfo = (props) => {
       })
       .catch((e) => {
         console.log(e);
-      });
+      })
+      .finally(()=> {
+        setLoading(false)
+      })
   };
 
   return (

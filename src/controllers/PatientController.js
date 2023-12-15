@@ -928,7 +928,7 @@ function properDateAndTime(dateAndTime) {
   const day = date.getDate();
   const month = date.getMonth();
   const year = date.getFullYear();
-  const hour = date.getUTCHours();
+  const hour = date.getUTCHours()+1;
   const minute = date.getMinutes();
   return `${day}/${month}/${year} at ${hour}:${minute}`;
 }
@@ -1396,6 +1396,13 @@ const viewAvailableAppointments = async (req, res) => {
 };
 
 const cancelAppointment = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "55es3afclinicpharmacy@gmail.com",
+      pass: "itqq jnfy kirk druf",
+    },
+  });
   try {
     const appointmentId = req.body.appointmentid;
     // Find the appointment by ID
@@ -1433,21 +1440,55 @@ const cancelAppointment = async (req, res) => {
     );
     const twentyFourHoursFromNow = new Date();
     twentyFourHoursFromNow.setHours(twentyFourHoursFromNow.getHours() + 24);
+    
 
     if (appointment.date >= twentyFourHoursFromNow) {
-      const patient = await patientModel.findById(appointment.patient);
-      const doctor = await doctorModel.findById(appointment.doctor);
-      const price = await doctorPrice(appointment.patient, doctor.username);
-      console.log(price + "\n" + patient.amountInWallet);
-      patient.amountInWallet += price;
-      await patient.save();
-      console.log(patient.amountInWallet);
-      alertM =
-        "A total of " +
-        price.toString() +
-        "EGP was refunded to the patient's wallet";
+        const patient = await patientModel.findById(appointment.patient);
+        const doctor = await doctorModel.findById(appointment.doctor);
+        const price = await doctorPrice(appointment.patient, doctor.username);
+        console.log(price + "\n" + patient.amountInWallet);
+        patient.amountInWallet += price;
+        await patient.save();
+        console.log(patient.amountInWallet);
+        alertM =
+          "A total of " +
+          price.toString() +
+          "EGP was refunded to the patient's wallet";
+
+        const dateAndTime = properDateAndTime(appointment.date)
+        const patientMessage = `You cancelled your appointment with Doctor ${doctor.name} on ${dateAndTime}. A total of ${price.toString()}  EGP was refunded to your wallet`
+        const doctorMessage = `Patient ${patient.name} cancelled their appointment with you on ${dateAndTime}.`
+
+        const emailToPatient = await transporter.sendMail({
+          from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+          to: patient.email, // list of receivers
+          subject: "Cancelled Appointment", // Subject line
+          text: patientMessage, // plain text body
+          html: `<b>${patientMessage}</b>`, // html body
+        });
+        const patientNotif = new notificationModel({
+          receivers: patient._id,
+          message: patientMessage
+        })
+        patientNotif.save().catch()
+
+        const emailToDoctor = await transporter.sendMail({
+          from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+          to: doctor.email, // list of receivers
+          subject: "Cancelled Appointment", // Subject line
+          text: doctorMessage, // plain text body
+          html: `<b>${doctorMessage}</b>`, // html body
+        });
+        const doctorNotif = new notificationModel({
+          receivers: doctor._id,
+          message: doctorMessage
+        })
+        doctorNotif.save().catch()
     }
     alertM = "Appointment canceled successfully \n" + alertM;
+
+
+
     return res.json({ message: alertM, appointment });
   } catch (error) {
     console.error(error);
