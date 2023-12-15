@@ -2,6 +2,7 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import DoctorService from "../../services/doctorService";
+import Home from "../gohome";
 
 function EditDoctor() {
   const initialDoctorState = {
@@ -31,6 +32,7 @@ function EditDoctor() {
 
   return (
     <div className="App-header" id="contentContainer">
+      <Home />
       <div className="card" style={{ width: 550, backgroundColor: "#282c34", margin: 10 }}>
         <div className="card-body">
           <h2 style={{ color: "white" }}>Update Doctor</h2>

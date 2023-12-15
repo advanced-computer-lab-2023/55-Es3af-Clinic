@@ -2,6 +2,7 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import AdminService from "../../services/adminService";
+import Home from "../gohome";
 
 const UsersList = (props) => {
   const [users, setUsers] = useState([]);
@@ -40,6 +41,7 @@ const UsersList = (props) => {
 
   return (
     <div>
+      <Home />
       <div className="App-header">
         <button
           style={{ backgroundColor: "green", marginBottom: "10px" }}

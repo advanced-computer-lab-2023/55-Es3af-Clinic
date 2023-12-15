@@ -2,6 +2,7 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState, useEffect } from "react";
 import patientService from "../../services/patientService";
+import Home from "../gohome";
 
 function AvailableAppointments(id) {
     const [appointments, setAppointments] = useState([]);
@@ -28,6 +29,7 @@ function AvailableAppointments(id) {
   
     return (
       <div>
+        <Home />
         <div className="App-header">
           {appointments.length > 0 ? (
             appointments.map((appointment) => {

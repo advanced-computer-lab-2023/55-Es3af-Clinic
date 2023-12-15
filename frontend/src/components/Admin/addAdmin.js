@@ -2,6 +2,7 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import AdminService from "../../services/adminService";
+import Home from "../gohome";
 
 function AddAdmin() {
   const initialUserState = {
@@ -31,6 +32,7 @@ function AddAdmin() {
 
   return (
     <div className="App">
+      <Home />
       <header className="App-header">
         <form className="App-header" onSubmit={addAdmin}>
           <div className="form-group">

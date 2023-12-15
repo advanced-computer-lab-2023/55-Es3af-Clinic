@@ -2,6 +2,7 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import PackageService from "../../services/packageService";
+import Home from "../gohome";
 
 function DeletePackage() {
   const initialUserState = {
@@ -28,6 +29,7 @@ function DeletePackage() {
 
   return (
     <div className="App">
+      <Home />
       <header className="App-header">
         <form className="App-header">
           <div className="form-group">

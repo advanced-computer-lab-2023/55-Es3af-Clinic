@@ -2,11 +2,12 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import DoctorService from "../../services/doctorService";
-import ReactDOM from 'react-dom';
+import ReactDOM from "react-dom";
+import Home from "../gohome";
 
 const MyPatientList = (props) => {
   const [patients, setPatients] = useState([]);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
   //const [medicalHistory, setMedicalHistory] = useState([]);
 
@@ -20,7 +21,7 @@ const MyPatientList = (props) => {
         // console.log(response.data);
         if (Array.isArray(response.data.data.patients)) {
           setPatients(response.data.data.patients);
-        } 
+        }
         // else {
         //   console.log("Data is not an array:", response.data);
         // }
@@ -29,7 +30,7 @@ const MyPatientList = (props) => {
         console.log(e);
       })
       .finally(() => {
-        setLoading(false); 
+        setLoading(false);
       });
   };
 
@@ -42,7 +43,7 @@ const MyPatientList = (props) => {
   };
 
   const arrayBufferToBase64 = (buffer) => {
-    let binary = '';
+    let binary = "";
     const bytes = new Uint8Array(buffer);
     const len = bytes.byteLength;
     for (let i = 0; i < len; i++) {
@@ -52,7 +53,7 @@ const MyPatientList = (props) => {
   };
 
   const viewDets = (patient) => {
-    const contentContainer = document.getElementById('contentContainer');
+    const contentContainer = document.getElementById("contentContainer");
     contentContainer.innerHTML = `
       <div>
         <div className="App-header">
@@ -84,7 +85,7 @@ const MyPatientList = (props) => {
                       Emergency Contact: ${patient.emergencyContactName} - ${patient.emergencyContactMobile}
                     </h3>
                   `
-                  : ''
+                  : ""
               }
               <h3 className="card-title" style={{ color: "white" }}>
                 Package: ${patient.package}
@@ -96,65 +97,66 @@ const MyPatientList = (props) => {
     `;
   };
 
-
- const viewMedicalHistory = async (patient) => {
-  // Extract medical history from the patient object
-  try {
-    setLoading(true)
-    const response = await DoctorService.viewHealthRecords(patient);
-    const medicalHistoryData = response.result;
-    setLoading(false)
-    viewHist(medicalHistoryData);
-  } catch (error) {
-    console.error('Error fetching medical history:', error.message);
-  }
-}
+  const viewMedicalHistory = async (patient) => {
+    // Extract medical history from the patient object
+    try {
+      setLoading(true);
+      const response = await DoctorService.viewHealthRecords(patient);
+      const medicalHistoryData = response.result;
+      setLoading(false);
+      viewHist(medicalHistoryData);
+    } catch (error) {
+      console.error("Error fetching medical history:", error.message);
+    }
+  };
 
   // Render the view after fetching the medical history
   const viewHist = (medicalHistory) => {
     console.log(medicalHistory);
-  
+
     // Create a new container element
-    const newContainer = document.createElement('div');
-    newContainer.id = 'contentContainer'; // Set the same ID as the original container
-  
+    const newContainer = document.createElement("div");
+    newContainer.id = "contentContainer"; // Set the same ID as the original container
+
     // Append the new container to the parent
-    const parentContainer = document.getElementById('contentContainer').parentElement;
+    const parentContainer =
+      document.getElementById("contentContainer").parentElement;
     parentContainer.appendChild(newContainer);
-  
+
     // Use ReactDOM.render to render JSX into the new container
     ReactDOM.render(
       <div className="App">
         <header className="App-header">
-        <div>
+          <div>
             {loading ? (
               <div className="preloader">
                 <div class="loader">
-                <div class="loader-outter"></div>
-                <div class="loader-inner"></div>
+                  <div class="loader-outter"></div>
+                  <div class="loader-inner"></div>
 
-                <div class="indicator">
-                  <svg width="16px" height="12px">
-                    <polyline
-                      id="back"
-                      points="1 6 4 6 6 11 10 1 12 6 15 6"
-                    ></polyline>
-                    <polyline
-                      id="front"
-                      points="1 6 4 6 6 11 10 1 12 6 15 6"
-                    ></polyline>
-                  </svg>
+                  <div class="indicator">
+                    <svg width="16px" height="12px">
+                      <polyline
+                        id="back"
+                        points="1 6 4 6 6 11 10 1 12 6 15 6"
+                      ></polyline>
+                      <polyline
+                        id="front"
+                        points="1 6 4 6 6 11 10 1 12 6 15 6"
+                      ></polyline>
+                    </svg>
+                  </div>
                 </div>
-              </div>
               </div>
             ) : (
               <>
-              <div
-              className="close-icon"
-              onClick={() => window.location.reload()}
-            >
-              &times; {/* Unicode "times" character (×) */}
-            </div>
+                <div
+                  className="close-icon"
+                  onClick={() => window.location.reload()}
+                  style={{ marginTop: "50px" }}
+                >
+                  &times; {/* Unicode "times" character (×) */}
+                </div>
                 <h2>Medical History</h2>
                 {medicalHistory.medicalHistoryPDF.length > 0 && (
                   <div>
@@ -163,34 +165,49 @@ const MyPatientList = (props) => {
                       {medicalHistory.medicalHistoryPDF.map((pdf, index) => (
                         <li key={index}>
                           {pdf.name}
-                          <iframe src={`data:application/pdf;base64,${arrayBufferToBase64(pdf.data.data)}`} width="800" height="600"></iframe>
+                          <iframe
+                            src={`data:application/pdf;base64,${arrayBufferToBase64(
+                              pdf.data.data
+                            )}`}
+                            width="800"
+                            height="600"
+                          ></iframe>
                         </li>
                       ))}
                     </ul>
                   </div>
                 )}
-  
+
                 {medicalHistory.medicalHistoryImage.length > 0 && (
                   <div>
                     <h3>Image Files</h3>
                     <ul>
-                      {medicalHistory.medicalHistoryImage.map((image, index) => (
-                        <li key={index}>
-                          {image.name}
-                          <img
-                            src={`data:${image.contentType};base64,${arrayBufferToBase64(image.data.data)}`}
-                            alt={image.Name}
-                            style={{ width: "200px", height: "200px", color: "white" }}
-                          />
-                        </li>
-                      ))}
+                      {medicalHistory.medicalHistoryImage.map(
+                        (image, index) => (
+                          <li key={index}>
+                            {image.name}
+                            <img
+                              src={`data:${
+                                image.contentType
+                              };base64,${arrayBufferToBase64(image.data.data)}`}
+                              alt={image.Name}
+                              style={{
+                                width: "200px",
+                                height: "200px",
+                                color: "white",
+                              }}
+                            />
+                          </li>
+                        )
+                      )}
                     </ul>
                   </div>
                 )}
-  
-                {medicalHistory.medicalHistoryPDF.length === 0 && medicalHistory.medicalHistoryImage.length === 0 && (
-                  <p>No medical history available.</p>
-                )}
+
+                {medicalHistory.medicalHistoryPDF.length === 0 &&
+                  medicalHistory.medicalHistoryImage.length === 0 && (
+                    <p>No medical history available.</p>
+                  )}
               </>
             )}
           </div>
@@ -198,38 +215,33 @@ const MyPatientList = (props) => {
       </div>,
       newContainer
     );
-  
+
     // Remove the original container
-    const originalContainer = document.getElementById('contentContainer');
+    const originalContainer = document.getElementById("contentContainer");
     originalContainer.parentElement.removeChild(originalContainer);
   };
-  
-  
-
-  
 
   // const scheduleFollowUpAppointment = async () => {
   //   try {
   //     const patientName = document.getElementById('patientName').value;
   //     const selectedDate = document.getElementById('selectedDate').value;
 
-  
   //     // Check if both fields are filled
   //     if (!patientName || !selectedDate) {
   //       alert('Please enter both the patient name and select a date.');
   //       return;
   //     }
-  
+
   //     // Call the DoctorService function to schedule the follow-up appointment
   //     const response = await DoctorService.scheduleFollowUpAppointment({
   //       patientName,
   //       date: selectedDate,
   //       // Other necessary data can be added here if required
   //     });
-  
+
   //     // Handle the response as needed (e.g., display success message)
   //     console.log(response); // Log the response or perform actions based on the response
-  
+
   //     // Clear the input fields or perform other actions after scheduling the appointment
   //     document.getElementById('patientName').value = '';
   //     document.getElementById('selectedDate').value = '';
@@ -249,10 +261,10 @@ const MyPatientList = (props) => {
   //           <div className="card-body">
   //             <h3 className="card-title" style={{ color: "white" }}>Enter Patient Name:</h3>
   //             <input type="text" id="patientName" placeholder="Patient Name" style={{ marginBottom: "10px" }}>
-              
+
   //             <h3 className="card-title" style={{ color: "white" }}>Select Date:</h3>
   //             <input type="date" id="selectedDate" style={{ marginBottom: "10px" }}>
-              
+
   //             <button onClick={scheduleFollowUpAppointment} style={{ backgroundColor: "green", color: "white", padding: "8px 12px" }}>Schedule Follow-up Appointment</button>
 
   //         </div>
@@ -263,31 +275,31 @@ const MyPatientList = (props) => {
   //   `;
   // };
 
-
   return (
     <div>
+      <Home />
       <div className="App-header" id="contentContainer">
-      {loading ? (
-            <div class="preloader">
-              <div class="loader">
-                <div class="loader-outter"></div>
-                <div class="loader-inner"></div>
+        {loading ? (
+          <div class="preloader">
+            <div class="loader">
+              <div class="loader-outter"></div>
+              <div class="loader-inner"></div>
 
-                <div class="indicator">
-                  <svg width="16px" height="12px">
-                    <polyline
-                      id="back"
-                      points="1 6 4 6 6 11 10 1 12 6 15 6"
-                    ></polyline>
-                    <polyline
-                      id="front"
-                      points="1 6 4 6 6 11 10 1 12 6 15 6"
-                    ></polyline>
-                  </svg>
-                </div>
+              <div class="indicator">
+                <svg width="16px" height="12px">
+                  <polyline
+                    id="back"
+                    points="1 6 4 6 6 11 10 1 12 6 15 6"
+                  ></polyline>
+                  <polyline
+                    id="front"
+                    points="1 6 4 6 6 11 10 1 12 6 15 6"
+                  ></polyline>
+                </svg>
               </div>
             </div>
-          ) : patients.length > 0 ? (
+          </div>
+        ) : patients.length > 0 ? (
           patients.map((patient) => {
             return (
               <div
@@ -319,8 +331,13 @@ const MyPatientList = (props) => {
                   >
                     View Medical History
                   </button>
-                  <a href={`/doctor/addPrescription/${patient._id}`} rel="noopener noreferrer">
-                    <button className="btn btn-primary">Add Prescription</button>
+                  <a
+                    href={`/doctor/addPrescription/${patient._id}`}
+                    rel="noopener noreferrer"
+                  >
+                    <button className="btn btn-primary">
+                      Add Prescription
+                    </button>
                   </a>
                 </div>
               </div>

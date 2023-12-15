@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useEffect } from "react";
 import PatientService from "../../services/patientService";
 import { useParams } from "react-router-dom";
+import Home from "../gohome";
 
 
 const DoctorInfo = (props) => {
@@ -31,6 +32,7 @@ const DoctorInfo = (props) => {
 
   return (
     <div>
+      <Home />
       <div className="App-header">
           <div
             className="card"

@@ -2,6 +2,7 @@ import "../../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import MemberService from "../../services/familyMemberService";
+import Home from "../gohome";
 
 function AddMember() {
     const initialUserState = {
@@ -35,6 +36,7 @@ function AddMember() {
     
     return (
         <div className="App">
+          <Home />
           <header className="App-header">
           <div className="top-right-button">
             <a href= "/patient/addFamilyMemberByAcc">

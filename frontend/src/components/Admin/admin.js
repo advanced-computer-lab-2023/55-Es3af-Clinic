@@ -12,6 +12,7 @@ import packageService from "../../services/packageService";
 import UpdatePackage from "../updatePackage";
 import { Link } from "react-router-dom";
 import Navbar from "../navbar";
+import AdminNav from "../adminNav";
 
 function AdminPage() {
   return (
@@ -35,7 +36,7 @@ function AdminHome() {
   //const id = '652b5385daaac6a3807ee5c7'
   return (
     <div className="App">
-      <Navbar />
+      <AdminNav />
       <header className="App-header">
         <div>
           <a href="/admin/addAdmin" rel="noopener noreferrer">

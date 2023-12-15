@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState, useEffect } from "react";
 import UserService from "../services/userService";
 import { useParams } from "react-router-dom";
+import Home from "./gohome";
 //import bcrypt from "bcrypt";
 
 
@@ -79,6 +80,7 @@ function UpdatePassword() {
 
     return (
         <div className="App">
+          <Home />
           <header className="App-header">
               <div className="form-group">
               <label htmlFor="Name">Current Password</label>
