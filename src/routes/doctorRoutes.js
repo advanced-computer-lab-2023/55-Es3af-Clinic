@@ -12,6 +12,7 @@ doctorRouter.use(express.json());
 doctorRouter.post('/addPrescription/:id',doctorController.addPrescription)
 doctorRouter.post("/addDoctor", doctorController.addDoctor);
 doctorRouter.put('/updatePassword', userController.changePassword)
+doctorRouter.route('/getAllPrescriptions').get(doctorController.getAllPrescriptions);
 doctorRouter.get('/notifi', userController.getNotifications)
 
 doctorRouter.route("/updateDoctor").put(doctorController.updateDoctor);
@@ -48,7 +49,7 @@ doctorRouter.route('/getAppointmentsWithStatusDone').get(doctorController.getApp
 // doctorRouter.route('/viewMedicalHistory').get(doctorController.viewMedicalHistory);
 doctorRouter.route('/cancelAppointment').put(doctorController.cancelAppointment);
 doctorRouter.put('/acceptOrRevokeFollowUp', doctorController.acceptOrRevokeFollowUp);
-doctorRouter.route('/getAllPrescriptions').get(doctorController.getAllPrescriptions);
+
 
 // router.route('/getDoctors').get(doctorController.getAllDoctors);
 // router.route('/getDoctor/:id').patch(doctorController.updateEmail);

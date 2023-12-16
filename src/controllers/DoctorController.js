@@ -960,8 +960,8 @@ const getAllPrescriptions = async (req, res) => {
 
     if (!prescriptions || prescriptions.length === 0) {
       return res
-        .status(404)
-        .json({ message: "No prescriptions found for this doctor." });
+        .status(200)
+        .send([]);
     }
 
     const prescriptionsWithStatus = prescriptions.map((prescription) => {
@@ -997,6 +997,8 @@ const getAllPrescriptions = async (req, res) => {
     });
   }
 };
+
+
 
 module.exports = {
   addDoctor,
