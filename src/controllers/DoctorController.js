@@ -1082,6 +1082,33 @@ const editDosage = async (req, res) => {
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+const updatePatientPrescription = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { medicineUpdates } = req.body;
+    const Prescription = await prescription.findById(id);
+    if (!Prescription) {
+      return res.status(404).json({ message: 'Prescription not found' });
+    }
+
+    medicineUpdates.forEach((update) => {
+      const { medID, dosage, duration } = update;
+      const medicineToUpdate = Prescription.medicine.find(med => med.medID.toString() === medID);
+
+      if (medicineToUpdate) {
+        medicineToUpdate.dosage = dosage;
+        medicineToUpdate.duration = duration;
+      }
+    });
+
+    const updatedPrescription = await Prescription.save();
+
+    return res.json({ message: 'Prescription updated successfully', Prescription });
+  } catch (error) {
+    console.error('Error updating prescription:', error);
+    return res.status(500).json({ message: 'Error updating prescription', error: error.message });
+  }
+}
 
 const rescheduleAnAppointment = async (req, res) => {
   const prevappointmentid = req.body.prevappointmentid;
@@ -1229,5 +1256,6 @@ module.exports = {
   acceptOrRevokeFollowUp,
   getAllPrescriptions,
   editDosage,
+  updatePatientPrescription,
   rescheduleAnAppointment
 };
