@@ -12,6 +12,7 @@ const prescriptionSchema = new Schema({
       medID: { type: mongoose.Schema.Types.ObjectId, ref: "medicine" },
       dosage: String, //7abayten ba3d el akl, etc
       duration: String, //1 day, 1 month, etc
+      filled: Boolean,
     },
   ],
   doctor: {
@@ -26,7 +27,7 @@ const prescriptionSchema = new Schema({
     default: "unfilled",
   },
   date: {
-    type: Date,
+     type: Date, default: Date.now
   },
 });
 

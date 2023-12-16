@@ -35,6 +35,10 @@ const medicineSchema = new Schema(
   archived:{
     type: Boolean,
     default:false,
+  },
+  overTheCounter:{
+    type: Boolean,
+    default: true,
   }
   },
   { timestamps: true }
