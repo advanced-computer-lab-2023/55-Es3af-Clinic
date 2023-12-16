@@ -1593,13 +1593,13 @@ const rescheduleAnAppointment = async (req, res) => {
   
 
   try {
-    // const transporter = nodemailer.createTransport({
-    //   service: "gmail",
-    //   auth: {
-    //     user: "55es3afclinicpharmacy@gmail.com",
-    //     pass: "itqq jnfy kirk druf",
-    //   },
-    // });
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "55es3afclinicpharmacy@gmail.com",
+        pass: "itqq jnfy kirk druf",
+      },
+    });
 
     try {
       // if (id == '') {
@@ -1618,17 +1618,17 @@ const rescheduleAnAppointment = async (req, res) => {
 
       // Find the existing appointment
       const existingAppointment = await appointmentModel.findById(prevappointmentid);
-      console.log(existingAppointment);
+      //console.log(existingAppointment);
       const doctor = await doctorModel.findById(existingAppointment.doctor);
-      console.log(doctor);
+      //console.log(doctor);
 
       // Use the existing time slot information to calculate duration
       const matchingTimeSlot = doctor.availableTimeSlots.find(slot => slot._id == newAppointmentid);
       const matchingTimeSlot1 = doctor.availableTimeSlots.find(slot => slot._id == prevappointmentid);
-      console.log(matchingTimeSlot)
+      //console.log(matchingTimeSlot)
       const startTime = matchingTimeSlot.startTime;
       const endTime = matchingTimeSlot.endTime;
-      console.log(startTime,endTime);
+      //console.log(startTime,endTime);
 
       const startParts = startTime.split(":");
     const endParts = endTime.split(":");
@@ -1641,13 +1641,13 @@ const rescheduleAnAppointment = async (req, res) => {
     const [startHour, startMinute] = startParts.map(part => parseInt(part, 10));
     const [endHour, endMinute] = endParts.map(part => parseInt(part, 10));
 
-    console.log("startHour:", startHour);
-    console.log("startMinute:", startMinute);
-    console.log("endHour:", endHour);
-    console.log("endMinute:", endMinute);
+    //console.log("startHour:", startHour);
+    //console.log("startMinute:", startMinute);
+    //console.log("endHour:", endHour);
+    //console.log("endMinute:", endMinute);
 
       const duration = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
-      console.log(duration);
+      //console.log(duration);
       
       // Update the appointment with the new date or time slot
       const existingAppointmentDate = new Date(matchingTimeSlot.date);
@@ -1659,7 +1659,7 @@ const rescheduleAnAppointment = async (req, res) => {
 
       // Save the updated appointment
       const updatedAppointment = await existingAppointment.save();
-      console.log(updatedAppointment)
+      //console.log(updatedAppointment)
 
       // Update doctor's availableTimeSlots (assuming you have a doctorId available)
       await doctorModel.findOneAndUpdate(
