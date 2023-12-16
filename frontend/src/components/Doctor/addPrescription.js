@@ -56,6 +56,7 @@ function AddPrescription() {
     const handleInputChange = (event) => {
         const {name, value} = event.target
         setMedicine({...medicine, [name]: value})
+        setMessage('You have to click on add prescription to save it')
     }
 
     return (
