@@ -27,7 +27,7 @@ const prescriptionSchema = new Schema({
     default: "unfilled",
   },
   date: {
-     type: Date, default: Date.now 
+     type: Date, default: Date.now
   },
 });
 

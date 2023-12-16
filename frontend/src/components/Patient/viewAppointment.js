@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { IoIosArrowBack } from "react-icons/io";
 import PatientService from "../../services/patientService";
 import Home from "../gohome";
+import patientService from "../../services/patientService";
+import doctorService from "../../services/doctorService";
 //import "./ViewAppointments.css"; // Import your CSS file for styling
 
 const ViewAppointments = () => {
@@ -11,6 +12,11 @@ const ViewAppointments = () => {
     doctorid: "",
     appointmentid: "",
   };
+  const intialBody1 = {
+    appointmentid:"",
+    prevappointmentid:"",
+  };
+
   const navigate = useNavigate();
   const [body, setBody] = useState(intialBody);
   const [appointments, setAppointments] = useState([]);
@@ -19,6 +25,8 @@ const ViewAppointments = () => {
   const [doctorHasAppointments, setDoctorHasAppointments] = useState(false);
   const [activeTab, setActiveTab] = useState("myAppointments");
   const [loading, setLoading] = useState(false);
+  const [body1,setBody1]= useState(intialBody1);
+
 
   useEffect(() => {
     retrieveAppointments();
@@ -58,6 +66,14 @@ const ViewAppointments = () => {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
+  const formatDateOfBirth = (dateOfBirth) => {
+    const date = new Date(dateOfBirth);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Month is zero-indexed
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
 
   const handleFollowUpRequest = async (appId, doctorId) => {
     try {
@@ -148,6 +164,44 @@ const ViewAppointments = () => {
       fetchData();
     }
   }, [body.appointmentid, setBody]);
+  const handleReschedule = async (appId, doctorid) => {
+    console.log("Reschedule button clicked. Appointment ID:", appId);
+    try {
+      
+      // Create a new object with the updated appointmentId
+      const updatedBody = {
+        ...body1,
+        prevappointmentid: appId,
+      };
+
+      // Update the state
+      setBody1(updatedBody);
+      // Make the asynchronous call after updating the state
+      const response = await patientService.AvailableAppointments(doctorid);
+      const appointmentsData = response;
+      console.log(response);
+      setAppointments(appointmentsData);
+      setDoctorHasAppointments(appointmentsData.length > 0);
+      setAppointmentBanner(true);
+      console.log(response);
+    } catch (error) {
+      console.error('Error loading time slots:', error);
+    }
+  };
+
+  const handleRescheduleThis= async(tID)=>{
+    try{
+      const updatedBody = {
+        ...body1,
+        appointmentid: tID,
+      };
+      const response= await patientService.rescheduleAnAppointment(updatedBody)
+      alert(response.data)
+      setBody1(updatedBody);
+    }catch (error) {
+      console.error('Error loading time slots:', error);
+    }
+  }
 
   return (
     <div>
@@ -246,16 +300,23 @@ const ViewAppointments = () => {
                           </button>
                         )}
                         {appointment.status === "pending" && (
-                          <div className="cancel-button-container">
-                            <button
-                              className="btn-cancel"
-                              style={{ marginInlineEnd: 0 }}
-                              onClick={() => handleCancel(appointment._id)}
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        )}
+                    <div>
+                        <div className="cancel-button-container">
+                      <button className="btn-cancel"
+                      style={{marginInlineEnd:0}} 
+                        onClick={() => handleCancel(appointment._id)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                    <button className="btn btn-primary"
+                      style={{marginInlineEnd:0}} 
+                        onClick={() => handleReschedule(appointment._id, appointment.doctor)}
+                      >
+                        Reschedule
+                      </button>
+                      </div>
+                    )}
                       </div>
                     </div>
                   );
@@ -312,9 +373,61 @@ const ViewAppointments = () => {
               )}
             </div>
           )}
+           {appointmentBanner && <div className="overlay"></div>}
+
+{appointmentBanner && (
+  <div className="member-banner" style={{ overflowY: "auto" }}>
+    <div
+      className="close-icon"
+      onClick={() => setAppointmentBanner(false)}
+    >
+      &times; {/* Unicode "times" character (×) */}
+    </div>
+    {doctorHasAppointments ? (
+      appointments.map((appointment) => (
+        <div
+          key={appointment._id}
+          className="card"
+          style={{
+            width: "450px",
+            backgroundColor: "#282c34",
+            margin: "10px",
+          }}
+        >
+          <div className="card-body">
+            <h3 className="card-title" style={{ color: "white" }}>
+              Date: {formatDateOfBirth(appointment.date)}
+            </h3>
+            <h3 className="card-title" style={{ color: "white" }}>
+              Start Time: {appointment.startTime}
+            </h3>
+            <h3 className="card-title" style={{ color: "white" }}>
+              End Time: {appointment.endTime}
+            </h3>
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                console.log("Clicked Appointment ID:", appointment._id);
+                handleRescheduleThis(appointment._id);
+              }}
+            >
+              Reschedule To This Appointment
+            </button>
+          </div>
+        </div>
+      ))
+    ) : (
+      <div>
+        <h2>No Appointments</h2>
+      </div>
+    )}
+  </div>
+)}
+        
         </div>
       )}
     </div>
+    
   );
 };
 
