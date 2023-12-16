@@ -625,9 +625,12 @@ const viewPrescriptions = async (req, res) => {
   });
 
   //console.log(`Patient is ${id}`);
-  PrescriptionsModel.find({patient: id})
+  PrescriptionsModel.find({ patient: id })
     .populate("doctor", "name -_id -__t")
-    .populate("medicine.medID", "Name")
+    .populate({
+      path: "medicine.medID",
+      select: "Name Price Quantity -_id", // Specify the fields you want to select
+    })
     .exec()
     .then((result) => {
       if (!result) {
@@ -928,7 +931,7 @@ function properDateAndTime(dateAndTime) {
   const day = date.getDate();
   const month = date.getMonth();
   const year = date.getFullYear();
-  const hour = date.getUTCHours()+1;
+  const hour = date.getUTCHours() + 1;
   const minute = date.getMinutes();
   return `${day}/${month}/${year} at ${hour}:${minute}`;
 }
@@ -1440,54 +1443,53 @@ const cancelAppointment = async (req, res) => {
     );
     const twentyFourHoursFromNow = new Date();
     twentyFourHoursFromNow.setHours(twentyFourHoursFromNow.getHours() + 24);
-    
 
     if (appointment.date >= twentyFourHoursFromNow) {
-        const patient = await patientModel.findById(appointment.patient);
-        const doctor = await doctorModel.findById(appointment.doctor);
-        const price = await doctorPrice(appointment.patient, doctor.username);
-        console.log(price + "\n" + patient.amountInWallet);
-        patient.amountInWallet += price;
-        await patient.save();
-        console.log(patient.amountInWallet);
-        alertM =
-          "A total of " +
-          price.toString() +
-          "EGP was refunded to the patient's wallet";
+      const patient = await patientModel.findById(appointment.patient);
+      const doctor = await doctorModel.findById(appointment.doctor);
+      const price = await doctorPrice(appointment.patient, doctor.username);
+      console.log(price + "\n" + patient.amountInWallet);
+      patient.amountInWallet += price;
+      await patient.save();
+      console.log(patient.amountInWallet);
+      alertM =
+        "A total of " +
+        price.toString() +
+        "EGP was refunded to the patient's wallet";
 
-        const dateAndTime = properDateAndTime(appointment.date)
-        const patientMessage = `You cancelled your appointment with Doctor ${doctor.name} on ${dateAndTime}. A total of ${price.toString()}  EGP was refunded to your wallet`
-        const doctorMessage = `Patient ${patient.name} cancelled their appointment with you on ${dateAndTime}.`
+      const dateAndTime = properDateAndTime(appointment.date);
+      const patientMessage = `You cancelled your appointment with Doctor ${
+        doctor.name
+      } on ${dateAndTime}. A total of ${price.toString()}  EGP was refunded to your wallet`;
+      const doctorMessage = `Patient ${patient.name} cancelled their appointment with you on ${dateAndTime}.`;
 
-        const emailToPatient = await transporter.sendMail({
-          from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
-          to: patient.email, // list of receivers
-          subject: "Cancelled Appointment", // Subject line
-          text: patientMessage, // plain text body
-          html: `<b>${patientMessage}</b>`, // html body
-        });
-        const patientNotif = new notificationModel({
-          receivers: patient._id,
-          message: patientMessage
-        })
-        patientNotif.save().catch()
+      const emailToPatient = await transporter.sendMail({
+        from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+        to: patient.email, // list of receivers
+        subject: "Cancelled Appointment", // Subject line
+        text: patientMessage, // plain text body
+        html: `<b>${patientMessage}</b>`, // html body
+      });
+      const patientNotif = new notificationModel({
+        receivers: patient._id,
+        message: patientMessage,
+      });
+      patientNotif.save().catch();
 
-        const emailToDoctor = await transporter.sendMail({
-          from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
-          to: doctor.email, // list of receivers
-          subject: "Cancelled Appointment", // Subject line
-          text: doctorMessage, // plain text body
-          html: `<b>${doctorMessage}</b>`, // html body
-        });
-        const doctorNotif = new notificationModel({
-          receivers: doctor._id,
-          message: doctorMessage
-        })
-        doctorNotif.save().catch()
+      const emailToDoctor = await transporter.sendMail({
+        from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+        to: doctor.email, // list of receivers
+        subject: "Cancelled Appointment", // Subject line
+        text: doctorMessage, // plain text body
+        html: `<b>${doctorMessage}</b>`, // html body
+      });
+      const doctorNotif = new notificationModel({
+        receivers: doctor._id,
+        message: doctorMessage,
+      });
+      doctorNotif.save().catch();
     }
     alertM = "Appointment canceled successfully \n" + alertM;
-
-
 
     return res.json({ message: alertM, appointment });
   } catch (error) {
@@ -1541,7 +1543,7 @@ const getAllPrescriptionsForPatient = async (req, res) => {
 
     const prescriptions = await PrescriptionsModel.find({ patient: patientId })
       .populate("doctor", "name") // Assuming doctor ID is stored in prescriptions and is populated
-      .populate("medicine.medID", "Name"); // Assuming medicine ID is stored in prescriptions and is populated
+      .populate("medicine.medID", "Name-Price-Quantity"); // Assuming medicine ID is stored in prescriptions and is populated
 
     if (!prescriptions || prescriptions.length === 0) {
       return res
@@ -1573,6 +1575,75 @@ const getAllPrescriptionsForPatient = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
+    res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
+  }
+};
+const payForPrescripFromWallet = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        id = decodedToken.name;
+      }
+    });
+    const patient = await patientModel.findById(id);
+    if (patient.amountInWallet == 0) {
+      res.status(200).send("Not sufficient funds");
+      return;
+    }
+    let total = 0;
+    let msg = "";
+    const prescriptionId = req.params.prescriptionID;
+    const prescription = await PrescriptionsModel.findById(prescriptionId)
+      .populate({
+        path: "medicine.medID",
+        select: "Name Price Quantity -_id",
+      })
+      .exec();
+    //console.log(prescription);
+    if (!prescription) {
+      res.status(404).json({ message: "Prescription not found" });
+      return;
+    }
+    for (const med of prescription.medicine) {
+      let { medID, filled } = med;
+      if (medID.Quantity > 0) {
+        if (medID.Price + total <= patient.amountInWallet) {
+          total += medID.Price;
+          med.filled = true;
+          medID.Quantity--;
+        } else {
+          msg +=
+            "Medicine " +
+            medID.Name +
+            " can not be bought because of insufficient funds \n";
+        }
+      } else {
+        msg += "Medicine " + medID.Name + " is not available \n";
+      }
+    }
+    patient.amountInWallet -= total;
+    await patient.save();
+    msg += "Amount " + total.toString() + "EGP was deducted from your wallet";
+    let flag = true;
+    for (const med of prescription.medicine) {
+      const { filled } = med;
+      if (!filled) {
+        flag = false;
+        break;
+      }
+    }
+    if (flag) prescription.status = "filled";
+    await prescription.save();
+    res.status(200).send(msg);
+  } catch (error) {
+    console.error(error);
     res.status(500).json({
       status: "error",
       message: "Internal Server Error",
@@ -1614,4 +1685,5 @@ module.exports = {
   cancelAppointment,
   viewPrescriptionDetails,
   getAllPrescriptionsForPatient,
+  payForPrescripFromWallet,
 };
