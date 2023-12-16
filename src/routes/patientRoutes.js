@@ -71,5 +71,6 @@ patientRoutes.get(
   "/viewPrescriptionDetails/:prescriptionId",
   patientController.viewPrescriptionDetails
 );
+patientRoutes.put('/rescheduleAnAppointment', patientController.rescheduleAnAppointment);
 //patientRoutes.get('/viewPrescriptions', patientController.getAllPrescriptionsForPatient);
 module.exports = { patientRoutes };
