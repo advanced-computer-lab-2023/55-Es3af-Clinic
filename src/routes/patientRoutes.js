@@ -71,6 +71,13 @@ patientRoutes.get(
   "/viewPrescriptionDetails/:prescriptionId",
   patientController.viewPrescriptionDetails
 );
-patientRoutes.put('/rescheduleAnAppointment', patientController.rescheduleAnAppointment);
+patientRoutes.put(
+  "/rescheduleAnAppointment",
+  patientController.rescheduleAnAppointment
+);
+patientRoutes.patch(
+  "/payUsingWallet/:prescriptionID",
+  patientController.payForPrescripFromWallet
+);
 //patientRoutes.get('/viewPrescriptions', patientController.getAllPrescriptionsForPatient);
 module.exports = { patientRoutes };
