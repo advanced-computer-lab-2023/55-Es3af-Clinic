@@ -748,7 +748,6 @@ const addPrescription = async (req, res) => {
       patient: patientID,
       medicine: medicines,
       doctor: id,
-      date: new Date()
     });
     newPrescription.save().catch((err) => {
       console.error(err);
