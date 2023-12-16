@@ -119,7 +119,9 @@ class PatientService {
   async cancelAppointment(body){
     return http.put("/patient/cancelAppointment", body)
   }
-  
+  async rescheduleAnAppointment(body){
+    return http.put("/patient/rescheduleAnAppointment", body)
+  }
 }
 
 export default new PatientService();
