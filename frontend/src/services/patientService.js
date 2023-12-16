@@ -10,10 +10,10 @@ class PatientService {
     );
   }
   getPatient() {
-    return http.get('/patient/getPatient');
+    return http.get("/patient/getPatient");
   }
-  async createSession(body){
-    return http.post("/patient/createSession", body)
+  async createSession(body) {
+    return http.post("/patient/createSession", body);
   }
   AvailableAppointments(id) {
     return http.get(`patient/viewAvailableAppointments/${id}`);
@@ -74,10 +74,10 @@ class PatientService {
   FilterDoctors(date, speciality) {
     const queryParams = {};
 
-    if (date!='') {
+    if (date != "") {
       queryParams.date = date;
     }
-    if (speciality!='') {
+    if (speciality != "") {
       queryParams.speciality = speciality;
     }
 
@@ -91,35 +91,40 @@ class PatientService {
   // }
 
   BookAnAppointment(body) {
-    return http.post("/patient/BookAnAppointment/",body);
+    return http.post("/patient/BookAnAppointment/", body);
   }
   viewSubscribedHealthPackages() {
     return http.get("/patient/viewSubscribedHealthPackages");
   }
 
   cancelPackageSubscirption(body) {
-     return http.put(`/patient/cancelHealthPackageSubscription`,body);
-   }
+    return http.put(`/patient/cancelHealthPackageSubscription`, body);
+  }
 
   viewPatientsAppointments() {
     return http.get("/patient/viewPatientAppointments");
   }
   viewMedicalHistory() {
-    return http.get('/patient/viewMedicalHistory');
+    return http.get("/patient/viewMedicalHistory");
   }
   async removeMedicalHistory(medicalHistoryId) {
     return http.delete(`/patient/removeMedicalHistory/${medicalHistoryId}`);
   }
-  async viewFamilyMembersAppointments(){
-    return http.get("/patient/viewFamilyMembersAppointments")
+  async viewFamilyMembersAppointments() {
+    return http.get("/patient/viewFamilyMembersAppointments");
   }
-  async requestFollowUp(body){
-    return http.post("/patient/requestFollowUp", body)
+  async requestFollowUp(body) {
+    return http.post("/patient/requestFollowUp", body);
   }
-  async cancelAppointment(body){
-    return http.put("/patient/cancelAppointment", body)
+  async cancelAppointment(body) {
+    return http.put("/patient/cancelAppointment", body);
   }
-  
+  async rescheduleAnAppointment(body) {
+    return http.put("/patient/rescheduleAnAppointment", body);
+  }
+  async payForPres(presID) {
+    return http.patch(`/patient/payUsingWallet/${presID}`);
+  }
 }
 
 export default new PatientService();

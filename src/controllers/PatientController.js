@@ -625,9 +625,12 @@ const viewPrescriptions = async (req, res) => {
   });
 
   //console.log(`Patient is ${id}`);
-  PrescriptionsModel.find({patient: id})
+  PrescriptionsModel.find({ patient: id })
     .populate("doctor", "name -_id -__t")
-    .populate("medicine.medID", "Name")
+    .populate({
+      path: "medicine.medID",
+      select: "Name Price Quantity -_id", // Specify the fields you want to select
+    })
     .exec()
     .then((result) => {
       if (!result) {
@@ -845,11 +848,15 @@ const BookAnAppointment = async (req, res) => {
 
     const duration = endHour * 60 + endMinute - (startHour * 60 + startMinute);
     if (name == "") name = patient.name;
+    const newAppointmentdate = new Date(matchingTimeSlot.date);
+    existingAppointmentDate.setHours(startHour);
+    existingAppointmentDate.setMinutes(startMinute);
+    //console.log(existingAppointmentDate)
     const newAppointment = new appointmentModel({
       patient: id,
       patientName: name, // Replace with the actual patient name
       doctor: doctorid, // Replace with the actual doctor ID
-      date: matchingTimeSlot.date, // Replace with the actual date
+      date: newAppointmentdate, // Replace with the actual date
       duration: duration, // Replace with the actual duration
       // Status will default to 'pending' if not provided
     });
@@ -928,7 +935,7 @@ function properDateAndTime(dateAndTime) {
   const day = date.getDate();
   const month = date.getMonth();
   const year = date.getFullYear();
-  const hour = date.getUTCHours()+1;
+  const hour = date.getUTCHours() + 1;
   const minute = date.getMinutes();
   return `${day}/${month}/${year} at ${hour}:${minute}`;
 }
@@ -1440,54 +1447,53 @@ const cancelAppointment = async (req, res) => {
     );
     const twentyFourHoursFromNow = new Date();
     twentyFourHoursFromNow.setHours(twentyFourHoursFromNow.getHours() + 24);
-    
 
     if (appointment.date >= twentyFourHoursFromNow) {
-        const patient = await patientModel.findById(appointment.patient);
-        const doctor = await doctorModel.findById(appointment.doctor);
-        const price = await doctorPrice(appointment.patient, doctor.username);
-        console.log(price + "\n" + patient.amountInWallet);
-        patient.amountInWallet += price;
-        await patient.save();
-        console.log(patient.amountInWallet);
-        alertM =
-          "A total of " +
-          price.toString() +
-          "EGP was refunded to the patient's wallet";
+      const patient = await patientModel.findById(appointment.patient);
+      const doctor = await doctorModel.findById(appointment.doctor);
+      const price = await doctorPrice(appointment.patient, doctor.username);
+      console.log(price + "\n" + patient.amountInWallet);
+      patient.amountInWallet += price;
+      await patient.save();
+      console.log(patient.amountInWallet);
+      alertM =
+        "A total of " +
+        price.toString() +
+        "EGP was refunded to the patient's wallet";
 
-        const dateAndTime = properDateAndTime(appointment.date)
-        const patientMessage = `You cancelled your appointment with Doctor ${doctor.name} on ${dateAndTime}. A total of ${price.toString()}  EGP was refunded to your wallet`
-        const doctorMessage = `Patient ${patient.name} cancelled their appointment with you on ${dateAndTime}.`
+      const dateAndTime = properDateAndTime(appointment.date);
+      const patientMessage = `You cancelled your appointment with Doctor ${
+        doctor.name
+      } on ${dateAndTime}. A total of ${price.toString()}  EGP was refunded to your wallet`;
+      const doctorMessage = `Patient ${patient.name} cancelled their appointment with you on ${dateAndTime}.`;
 
-        const emailToPatient = await transporter.sendMail({
-          from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
-          to: patient.email, // list of receivers
-          subject: "Cancelled Appointment", // Subject line
-          text: patientMessage, // plain text body
-          html: `<b>${patientMessage}</b>`, // html body
-        });
-        const patientNotif = new notificationModel({
-          receivers: patient._id,
-          message: patientMessage
-        })
-        patientNotif.save().catch()
+      const emailToPatient = await transporter.sendMail({
+        from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+        to: patient.email, // list of receivers
+        subject: "Cancelled Appointment", // Subject line
+        text: patientMessage, // plain text body
+        html: `<b>${patientMessage}</b>`, // html body
+      });
+      const patientNotif = new notificationModel({
+        receivers: patient._id,
+        message: patientMessage,
+      });
+      patientNotif.save().catch();
 
-        const emailToDoctor = await transporter.sendMail({
-          from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
-          to: doctor.email, // list of receivers
-          subject: "Cancelled Appointment", // Subject line
-          text: doctorMessage, // plain text body
-          html: `<b>${doctorMessage}</b>`, // html body
-        });
-        const doctorNotif = new notificationModel({
-          receivers: doctor._id,
-          message: doctorMessage
-        })
-        doctorNotif.save().catch()
+      const emailToDoctor = await transporter.sendMail({
+        from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+        to: doctor.email, // list of receivers
+        subject: "Cancelled Appointment", // Subject line
+        text: doctorMessage, // plain text body
+        html: `<b>${doctorMessage}</b>`, // html body
+      });
+      const doctorNotif = new notificationModel({
+        receivers: doctor._id,
+        message: doctorMessage,
+      });
+      doctorNotif.save().catch();
     }
     alertM = "Appointment canceled successfully \n" + alertM;
-
-
 
     return res.json({ message: alertM, appointment });
   } catch (error) {
@@ -1541,7 +1547,7 @@ const getAllPrescriptionsForPatient = async (req, res) => {
 
     const prescriptions = await PrescriptionsModel.find({ patient: patientId })
       .populate("doctor", "name") // Assuming doctor ID is stored in prescriptions and is populated
-      .populate("medicine.medID", "Name"); // Assuming medicine ID is stored in prescriptions and is populated
+      .populate("medicine.medID", "Name-Price-Quantity"); // Assuming medicine ID is stored in prescriptions and is populated
 
     if (!prescriptions || prescriptions.length === 0) {
       return res
@@ -1580,56 +1586,89 @@ const getAllPrescriptionsForPatient = async (req, res) => {
   }
 };
 
-
 const rescheduleAnAppointment = async (req, res) => {
   const prevappointmentid = req.body.prevappointmentid;
   const newAppointmentid = req.body.appointmentid;
- // Add this field for the new date
-  
+  // Add this field for the new date
+  console.log(prevappointmentid, newAppointmentid);
+
   try {
-    // const transporter = nodemailer.createTransport({
-    //   service: "gmail",
-    //   auth: {
-    //     user: "55es3afclinicpharmacy@gmail.com",
-    //     pass: "itqq jnfy kirk druf",
-    //   },
-    // });
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "55es3afclinicpharmacy@gmail.com",
+        pass: "itqq jnfy kirk druf",
+      },
+    });
 
     try {
-      if (id == '') {
-        const token = req.cookies.jwt;
-        jwt.verify(token, 'supersecret', (err, decodedToken) => {
-          if (err) {
-            res.status(401).json({ message: "You are not logged in." })
-          }
-          else {
-            id = decodedToken.name;
-          }
-        });
-      }
+      // if (id == '') {
+      //   const token = req.cookies.jwt;
+      //   jwt.verify(token, 'supersecret', (err, decodedToken) => {
+      //     if (err) {
+      //       res.status(401).json({ message: "You are not logged in." })
+      //     }
+      //     else {
+      //       id = decodedToken.name;
+      //     }
+      //   });
+      // }
 
       //const patient = await patientModel.findById(prevappointmentid.patient);
 
       // Find the existing appointment
-      const existingAppointment = await appointmentModel.findById(prevappointmentid);
+      const existingAppointment = await appointmentModel.findById(
+        prevappointmentid
+      );
+      //console.log(existingAppointment);
+      const doctor = await doctorModel.findById(existingAppointment.doctor);
+      //console.log(doctor);
 
       // Use the existing time slot information to calculate duration
-      const matchingTimeSlot = doctor.availableTimeSlots.find(slot => slot._id == newAppointmentid);
-      const matchingTimeSlot1 = doctor.availableTimeSlots.find(slot => slot._id == prevAppointmentid);
+      const matchingTimeSlot = doctor.availableTimeSlots.find(
+        (slot) => slot._id == newAppointmentid
+      );
+      const matchingTimeSlot1 = doctor.availableTimeSlots.find(
+        (slot) => slot._id == prevappointmentid
+      );
+      //console.log(matchingTimeSlot)
       const startTime = matchingTimeSlot.startTime;
       const endTime = matchingTimeSlot.endTime;
+      //console.log(startTime,endTime);
 
-      const [startHour, startMinute] = startTime.split(":").map(Number);
-      const [endHour, endMinute] = endTime.split(":").map(Number);
+      const startParts = startTime.split(":");
+      const endParts = endTime.split(":");
 
-      const duration = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
+      if (startParts.length !== 2 || endParts.length !== 2) {
+        console.error("Invalid time format");
+        return res.status(400).send("Invalid time format");
+      }
+
+      const [startHour, startMinute] = startParts.map((part) =>
+        parseInt(part, 10)
+      );
+      const [endHour, endMinute] = endParts.map((part) => parseInt(part, 10));
+
+      //console.log("startHour:", startHour);
+      //console.log("startMinute:", startMinute);
+      //console.log("endHour:", endHour);
+      //console.log("endMinute:", endMinute);
+
+      const duration =
+        endHour * 60 + endMinute - (startHour * 60 + startMinute);
+      //console.log(duration);
 
       // Update the appointment with the new date or time slot
-      existingAppointment.date = matchingTimeSlot.date;
+      const existingAppointmentDate = new Date(matchingTimeSlot.date);
+      existingAppointmentDate.setHours(startHour);
+      existingAppointmentDate.setMinutes(startMinute);
+      console.log(existingAppointmentDate);
+      existingAppointment.date = existingAppointmentDate;
       existingAppointment.duration = duration;
 
       // Save the updated appointment
       const updatedAppointment = await existingAppointment.save();
+      //console.log(updatedAppointment)
 
       // Update doctor's availableTimeSlots (assuming you have a doctorId available)
       await doctorModel.findOneAndUpdate(
@@ -1652,11 +1691,84 @@ const rescheduleAnAppointment = async (req, res) => {
       res.status(200).send("Appointment was rescheduled successfully");
     } catch (error) {
       console.error(error);
-      res.status(500).send("An error occurred while rescheduling the appointment");
+      res
+        .status(500)
+        .send("An error occurred while rescheduling the appointment");
     }
   } catch (error) {
     console.error(error);
-    res.status(500).send("An error occurred while rescheduling the appointment");
+    res
+      .status(500)
+      .send("An error occurred while rescheduling the appointment");
+  }
+};
+const payForPrescripFromWallet = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        id = decodedToken.name;
+      }
+    });
+    const patient = await patientModel.findById(id);
+    if (patient.amountInWallet == 0) {
+      res.status(200).send("Not sufficient funds");
+      return;
+    }
+    let total = 0;
+    let msg = "";
+    const prescriptionId = req.params.prescriptionID;
+    const prescription = await PrescriptionsModel.findById(prescriptionId)
+      .populate({
+        path: "medicine.medID",
+        select: "Name Price Quantity -_id",
+      })
+      .exec();
+    //console.log(prescription);
+    if (!prescription) {
+      res.status(404).json({ message: "Prescription not found" });
+      return;
+    }
+    for (const med of prescription.medicine) {
+      let { medID, filled } = med;
+      if (medID.Quantity > 0) {
+        if (medID.Price + total <= patient.amountInWallet) {
+          total += medID.Price;
+          med.filled = true;
+          medID.Quantity--;
+        } else {
+          msg +=
+            "Medicine " +
+            medID.Name +
+            " can not be bought because of insufficient funds \n";
+        }
+      } else {
+        msg += "Medicine " + medID.Name + " is not available \n";
+      }
+    }
+    patient.amountInWallet -= total;
+    await patient.save();
+    msg += "Amount " + total.toString() + "EGP was deducted from your wallet";
+    let flag = true;
+    for (const med of prescription.medicine) {
+      const { filled } = med;
+      if (!filled) {
+        flag = false;
+        break;
+      }
+    }
+    if (flag) prescription.status = "filled";
+    await prescription.save();
+    res.status(200).send(msg);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: "error",
+      message: "Internal Server Error",
+    });
   }
 };
 
@@ -1694,5 +1806,6 @@ module.exports = {
   cancelAppointment,
   viewPrescriptionDetails,
   getAllPrescriptionsForPatient,
-  rescheduleAnAppointment
+  payForPrescripFromWallet,
+  rescheduleAnAppointment,
 };
