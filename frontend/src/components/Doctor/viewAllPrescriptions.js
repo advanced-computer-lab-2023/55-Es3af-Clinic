@@ -5,6 +5,7 @@ import Home from "../gohome";
 const ViewAllPrescriptions = () => {
   const [prescriptions, setPrescriptions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [newDosage, setNewDosage] = useState({})
 
   useEffect(() => {
     retrievePrescriptions();
@@ -17,6 +18,7 @@ const ViewAllPrescriptions = () => {
         console.log(response);
         if (response.length !== 0) {
           setPrescriptions(response.data.prescriptions);
+          console.log(prescriptions)
         } else {
           console.log("Data is not an array:", response);
         }
@@ -31,21 +33,39 @@ const ViewAllPrescriptions = () => {
 
   const handleEditDosage = async (prescriptionId, medicineId) => {
     try {
-      const newDosage = prompt("Enter the new dosage:");
-      if (newDosage !== null) {
+      const newDosageNew = prompt("Enter the new dosage:");
+      if (newDosageNew !== null) {
         console.log('Prescription ID:', prescriptionId);
         console.log('Medicine ID:', medicineId);
-        console.log('New Dosage:', newDosage);
+        console.log('New Dosage:', newDosageNew);
+
+        const newDose = {
+          prescriptionId: prescriptionId,
+          medicineId: medicineId,
+          newDosage: newDosageNew
+        }
+        console.log(newDose)
+        setNewDosage(newDose)
   
-        const response = await DoctorService.editDosage(prescriptionId, medicineId, newDosage);
-        console.log(response.data.message);
+        
   
-        retrievePrescriptions();
+        //retrievePrescriptions();
       }
     } catch (error) {
       console.error(error);
     }
   };
+
+  const calling = async () => {
+    const response = await DoctorService.editDosage(newDosage);
+    //console.log(response.data.message);
+  }
+
+  useEffect(() => {
+    if(Object.keys(newDosage).length > 0){
+      calling()
+    }
+  }, [newDosage])
   
   
   const formatDate = (date) => {
@@ -84,7 +104,8 @@ const ViewAllPrescriptions = () => {
                           <strong>Name: </strong> {medicine.name}<br />
                           <strong>Dosage: </strong> {medicine.dosage}<br />
                           <strong>Duration: </strong> {medicine.duration}<br />
-                          <button onClick={() => handleEditDosage(prescription._id, medicine.medID)}>Edit Dosage</button>
+                          <button className="btn btn-primary" onClick={() => {handleEditDosage(prescription.id, medicine.medID._id);
+                                console.log(medicine)}}>Edit Dosage</button>
                           {i < prescription.prescriptions.length - 1 ? <hr /> : ""}
                         </li>
                       ))}

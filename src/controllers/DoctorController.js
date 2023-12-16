@@ -1005,12 +1005,14 @@ const getAllPrescriptions = async (req, res) => {
         .status(200)
         .send([]);
     }
+    // console.log(prescriptions)
 
     const prescriptionsWithStatus = prescriptions.map((prescription) => {
       // Map through each prescription
       const filledStatus = prescription.medicine.map((med) => {
         // For each medicine in the prescription, create a modified structure
         return {
+          medID: med.medID,
           name: med.medID.Name,
           dosage: med.dosage,
           duration: med.duration,
@@ -1019,6 +1021,7 @@ const getAllPrescriptions = async (req, res) => {
       });
 
       return {
+        id: prescription._id,
         patient: prescription.patient.name,
         prescriptions: filledStatus,
         status: prescription.status
@@ -1043,38 +1046,40 @@ const getAllPrescriptions = async (req, res) => {
 
 const editDosage = async (req, res) => {
   try {
-    const { prescriptionId, medicineId, dosage } = req.body;
+    const { prescriptionId, medicineId, newDosage } = req.body;
      // Log the parameters to ensure they are received correctly
-     console.log('Prescription ID:', prescriptionId);
-     console.log('Medicine ID:', medicineId);
-     console.log('New Dosage:', dosage);
+    //  console.log('Prescription ID:', prescriptionId);
+    //  console.log('Medicine ID:', medicineId);
+    //  console.log('New Dosage:', newDosage);
 
     // Validate the request parameters
-    if (!mongoose.Types.ObjectId.isValid(prescriptionId) || !mongoose.Types.ObjectId.isValid(medicineId) || !dosage) {
+    if (!mongoose.Types.ObjectId.isValid(prescriptionId) || !mongoose.Types.ObjectId.isValid(medicineId) || !newDosage) {
       return res.status(400).json({ message: 'Invalid request parameters' });
     }
 
     // Find the prescription by ID
     const Prescription = await prescription.findById(prescriptionId);
+    //console.log(Prescription)
 
     // Check if the prescription exists
-    if (!Prescription) {
-      return res.status(404).json({ message: 'Prescription not found' });
-    }
+    // if (!Prescription) {
+    //   return res.status(404).json({ message: 'Prescription not found' });
+    // }
 
     // Find the medicine in the prescription
-    const medicineToUpdate = Prescription.medicine.find(med => med._id.toString() === medicineId.toString());
+    const medicineToUpdate = Prescription.medicine.find(med => med.medID.toString() === medicineId.toString());
 
     // Check if the medicine exists in the prescription
-    if (!medicineToUpdate) {
-      return res.status(404).json({ message: 'Medicine not found in the prescription' });
-    }
+    // if (!medicineToUpdate) {
+    //   return res.status(404).json({ message: 'Medicine not found in the prescription' });
+    // }
 
     // Update the dosage
-    medicineToUpdate.dosage = dosage;
+    medicineToUpdate.dosage = newDosage;
 
     // Save the updated prescription
     await Prescription.save();
+    //console.log(Prescription)
 
     return res.status(200).json({ message: 'Dosage updated successfully' });
   } catch (error) {
