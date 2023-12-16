@@ -156,13 +156,9 @@ addPrescription(prescription, id){
     return http.put("/doctor/rescheduleAnAppointment", body)
   }
   
-  async editDosage(prescriptionId, medicineId, dosage) {
+  async editDosage(dosage) {
     try {
-      const response = await http.put("/doctor/editDosage", {
-        prescriptionId: prescriptionId,
-        medicineId: medicineId,
-        dosage: dosage,
-      });
+      const response = await http.put("/doctor/editDosage", dosage);
   
       return response.data;
     } catch (error) {
