@@ -5,6 +5,7 @@ import Home from "../gohome";
 const ViewAllPrescriptions = () => {
   const [prescriptions, setPrescriptions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [newDosage, setNewDosage] = useState({})
 
   useEffect(() => {
     retrievePrescriptions();
@@ -15,8 +16,9 @@ const ViewAllPrescriptions = () => {
     DoctorService.getAllPrescriptions()
       .then((response) => {
         console.log(response);
-        if (response.length != 0) {
+        if (response.length !== 0) {
           setPrescriptions(response.data.prescriptions);
+          console.log(prescriptions)
         } else {
           console.log("Data is not an array:", response);
         }
@@ -29,6 +31,43 @@ const ViewAllPrescriptions = () => {
       });
   };
 
+  const handleEditDosage = async (prescriptionId, medicineId) => {
+    try {
+      const newDosageNew = prompt("Enter the new dosage:");
+      if (newDosageNew !== null) {
+        console.log('Prescription ID:', prescriptionId);
+        console.log('Medicine ID:', medicineId);
+        console.log('New Dosage:', newDosageNew);
+
+        const newDose = {
+          prescriptionId: prescriptionId,
+          medicineId: medicineId,
+          newDosage: newDosageNew
+        }
+        console.log(newDose)
+        setNewDosage(newDose)
+  
+        
+  
+        //retrievePrescriptions();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const calling = async () => {
+    const response = await DoctorService.editDosage(newDosage);
+    //console.log(response.data.message);
+  }
+
+  useEffect(() => {
+    if(Object.keys(newDosage).length > 0){
+      calling()
+    }
+  }, [newDosage])
+  
+  
   const formatDate = (date) => {
     const options = { year: "numeric", month: "short", day: "numeric" };
     return new Date(date).toLocaleDateString(undefined, options);
@@ -38,49 +77,38 @@ const ViewAllPrescriptions = () => {
     <div>
       <Home />
       {loading ? (
-        <div class="preloader">
-          <div class="loader">
-            <div class="loader-outter"></div>
-            <div class="loader-inner"></div>
+        <div className="preloader">
+          <div className="loader">
+            <div className="loader-outter"></div>
+            <div className="loader-inner"></div>
 
-            <div class="indicator">
+            <div className="indicator">
               <svg width="16px" height="12px">
-                <polyline
-                  id="back"
-                  points="1 6 4 6 6 11 10 1 12 6 15 6"
-                ></polyline>
-                <polyline
-                  id="front"
-                  points="1 6 4 6 6 11 10 1 12 6 15 6"
-                ></polyline>
+                <polyline id="back" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
+                <polyline id="front" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
               </svg>
             </div>
           </div>
         </div>
       ) : (
         <div className="App-header">
-          {prescriptions.length > 0 ? (
-            prescriptions.map((prescription, index) => (
-              <div
-                className="card"
-                key={index}
-                style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
-              >
+        {prescriptions.length > 0 ? (
+           prescriptions.map((prescription, prescriptionIndex) => (
+              <div className="card" key={prescriptionIndex} style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}>
                 <div className="card-body">
-                  {" "}
-                  <h3 style={{ color: "white" }}>
-                    Patient: {prescription.patient}
-                  </h3>
+                  <h3 style={{ color: "white" }}>Patient: {prescription.patient}</h3>
                   <div className="medicine-details" style={{ color: "white" }}>
                     <ul>
-                    {prescription.prescriptions.map((medicine, i) => (
-                            <li key={i}>
-                            <strong>Name: </strong> {medicine.name}<br/>
-                            <strong>Dosage: </strong> {medicine.dosage}<br/>
-                            <strong>Duration: </strong> {medicine.duration}<br/>
-                            {i < prescription.prescriptions.length - 1 ? <hr/> : ""}
-                          </li>
-                    ))}
+                      {prescription.prescriptions.map((medicine, i) => (
+                        <li key={i}>
+                          <strong>Name: </strong> {medicine.name}<br />
+                          <strong>Dosage: </strong> {medicine.dosage}<br />
+                          <strong>Duration: </strong> {medicine.duration}<br />
+                          <button className="btn btn-primary" onClick={() => {handleEditDosage(prescription.id, medicine.medID._id);
+                                console.log(medicine)}}>Edit Dosage</button>
+                          {i < prescription.prescriptions.length - 1 ? <hr /> : ""}
+                        </li>
+                      ))}
                     </ul>
                     <strong>Status: </strong> {prescription.status}
                   </div>

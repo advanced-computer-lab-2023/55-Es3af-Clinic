@@ -11,6 +11,8 @@ import AdminPage from './components/Admin/admin';
 import Login from './components/login';
 import ForgetPassword from './components/forgetPassword'
 import ResetPassword from './components/resertPassword';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
