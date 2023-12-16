@@ -1623,14 +1623,23 @@ const rescheduleAnAppointment = async (req, res) => {
       //console.log(existingAppointment);
       const doctor = await doctorModel.findById(existingAppointment.doctor);
       //console.log(doctor);
+      const slotStartH=existingAppointment.date.getHours();
+      const slotStartM=existingAppointment.date.getMinutes();
+      const slotStart = `${String(slotStartH).padStart(2, '0')}:${String(slotStartM).padStart(2, '0')}`;
+      const slotDate = existingAppointment.date.toISOString().split('T')[0];
+      //console.log(slotDate)
+      const slotEndH = Math.floor((slotStartH * 60 + slotStartM + existingAppointment.duration) / 60);
+      const slotEndM = (slotStartH * 60 + slotStartM + existingAppointment.duration) % 60;
+  
+      // Combine slotEndH and slotEndM into slotEnd
+      const slotEnd = `${String(slotEndH).padStart(2, '0')}:${String(slotEndM).padStart(2, '0')}`;
+  
 
       // Use the existing time slot information to calculate duration
       const matchingTimeSlot = doctor.availableTimeSlots.find(
         (slot) => slot._id == newAppointmentid
       );
-      const matchingTimeSlot1 = doctor.availableTimeSlots.find(
-        (slot) => slot._id == prevappointmentid
-      );
+      
       //console.log(matchingTimeSlot)
       const startTime = matchingTimeSlot.startTime;
       const endTime = matchingTimeSlot.endTime;
@@ -1675,10 +1684,16 @@ const rescheduleAnAppointment = async (req, res) => {
         { _id: existingAppointment.doctor },
         {
           $pull: { availableTimeSlots: { _id: newAppointmentid } },
-          $push: { availableTimeSlots: matchingTimeSlot1 },
         }
       );
-
+      
+      // Add the rescheduled appointment to availableTimeSlots
+      await doctorModel.findOneAndUpdate(
+        { _id: existingAppointment.doctor },
+        {
+          $push: { availableTimeSlots: { date: slotDate, startTime: slotStart, endTime: slotEnd } },
+        }
+      );
       // Send emails
       // const emailToPatient = await transporter.sendMail({
       //   from: '"Clinic" <55es3afclinicpharmacy@gmail.com>',

@@ -1070,14 +1070,14 @@ const rescheduleAnAppointment = async (req, res) => {
 
       // Find the existing appointment
       const existingAppointment = await appointment.findById(prevappointmentid);
-      console.log(existingAppointment);
+     // console.log(existingAppointment);
       const doctor = await doctorModel.findById(existingAppointment.doctor);
       //console.log(doctor);
       const slotStartH=existingAppointment.date.getHours();
       const slotStartM=existingAppointment.date.getMinutes();
       const slotStart = `${String(slotStartH).padStart(2, '0')}:${String(slotStartM).padStart(2, '0')}`;
       const slotDate = existingAppointment.date.toISOString().split('T')[0];
-      console.log(slotDate)
+      //console.log(slotDate)
       const slotEndH = Math.floor((slotStartH * 60 + slotStartM + existingAppointment.duration) / 60);
       const slotEndM = (slotStartH * 60 + slotStartM + existingAppointment.duration) % 60;
   
@@ -1087,10 +1087,10 @@ const rescheduleAnAppointment = async (req, res) => {
 
       // Use the existing time slot information to calculate duration
       const matchingTimeSlot = doctor.availableTimeSlots.find(slot => slot._id == newAppointmentid);
-      console.log(matchingTimeSlot)
+      //console.log(matchingTimeSlot)
       const startTime = matchingTimeSlot.startTime;
       const endTime = matchingTimeSlot.endTime;
-      console.log(startTime,endTime);
+      //console.log(startTime,endTime);
 
       const startParts = startTime.split(":");
     const endParts = endTime.split(":");
@@ -1103,25 +1103,25 @@ const rescheduleAnAppointment = async (req, res) => {
     const [startHour, startMinute] = startParts.map(part => parseInt(part, 10));
     const [endHour, endMinute] = endParts.map(part => parseInt(part, 10));
 
-    console.log("startHour:", startHour);
-    console.log("startMinute:", startMinute);
-    console.log("endHour:", endHour);
-    console.log("endMinute:", endMinute);
+    // console.log("startHour:", startHour);
+    // console.log("startMinute:", startMinute);
+    // console.log("endHour:", endHour);
+    // console.log("endMinute:", endMinute);
 
       const duration = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
-      console.log(duration);
+      //console.log(duration);
       
       // Update the appointment with the new date or time slot
       const existingAppointmentDate = new Date(matchingTimeSlot.date);
       existingAppointmentDate.setHours(startHour);
       existingAppointmentDate.setMinutes(startMinute);
-      console.log(existingAppointmentDate)
+      //console.log(existingAppointmentDate)
       existingAppointment.date = existingAppointmentDate;
       existingAppointment.duration = duration;
 
       // Save the updated appointment
       const updatedAppointment = await existingAppointment.save();
-      console.log(updatedAppointment)
+      //console.log(updatedAppointment)
 
 
       // Update doctor's availableTimeSlots (assuming you have a doctorId available)
