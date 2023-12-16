@@ -147,9 +147,23 @@ addPrescription(prescription, id){
     }
   }
 
+  async editDosage(prescriptionId, medicineId, dosage) {
+    try {
+      const response = await http.put("/doctor/editDosage", {
+        prescriptionId: prescriptionId,
+        medicineId: medicineId,
+        dosage: dosage,
+      });
+  
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+  
+
 }
-
-
 
 
 export default new DoctorService();

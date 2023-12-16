@@ -985,6 +985,7 @@ const getAllPrescriptions = async (req, res) => {
 
     res.status(200).json({
       status: "success",
+      message: 'Prescription added successfully.',
       data: {
         prescriptions: prescriptionsWithStatus,
       },
@@ -995,6 +996,48 @@ const getAllPrescriptions = async (req, res) => {
       status: "error",
       message: "Internal Server Error",
     });
+  }
+};
+
+const editDosage = async (req, res) => {
+  try {
+    const { prescriptionId, medicineId, dosage } = req.body;
+     // Log the parameters to ensure they are received correctly
+     console.log('Prescription ID:', prescriptionId);
+     console.log('Medicine ID:', medicineId);
+     console.log('New Dosage:', dosage);
+
+    // Validate the request parameters
+    if (!mongoose.Types.ObjectId.isValid(prescriptionId) || !mongoose.Types.ObjectId.isValid(medicineId) || !dosage) {
+      return res.status(400).json({ message: 'Invalid request parameters' });
+    }
+
+    // Find the prescription by ID
+    const Prescription = await prescription.findById(prescriptionId);
+
+    // Check if the prescription exists
+    if (!Prescription) {
+      return res.status(404).json({ message: 'Prescription not found' });
+    }
+
+    // Find the medicine in the prescription
+    const medicineToUpdate = Prescription.medicine.find(med => med._id.toString() === medicineId.toString());
+
+    // Check if the medicine exists in the prescription
+    if (!medicineToUpdate) {
+      return res.status(404).json({ message: 'Medicine not found in the prescription' });
+    }
+
+    // Update the dosage
+    medicineToUpdate.dosage = dosage;
+
+    // Save the updated prescription
+    await Prescription.save();
+
+    return res.status(200).json({ message: 'Dosage updated successfully' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
@@ -1023,4 +1066,5 @@ module.exports = {
   cancelAppointment,
   acceptOrRevokeFollowUp,
   getAllPrescriptions,
+  editDosage
 };
