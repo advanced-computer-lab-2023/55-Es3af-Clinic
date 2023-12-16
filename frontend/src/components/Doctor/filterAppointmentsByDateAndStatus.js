@@ -84,11 +84,18 @@ function FilteredAppointments() {
   }
 
   const book2 = async () => {
-    console.log('hanady 3al function ')
-    doctorService.scheduleFollowUp(details)
+    //console.log('hanady 3al function ')
+    await doctorService.scheduleFollowUp(details)
     alert('Follow up scheduled successfully')
     setSlotsBanner(false)
   }
+
+  useEffect(() => {
+    //console.log(details)
+    if (details.slotTime) {
+      book2();
+    }
+  }, [details])
 
   const handleCancel = (appId) => {
     // Create a new object with the updated appointmentId
