@@ -1228,6 +1228,6 @@ module.exports = {
   cancelAppointment,
   acceptOrRevokeFollowUp,
   getAllPrescriptions,
-  editDosage
-  rescheduleAnAppointment,
+  editDosage,
+  rescheduleAnAppointment
 };
