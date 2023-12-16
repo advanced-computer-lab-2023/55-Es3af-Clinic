@@ -118,6 +118,10 @@ addPrescription(prescription, id){
   return http.post(`/doctor/addPrescription/${id}`, prescription)
 }
 
+  scheduleFollowUp(details){
+    return http.post('/doctor/scheduleFollowUpAppointment', details)
+  }
+
   // async scheduleFollowUpAppointment(appointmentData) {
   //   try {
   //     const response = await http.post(

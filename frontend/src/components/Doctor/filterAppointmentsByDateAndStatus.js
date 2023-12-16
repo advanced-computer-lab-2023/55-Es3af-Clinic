@@ -8,9 +8,25 @@ function FilteredAppointments() {
   const intialBody = {
     appointmentid:"",
   };
+
+  // const initialDetails = {
+  //   patientID: '',
+  //   patientName: '',
+  //   slot: {
+  //     date: '',
+  //     startTime: '',
+  //     endTime: ''
+  //   }
+  // }
+
   const [results, setResults] = useState([]);
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [body,setBody]= useState(intialBody);
+  const [details, setDetails] = useState({})
+  const [slotsBanner, setSlotsBanner] = useState(false)
+  const [slots, setSlots] = useState([])
+  const [patient, setPatient] = useState({})
+  const [send, setSend] = useState(false)
   
 
   const search = async (event) => {
@@ -40,6 +56,30 @@ function FilteredAppointments() {
     const hour = time.getHours()
     const minute = time.getMinutes()
     return `${hour}:${minute}`
+  }
+
+  const handleFollowUp = async (patientID, patientName) => {
+    setSlotsBanner(true)
+    const timeSlots = await doctorService.getTimeSlots()
+    setSlots(timeSlots)
+    setDetails({patientID: patientID, patientName: patientName})
+  }
+
+  const bookFollowUp = async (slot) => {
+    const slotTime = {
+      date: slot.date,
+      startTime: slot.startTime,
+      endTime: slot.endTime
+    }
+    setDetails(details => ({...details, slotTime}))
+    //book2();
+  }
+
+  const book2 = async () => {
+    console.log('hanady 3al function ')
+    doctorService.scheduleFollowUp(details)
+    alert('Follow up scheduled successfully')
+    setSlotsBanner(false)
   }
 
   const handleCancel = (appId) => {
@@ -73,6 +113,17 @@ function FilteredAppointments() {
       fetchData();
     }
   }, [body.appointmentid, setBody]);
+
+  useEffect(() => {
+    console.log(details)
+    if (details.slotTime) {
+      book2();
+    }
+  }, [details])
+
+  
+
+
 
   return (
     <div className="App">
@@ -130,6 +181,15 @@ function FilteredAppointments() {
                   <h3 className="card-title" style={{ color: "white" }}>
                    Time: {formatTime(result.date)}
                   </h3>
+                  {result.status == "done" && (
+                      <button
+                          className="btn btn-primary"
+                          style={{ marginInlineEnd: 0 }}
+                          onClick={() => handleFollowUp(result.patient, result.patientName)}
+                      >
+                          Follow Up
+                      </button>
+                  )}
                   {result.status === "pending" && (
                         <div className="cancel-button-container">
                       <button className="btn-cancel"
@@ -153,6 +213,55 @@ function FilteredAppointments() {
           
         </form>
       </header>
+      {slotsBanner && <div className="overlay"></div>}
+      {slotsBanner && (
+        <div className="member-banner" style={{ overflowY: "auto" }}>
+          <div
+            className="close-icon"
+            onClick={() => setSlotsBanner(false)}
+          >
+            &times; {/* Unicode "times" character (×) */}
+          </div>
+          {slots ? (
+            slots.map((slot) => (
+              <div
+                key={slot._id}
+                className="card"
+                style={{
+                  width: "450px",
+                  backgroundColor: "#282c34",
+                  margin: "10px",
+                }}
+              >
+                <div className="card-body">
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Date: {formatDateOfBirth(slot.date)}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Start Time: {slot.startTime}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    End Time: {slot.endTime}
+                  </h3>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                      console.log("Clicked Appointment ID:", slot._id);
+                      bookFollowUp(slot)
+                    }}
+                  >
+                    Select this time slot
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div>
+              <h2>No Appointments</h2>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
