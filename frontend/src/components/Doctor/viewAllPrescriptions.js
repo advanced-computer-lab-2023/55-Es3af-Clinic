@@ -15,7 +15,7 @@ const ViewAllPrescriptions = () => {
     DoctorService.getAllPrescriptions()
       .then((response) => {
         console.log(response);
-        if (Array.isArray(response.data.prescriptions)) {
+        if (response.length != 0) {
           setPrescriptions(response.data.prescriptions);
         } else {
           console.log("Data is not an array:", response);
@@ -88,7 +88,7 @@ const ViewAllPrescriptions = () => {
               </div>
             ))
           ) : (
-            <p>No prescriptions found for this doctor.</p>
+            <p>You haven't written any prescriptions yet</p>
           )}
         </div>
       )}

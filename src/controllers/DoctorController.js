@@ -747,6 +747,7 @@ const addPrescription = async (req, res) => {
       patient: patientID,
       medicine: medicines,
       doctor: id,
+      date: new Date()
     });
     newPrescription.save().catch((err) => {
       console.error(err);
@@ -959,8 +960,8 @@ const getAllPrescriptions = async (req, res) => {
 
     if (!prescriptions || prescriptions.length === 0) {
       return res
-        .status(404)
-        .json({ message: "No prescriptions found for this doctor." });
+        .status(200)
+        .send([]);
     }
 
     const prescriptionsWithStatus = prescriptions.map((prescription) => {
