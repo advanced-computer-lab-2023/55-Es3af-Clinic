@@ -9,6 +9,7 @@ const userController = require('./controllers/UserController');
 const {auth} = require("./utils/auth");
 const http =require("http")
 const { Server } = require("socket.io");
+const { createAndDownloadPDF } = require("./controllers/DoctorController");
 
 
 //require("dotenv").config();
@@ -59,6 +60,7 @@ mongoose.connect(MongoURI, {dbName: 'Clinic'})
 })
 .catch(err => console.log(err));
 
+//createAndDownloadPDF({ name: 'John Doe', age: 30, city: 'Example City' })
 
 app.use(
   cors({

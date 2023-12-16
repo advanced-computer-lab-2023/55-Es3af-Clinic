@@ -16,6 +16,7 @@ const packageModel = require("../Models/Packages.js");
 const nodemailer = require('nodemailer')
 const notificationModel = require('../Models/notifications.js');
 const appointments = require("../Models/Appointments.js");
+const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
 
 // const Patient = JSON.parse(fs.readFileSync('./data/patient.json'));
 // const Doctors = JSON.parse(fs.readFileSync('./data/doctor.json'));
@@ -1210,6 +1211,7 @@ const rescheduleAnAppointment = async (req, res) => {
 
 
 
+
 module.exports = {
   addDoctor,
   getAllPatients,
@@ -1234,5 +1236,5 @@ module.exports = {
   acceptOrRevokeFollowUp,
   getAllPrescriptions,
   editDosage,
-  rescheduleAnAppointment
+  rescheduleAnAppointment,
 };
