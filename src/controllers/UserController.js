@@ -2,10 +2,10 @@ const userModel = require("../Models/user.js");
 const { default: mongoose } = require("mongoose");
 const bcrypt = require("bcrypt");
 const { createToken } = require("../utils/auth.js");
-const jwt = require('jsonwebtoken')
-const nodemailer = require('nodemailer')
-const notificationModel = require('../Models/notifications.js')
-const patientController = require('./PatientController.js')
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const notificationModel = require("../Models/notifications.js");
+const patientController = require("./PatientController.js");
 
 const createUser = async (req, res) => {
   //add a new user to the database with
@@ -128,9 +128,9 @@ const forgetPassword = async (req, res) => {
   }
 };
 
-const resetPassword = async(req, res) => {
+const resetPassword = async (req, res) => {
   const { password } = req.body;
-  const id = req.params.id
+  const id = req.params.id;
 
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(password, salt);
@@ -138,40 +138,40 @@ const resetPassword = async(req, res) => {
 
   const user = await userModel.findById(id);
 
-  if(!user) res.status(200).send('Username is incorrect')
-  else{
+  if (!user) res.status(200).send("Username is incorrect");
+  else {
     await userModel.findByIdAndUpdate(id, {
       password: newPassword,
     });
     res.status(200).send("Password updated successfully!");
   }
-}
+};
 
-async function getPassword(id, password){
-  var user = await userModel.findById(id)
+async function getPassword(id, password) {
+  var user = await userModel.findById(id);
 
-  console.log(`user password: ${user.password}`)
-  console.log(`old password: ${password}`)
+  console.log(`user password: ${user.password}`);
+  console.log(`old password: ${password}`);
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
-  if(isPasswordValid) return true
-  else return false
+  if (isPasswordValid) return true;
+  else return false;
 }
 
 const changePassword = async (req, res) => {
   //const currPassword = req.body.password
   const token = req.cookies.jwt;
-  var id = ''
+  var id = "";
   jwt.verify(token, "supersecret", (err, decodedToken) => {
     if (err) {
-      console.log('You are not logged in.');
+      console.log("You are not logged in.");
       // res send status 401 you are not logged in
       res.status(401).json({ message: "You are not logged in." });
       // res.redirect('/login');
     } else {
       id = decodedToken.name;
-      console.log('got the id')
+      console.log("got the id");
     }
   });
 
@@ -179,42 +179,43 @@ const changePassword = async (req, res) => {
   const hashedPassword = await bcrypt.hash(req.body.newPassword, salt);
   var newPassword = hashedPassword;
 
-  console.log(`current password: ${req.body.oldPassword}`)
+  console.log(`current password: ${req.body.oldPassword}`);
 
-  var message = ''
+  var message = "";
 
-  var correct = await getPassword(id, req.body.oldPassword)
+  var correct = await getPassword(id, req.body.oldPassword);
 
-  if(correct) {
-    console.log('correct current password')
-    const isPasswordValid = await bcrypt.compare(req.body.oldPassword, req.body.newPassword);
-    if(isPasswordValid) {
-      console.log('same same')
-      message = 'new password is the same as the current'
-    }
-    else{
+  if (correct) {
+    console.log("correct current password");
+    const isPasswordValid = await bcrypt.compare(
+      req.body.oldPassword,
+      req.body.newPassword
+    );
+    if (isPasswordValid) {
+      console.log("same same");
+      message = "new password is the same as the current";
+    } else {
       try {
         await userModel.findByIdAndUpdate(id, { password: newPassword });
-        message = "Password updated successfully"
+        message = "Password updated successfully";
       } catch (err) {
         console.error(err);
       }
     }
-  }
-  else {
-    console.log('wrong current password')
-    message = 'wrong current password'
+  } else {
+    console.log("wrong current password");
+    message = "wrong current password";
   }
 
-  res.status(200).send(message)
+  res.status(200).send(message);
 };
 
-const getNotifications = async(req, res) => {
+const getNotifications = async (req, res) => {
   const token = req.cookies.jwt;
-  var id = ''
+  var id = "";
   jwt.verify(token, "supersecret", (err, decodedToken) => {
     if (err) {
-      console.log('You are not logged in.');
+      console.log("You are not logged in.");
       // res send status 401 you are not logged in
       res.status(401).json({ message: "You are not logged in." });
       // res.redirect('/login');
@@ -224,27 +225,47 @@ const getNotifications = async(req, res) => {
     }
   });
 
-  await notificationModel.find({})
-  .exec()
-  .then((result) => {
-    var userNotification = []
-    //console.log(result)
-    var notifID = 0
-    for(var notifi of result){
-      if(notifi.receivers.includes(id)){
-        //console.log(notifController)
-        notifID++
-        var message = notifi.message
-        var date = patientController.properDateAndTime(notifi.createdAt)
-        userNotification.push({notifID, message, date})
+  await notificationModel
+    .find({})
+    .exec()
+    .then((result) => {
+      var userNotification = [];
+      //console.log(result)
+      var notifID = 0;
+      for (var notifi of result) {
+        if (notifi.receivers.includes(id)) {
+          //console.log(notifController)
+          notifID++;
+          var message = notifi.message;
+          var date = patientController.properDateAndTime(notifi.createdAt);
+          userNotification.push({ notifID, message, date });
+        }
       }
-    }
-    if(userNotification.length == 0) userNotification.push({notifID, message:'You have no notifications yet', date: ''})
-    //console.log(userNotification)
-    res.status(200).send(userNotification)
-  })
-  .catch((err) => console.error(err))
-}
+      if (userNotification.length == 0)
+        userNotification.push({
+          notifID,
+          message: "You have no notifications yet",
+          date: "",
+        });
+      //console.log(userNotification)
+      res.status(200).send(userNotification);
+    })
+    .catch((err) => console.error(err));
+};
+
+const getProfile = async (req, res) => {
+  const token = req.cookies.jwt;
+
+  if (!token) {
+    return res.status(401).json({ message: "You are not logged in." });
+  }
+
+  const decodedToken = jwt.verify(token, "supersecret");
+  const userId = decodedToken.name;
+  const user = await userModel.findById(userId);
+
+  res.send(user);
+};
 
 module.exports = {
   createUser,
@@ -257,4 +278,5 @@ module.exports = {
   changePassword,
   resetPassword,
   getNotifications,
+  getProfile,
 };
