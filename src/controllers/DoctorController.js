@@ -998,6 +998,8 @@ const getAllPrescriptions = async (req, res) => {
   }
 };
 
+
+
 module.exports = {
   addDoctor,
   getAllPatients,
