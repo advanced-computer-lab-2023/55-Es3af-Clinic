@@ -8,10 +8,18 @@ function FilteredAppointments() {
   const intialBody = {
     appointmentid:"",
   };
+  const intialBody1 = {
+    appointmentid:"",
+    prevappointmentid:"",
+  };
   const [results, setResults] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [appointmentBanner, setAppointmentBanner] = useState(false);
   const [searchPerformed, setSearchPerformed] = useState(false);
+  const [doctorHasAppointments, setDoctorHasAppointments] = useState(false);
   const [body,setBody]= useState(intialBody);
-  
+  const [body1,setBody1]= useState(intialBody1);
+
 
   const search = async (event) => {
     event.preventDefault();
@@ -74,6 +82,44 @@ function FilteredAppointments() {
     }
   }, [body.appointmentid, setBody]);
 
+
+  const handleReschedule = async (appId) => {
+    try {
+      // Create a new object with the updated appointmentId
+      const updatedBody = {
+        ...body1,
+        prevappointmentid: appId,
+      };
+
+      // Update the state
+      setBody1(updatedBody);
+      // Make the asynchronous call after updating the state
+      const response = await doctorService.getTimeSlots();
+      const appointmentsData = response;
+      console.log(response);
+      setAppointments(appointmentsData);
+      setDoctorHasAppointments(appointmentsData.length > 0);
+      setAppointmentBanner(true);
+      console.log(response);
+    } catch (error) {
+      console.error('Error loading time slots:', error);
+    }
+  };
+
+  const handleRescheduleThis= async(tID)=>{
+    try{
+      const updatedBody = {
+        ...body1,
+        appointmentid: tID,
+      };
+      const response= await doctorService.rescheduleAnAppointment(updatedBody)
+      alert(response.data)
+      setBody1(updatedBody);
+    }catch (error) {
+      console.error('Error loading time slots:', error);
+    }
+  }
+
   return (
     <div className="App">
       <Home />
@@ -131,6 +177,7 @@ function FilteredAppointments() {
                    Time: {formatTime(result.date)}
                   </h3>
                   {result.status === "pending" && (
+                    <div>
                         <div className="cancel-button-container">
                       <button className="btn-cancel"
                       style={{marginInlineEnd:0}} 
@@ -139,7 +186,13 @@ function FilteredAppointments() {
                         Cancel
                       </button>
                     </div>
-
+                    <button className="btn btn-primary"
+                      style={{marginInlineEnd:0}} 
+                        onClick={() => handleReschedule(result._id)}
+                      >
+                        Reschedule
+                      </button>
+                      </div>
                     )}
                   </div>
               </div>
@@ -153,6 +206,56 @@ function FilteredAppointments() {
           
         </form>
       </header>
+      {appointmentBanner && <div className="overlay"></div>}
+
+      {appointmentBanner && (
+        <div className="member-banner" style={{ overflowY: "auto" }}>
+          <div
+            className="close-icon"
+            onClick={() => setAppointmentBanner(false)}
+          >
+            &times; {/* Unicode "times" character (×) */}
+          </div>
+          {doctorHasAppointments ? (
+            appointments.map((appointment) => (
+              <div
+                key={appointment._id}
+                className="card"
+                style={{
+                  width: "450px",
+                  backgroundColor: "#282c34",
+                  margin: "10px",
+                }}
+              >
+                <div className="card-body">
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Date: {formatDateOfBirth(appointment.date)}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    Start Time: {appointment.startTime}
+                  </h3>
+                  <h3 className="card-title" style={{ color: "white" }}>
+                    End Time: {appointment.endTime}
+                  </h3>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                      console.log("Clicked Appointment ID:", appointment._id);
+                      handleRescheduleThis(appointment._id);
+                    }}
+                  >
+                    Reschedule To This Appointment
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div>
+              <h2>No Appointments</h2>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

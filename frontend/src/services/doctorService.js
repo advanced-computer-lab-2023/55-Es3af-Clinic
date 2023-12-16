@@ -147,6 +147,11 @@ addPrescription(prescription, id){
     }
   }
 
+
+  async rescheduleAnAppointment(body){
+    return http.put("/doctor/rescheduleAnAppointment", body)
+  }
+  
 }
 
 

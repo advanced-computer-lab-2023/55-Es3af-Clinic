@@ -49,6 +49,7 @@ doctorRouter.route('/getAppointmentsWithStatusDone').get(doctorController.getApp
 // doctorRouter.route('/viewMedicalHistory').get(doctorController.viewMedicalHistory);
 doctorRouter.route('/cancelAppointment').put(doctorController.cancelAppointment);
 doctorRouter.put('/acceptOrRevokeFollowUp', doctorController.acceptOrRevokeFollowUp);
+doctorRouter.route('/rescheduleAnAppointment').put(doctorController.rescheduleAnAppointment);
 
 
 // router.route('/getDoctors').get(doctorController.getAllDoctors);

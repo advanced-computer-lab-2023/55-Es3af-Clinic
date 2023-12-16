@@ -998,6 +998,126 @@ const getAllPrescriptions = async (req, res) => {
   }
 };
 
+const rescheduleAnAppointment = async (req, res) => {
+  const prevappointmentid = req.body.prevappointmentid;
+  const newAppointmentid = req.body.appointmentid;
+ // Add this field for the new date  
+  try {
+    // const transporter = nodemailer.createTransport({
+    //   service: "gmail",
+    //   auth: {
+    //     user: "55es3afclinicpharmacy@gmail.com",
+    //     pass: "itqq jnfy kirk druf",
+    //   },
+    // });
+
+    try {
+      // if (id == '') {
+      //   const token = req.cookies.jwt;
+      //   jwt.verify(token, 'supersecret', (err, decodedToken) => {
+      //     if (err) {
+      //       res.status(401).json({ message: "You are not logged in." })
+      //     }
+      //     else {
+      //       id = decodedToken.name;
+      //     }
+      //   });
+      // }
+
+      //const patient = await patientModel.findById(prevappointmentid.patient);
+
+      // Find the existing appointment
+      const existingAppointment = await appointment.findById(prevappointmentid);
+      console.log(existingAppointment);
+      const doctor = await doctorModel.findById(existingAppointment.doctor);
+      //console.log(doctor);
+      const slotStartH=existingAppointment.date.getHours();
+      const slotStartM=existingAppointment.date.getMinutes();
+      const slotStart = `${String(slotStartH).padStart(2, '0')}:${String(slotStartM).padStart(2, '0')}`;
+      const slotDate = existingAppointment.date.toISOString().split('T')[0];
+      console.log(slotDate)
+      const slotEndH = Math.floor((slotStartH * 60 + slotStartM + existingAppointment.duration) / 60);
+      const slotEndM = (slotStartH * 60 + slotStartM + existingAppointment.duration) % 60;
+  
+      // Combine slotEndH and slotEndM into slotEnd
+      const slotEnd = `${String(slotEndH).padStart(2, '0')}:${String(slotEndM).padStart(2, '0')}`;
+  
+
+      // Use the existing time slot information to calculate duration
+      const matchingTimeSlot = doctor.availableTimeSlots.find(slot => slot._id == newAppointmentid);
+      console.log(matchingTimeSlot)
+      const startTime = matchingTimeSlot.startTime;
+      const endTime = matchingTimeSlot.endTime;
+      console.log(startTime,endTime);
+
+      const startParts = startTime.split(":");
+    const endParts = endTime.split(":");
+
+    if (startParts.length !== 2 || endParts.length !== 2) {
+      console.error("Invalid time format");
+      return res.status(400).send("Invalid time format");
+    }
+
+    const [startHour, startMinute] = startParts.map(part => parseInt(part, 10));
+    const [endHour, endMinute] = endParts.map(part => parseInt(part, 10));
+
+    console.log("startHour:", startHour);
+    console.log("startMinute:", startMinute);
+    console.log("endHour:", endHour);
+    console.log("endMinute:", endMinute);
+
+      const duration = (endHour * 60 + endMinute) - (startHour * 60 + startMinute);
+      console.log(duration);
+      
+      // Update the appointment with the new date or time slot
+      const existingAppointmentDate = new Date(matchingTimeSlot.date);
+      existingAppointmentDate.setHours(startHour);
+      existingAppointmentDate.setMinutes(startMinute);
+      console.log(existingAppointmentDate)
+      existingAppointment.date = existingAppointmentDate;
+      existingAppointment.duration = duration;
+
+      // Save the updated appointment
+      const updatedAppointment = await existingAppointment.save();
+      console.log(updatedAppointment)
+
+
+      // Update doctor's availableTimeSlots (assuming you have a doctorId available)
+      await doctorModel.findOneAndUpdate(
+        { _id: existingAppointment.doctor },
+        {
+          $pull: { availableTimeSlots: { _id: newAppointmentid } },
+        }
+      );
+      
+      // Add the rescheduled appointment to availableTimeSlots
+      await doctorModel.findOneAndUpdate(
+        { _id: existingAppointment.doctor },
+        {
+          $push: { availableTimeSlots: { date: slotDate, startTime: slotStart, endTime: slotEnd } },
+        }
+      );
+
+      // Send emails
+      // const emailToPatient = await transporter.sendMail({
+      //   from: '"Clinic" <55es3afclinicpharmacy@gmail.com>',
+      //   to: patient.email,
+      //   subject: "Rescheduled Appointment",
+      //   text: `You have rescheduled an appointment with doctor ${existingAppointment.doctorName} at ${existingAppointment.date}.`,
+      //   html: <b>You have rescheduled an appointment with doctor ${existingAppointment.doctorName} at ${existingAppointment.date}.</b>,
+      // });
+
+      res.status(200).send("Appointment was rescheduled successfully");
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("An error occurred while rescheduling the appointment");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while rescheduling the appointment");
+  }
+};
+
 
 
 module.exports = {
@@ -1023,4 +1143,5 @@ module.exports = {
   cancelAppointment,
   acceptOrRevokeFollowUp,
   getAllPrescriptions,
+  rescheduleAnAppointment,
 };
