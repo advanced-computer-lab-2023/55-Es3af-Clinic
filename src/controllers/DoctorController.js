@@ -741,6 +741,7 @@ const addPrescription = async (req, res) => {
         medID: medID,
         dosage: med.dosage,
         duration: med.duration,
+        filled: false,
       });
     }
     const newPrescription = new prescription({
