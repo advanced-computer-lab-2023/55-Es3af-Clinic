@@ -1289,6 +1289,94 @@ const rescheduleAnAppointment = async (req, res) => {
   }
 };
 
+async function viewFollowUpRequests(doctorId) {
+  try {
+      // Find the doctor by ID
+      const doctor = await Doctor.findById(doctorId);
+
+      if (!doctor) {
+          return { success: false, message: 'Doctor not found' };
+      }
+
+      // Find appointments for the doctor marked as follow-ups
+      const followUpAppointments = await Appointment.find({
+          doctor: doctorId,
+          type: 'Follow-up'
+          // You can add more conditions if needed
+      }).populate('patient', 'name'); // Populate patient details if needed
+
+      return { success: true, followUpAppointments };
+  } catch (error) {
+      return { success: false, message: error.message };
+  }
+}
+
+async function acceptFollowUpRequest(doctorId, patientId, followUpDate) {
+  try {
+      // Find the doctor by ID
+      const doctor = await Doctor.findById(doctorId);
+
+      if (!doctor) {
+          return { success: false, message: 'Doctor not found' };
+      }
+
+      // Check if the follow-up date is available in doctor's schedule
+      const availableSlots = doctor.availableTimeSlots.map(slot => slot.toString());
+      const followUpDateString = followUpDate.toString();
+
+      if (!availableSlots.includes(followUpDateString)) {
+          return { success: false, message: 'Follow-up date not available' };
+      }
+
+      // Remove the follow-up date from available time slots
+      doctor.availableTimeSlots = doctor.availableTimeSlots.filter(slot => slot.toString() !== followUpDateString);
+
+      // Save the updated doctor's schedule
+      await doctor.save();
+
+      // Create a new appointment for the follow-up
+      const newAppointment = new Appointment({
+          doctor: doctorId,
+          patient: patientId,
+          date: followUpDate,
+          type: 'Follow-up'
+          // You can add more properties as needed
+      });
+
+      // Save the new appointment
+      await newAppointment.save();
+
+      return { success: true, message: 'Follow-up request accepted' };
+  } catch (error) {
+      return { success: false, message: error.message };
+  }
+}
+
+async function rejectFollowUpRequest(appointmentId) {
+  try {
+      // Find the appointment by ID
+      const appointment = await appointment.findById(appointmentId);
+
+      if (!appointment) {
+          return { success: false, message: 'Appointment not found' };
+      }
+
+      // Check if the appointment is a follow-up
+      if (appointment.type !== 'Follow-up') {
+          return { success: false, message: 'This appointment is not a follow-up' };
+      }
+
+      // Update the appointment status to "rejected"
+      appointment.status = 'rejected';
+      await appointment.save();
+
+      return { success: true, message: 'Follow-up request rejected successfully' };
+  } catch (error) {
+      return { success: false, message: error.message };
+  }
+}
+
+
 module.exports = {
   addDoctor,
   getAllPatients,
@@ -1314,5 +1402,8 @@ module.exports = {
   getAllPrescriptions,
   editDosage,
   editPrescription,
-  rescheduleAnAppointment
+  rescheduleAnAppointment,
+  acceptFollowUpRequest,
+  viewFollowUpRequests,
+  rejectFollowUpRequest,
 };
