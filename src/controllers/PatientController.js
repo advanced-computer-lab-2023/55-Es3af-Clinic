@@ -4,6 +4,7 @@ const doctorModel = require("../Models/Doctor.js");
 const userModel = require("../Models/user.js");
 const packageModel = require("../Models/Packages.js");
 const appointmentModel = require("../Models/Appointments.js");
+const MedicineModel = require("../Models/Medicine.js");
 const PrescriptionsModel = require("../Models/Prescriptions.js");
 const notificationModel = require("../Models/notifications.js");
 const followUpModel = require("../Models/FollowUpRequests.js");
@@ -842,15 +843,20 @@ const BookAnAppointment = async (req, res) => {
     );
     const startTime = matchingTimeSlot.startTime;
     const endTime = matchingTimeSlot.endTime;
+    const startTimeObject = parseTime(startTime);
+    const endTimeObject = parseTime(endTime);
 
-    const [startHour, startMinute] = startTime.split(":").map(Number);
-    const [endHour, endMinute] = endTime.split(":").map(Number);
+    const [startHour, startMinute] = [
+      startTimeObject.hours,
+      startTimeObject.minutes,
+    ];
+    const [endHour, endMinute] = [endTimeObject.hours, endTimeObject.minutes];
 
     const duration = endHour * 60 + endMinute - (startHour * 60 + startMinute);
     if (name == "") name = patient.name;
     const newAppointmentdate = new Date(matchingTimeSlot.date);
-    existingAppointmentDate.setHours(startHour);
-    existingAppointmentDate.setMinutes(startMinute);
+    newAppointmentdate.setHours(startHour);
+    newAppointmentdate.setMinutes(startMinute);
     //console.log(existingAppointmentDate)
     const newAppointment = new appointmentModel({
       patient: id,
@@ -939,25 +945,38 @@ function properDateAndTime(dateAndTime) {
   const minute = date.getMinutes();
   return `${day}/${month}/${year} at ${hour}:${minute}`;
 }
+const parseTime = (timeString) => {
+  const [time, meridiem] = timeString.split(" ");
+  const [hours, minutes] = time.split(":").map(Number);
+
+  // Adjust hours for PM
+  const adjustedHours = meridiem === "PM" ? hours + 12 : hours;
+
+  return { hours: adjustedHours, minutes };
+};
 const requestFollowUp = async (req, res) => {
   const doctorid = req.body.doctorid;
   const prevAppointmentid = req.body.appointmentid;
   const followUpAppId = req.body.followAppId;
-
   try {
     const doctor = await doctorModel.findById(doctorid);
     const prevAppointment = await appointmentModel.findById(prevAppointmentid);
-
     const matchingTimeSlot = doctor.availableTimeSlots.find(
       (slot) => slot._id == followUpAppId
     );
     const startTime = matchingTimeSlot.startTime;
     const endTime = matchingTimeSlot.endTime;
+    const startTimeObject = parseTime(startTime);
+    const endTimeObject = parseTime(endTime);
 
-    const [startHour, startMinute] = startTime.split(":").map(Number);
-    const [endHour, endMinute] = endTime.split(":").map(Number);
+    const [startHour, startMinute] = [
+      startTimeObject.hours,
+      startTimeObject.minutes,
+    ];
+    const [endHour, endMinute] = [endTimeObject.hours, endTimeObject.minutes];
 
     const duration = endHour * 60 + endMinute - (startHour * 60 + startMinute);
+    if (duration < 0) duration = 60;
     const isThere = await followUpModel.find({
       pastAppointement: prevAppointmentid,
       date: matchingTimeSlot.date,
@@ -1186,7 +1205,6 @@ const viewFamilyAppointments = async (req, res) => {
     });
     const patientId = id;
     const patient = await patientModel.findById(patientId);
-
     const familyAppNoAcc = await appointmentModel
       .find({ patient: patientId, patientName: { $ne: patient.name } })
       .populate("doctor", "name")
@@ -1623,40 +1641,42 @@ const rescheduleAnAppointment = async (req, res) => {
       //console.log(existingAppointment);
       const doctor = await doctorModel.findById(existingAppointment.doctor);
       //console.log(doctor);
-      const slotStartH=existingAppointment.date.getHours();
-      const slotStartM=existingAppointment.date.getMinutes();
-      const slotStart = `${String(slotStartH).padStart(2, '0')}:${String(slotStartM).padStart(2, '0')}`;
-      const slotDate = existingAppointment.date.toISOString().split('T')[0];
+      const slotStartH = existingAppointment.date.getHours();
+      const slotStartM = existingAppointment.date.getMinutes();
+      const slotStart = `${String(slotStartH).padStart(2, "0")}:${String(
+        slotStartM
+      ).padStart(2, "0")}`;
+      const slotDate = existingAppointment.date.toISOString().split("T")[0];
       //console.log(slotDate)
-      const slotEndH = Math.floor((slotStartH * 60 + slotStartM + existingAppointment.duration) / 60);
-      const slotEndM = (slotStartH * 60 + slotStartM + existingAppointment.duration) % 60;
-  
+      const slotEndH = Math.floor(
+        (slotStartH * 60 + slotStartM + existingAppointment.duration) / 60
+      );
+      const slotEndM =
+        (slotStartH * 60 + slotStartM + existingAppointment.duration) % 60;
+
       // Combine slotEndH and slotEndM into slotEnd
-      const slotEnd = `${String(slotEndH).padStart(2, '0')}:${String(slotEndM).padStart(2, '0')}`;
-  
+      const slotEnd = `${String(slotEndH).padStart(2, "0")}:${String(
+        slotEndM
+      ).padStart(2, "0")}`;
 
       // Use the existing time slot information to calculate duration
       const matchingTimeSlot = doctor.availableTimeSlots.find(
         (slot) => slot._id == newAppointmentid
       );
-      
+
       //console.log(matchingTimeSlot)
       const startTime = matchingTimeSlot.startTime;
       const endTime = matchingTimeSlot.endTime;
       //console.log(startTime,endTime);
 
-      const startParts = startTime.split(":");
-      const endParts = endTime.split(":");
+      const startTimeObject = parseTime(startTime);
+      const endTimeObject = parseTime(endTime);
 
-      if (startParts.length !== 2 || endParts.length !== 2) {
-        console.error("Invalid time format");
-        return res.status(400).send("Invalid time format");
-      }
-
-      const [startHour, startMinute] = startParts.map((part) =>
-        parseInt(part, 10)
-      );
-      const [endHour, endMinute] = endParts.map((part) => parseInt(part, 10));
+      const [startHour, startMinute] = [
+        startTimeObject.hours,
+        startTimeObject.minutes,
+      ];
+      const [endHour, endMinute] = [endTimeObject.hours, endTimeObject.minutes];
 
       //console.log("startHour:", startHour);
       //console.log("startMinute:", startMinute);
@@ -1665,6 +1685,7 @@ const rescheduleAnAppointment = async (req, res) => {
 
       const duration =
         endHour * 60 + endMinute - (startHour * 60 + startMinute);
+      if (duration < 0) duration = 60;
       //console.log(duration);
 
       // Update the appointment with the new date or time slot
@@ -1686,12 +1707,18 @@ const rescheduleAnAppointment = async (req, res) => {
           $pull: { availableTimeSlots: { _id: newAppointmentid } },
         }
       );
-      
+
       // Add the rescheduled appointment to availableTimeSlots
       await doctorModel.findOneAndUpdate(
         { _id: existingAppointment.doctor },
         {
-          $push: { availableTimeSlots: { date: slotDate, startTime: slotStart, endTime: slotEnd } },
+          $push: {
+            availableTimeSlots: {
+              date: slotDate,
+              startTime: slotStart,
+              endTime: slotEnd,
+            },
+          },
         }
       );
       // Send emails
@@ -1748,12 +1775,15 @@ const payForPrescripFromWallet = async (req, res) => {
       return;
     }
     for (const med of prescription.medicine) {
-      let { medID, filled } = med;
-      if (medID.Quantity > 0) {
+      const m = await MedicineModel.findOne({ Name: med.medID.Name });
+      let { medID } = med;
+      if (m.Quantity > 0) {
         if (medID.Price + total <= patient.amountInWallet) {
           total += medID.Price;
           med.filled = true;
-          medID.Quantity--;
+          m.Quantity--;
+          m.Sales++;
+          await m.save();
         } else {
           msg +=
             "Medicine " +
@@ -1786,7 +1816,58 @@ const payForPrescripFromWallet = async (req, res) => {
     });
   }
 };
+const payForPrescripFromCredit = async (req, res) => {
+  const prescriptionId = req.body.p;
+  const prescription = await PrescriptionsModel.findById(prescriptionId)
+    .populate({
+      path: "medicine.medID",
+      select: "Name Price Quantity -_id",
+    })
+    .exec();
+  let msg = "";
+  let lineItems = [];
 
+  for (const med of prescription.medicine) {
+    const m = await MedicineModel.findOne({ Name: med.medID.Name });
+    let { medID } = med;
+    if (m.Quantity > 0) {
+      lineItems.push({
+        price_data: {
+          currency: "egp", // Update currency if necessary
+          product_data: {
+            name: medID.Name,
+          },
+          unit_amount: m.Price * 100, // Stripe uses cents
+        },
+        quantity: 1,
+      });
+      med.filled = true;
+      m.Quantity--;
+      m.Sales++;
+      await m.save();
+    } else {
+      msg += "Medicine " + medID.Name + " is not available \n";
+    }
+  }
+  let flag = true;
+  for (const med of prescription.medicine) {
+    const { filled } = med;
+    if (!filled) {
+      flag = false;
+      break;
+    }
+  }
+  if (flag) prescription.status = "filled";
+  await prescription.save();
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    mode: "payment",
+    line_items: lineItems,
+    success_url: "http://localhost:3000/patient/viewPrescriptions",
+    cancel_url: "http://localhost:3000/patient",
+  });
+  res.json({ url: session.url, message: msg });
+};
 module.exports = {
   addFamilyMember,
   viewFamilyMembers,
@@ -1823,4 +1904,5 @@ module.exports = {
   getAllPrescriptionsForPatient,
   payForPrescripFromWallet,
   rescheduleAnAppointment,
+  payForPrescripFromCredit,
 };

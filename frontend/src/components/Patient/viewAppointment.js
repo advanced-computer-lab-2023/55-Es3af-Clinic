@@ -13,8 +13,8 @@ const ViewAppointments = () => {
     appointmentid: "",
   };
   const intialBody1 = {
-    appointmentid:"",
-    prevappointmentid:"",
+    appointmentid: "",
+    prevappointmentid: "",
   };
 
   const navigate = useNavigate();
@@ -22,11 +22,11 @@ const ViewAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [timeSlots, setTimeSlots] = useState([]);
   const [appointmentBanner, setAppointmentBanner] = useState(false);
+  const [appBanner, setAppBanner] = useState(false);
   const [doctorHasAppointments, setDoctorHasAppointments] = useState(false);
   const [activeTab, setActiveTab] = useState("myAppointments");
   const [loading, setLoading] = useState(false);
-  const [body1,setBody1]= useState(intialBody1);
-
+  const [body1, setBody1] = useState(intialBody1);
 
   useEffect(() => {
     retrieveAppointments();
@@ -46,7 +46,6 @@ const ViewAppointments = () => {
     if (serviceFunction) {
       serviceFunction()
         .then((response) => {
-          console.log(response.data);
           if (Array.isArray(response.data)) {
             const flattenedUsers = response.data.flat();
             setAppointments(flattenedUsers);
@@ -74,9 +73,9 @@ const ViewAppointments = () => {
     return `${day}/${month}/${year}`;
   };
 
-
   const handleFollowUpRequest = async (appId, doctorId) => {
     try {
+      setTimeSlots([]);
       setAppointmentBanner(true);
       setBody((prevBody) => {
         const updatedBody = {
@@ -97,34 +96,23 @@ const ViewAppointments = () => {
       setDoctorHasAppointments(false); // No appointments in case of an error
     }
   };
-  const handleRequest = (followId) => {
+  const handleRequest = async (followId) => {
     // Create a new object with the updated followAppId
     const updatedBody = {
       ...body,
       followAppId: followId,
     };
-
-    // Update the state
     setBody(updatedBody);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Make the asynchronous call after updating the state
-        const response = await PatientService.requestFollowUp(body);
-        console.log(response);
-        alert(response.data);
-      } catch (error) {
-        console.error("Error requesting a follow-up:", error);
-      }
-    };
-
-    // Check if followAppId has been updated
-    if (body.followAppId !== "") {
-      fetchData();
+    try {
+      // Make the asynchronous call after updating the state
+      const response = await PatientService.requestFollowUp(updatedBody);
+      console.log(response);
+      alert(response.data);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error requesting a follow-up:", error);
     }
-  }, [body.followAppId]); // useEffect will be triggered when followAppId changes
+  };
 
   const formatDate = (dateO) => {
     const date = new Date(dateO);
@@ -133,41 +121,30 @@ const ViewAppointments = () => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
-  const handleCancel = (appId) => {
+  const handleCancel = async (appId) => {
     // Create a new object with the updated appointmentId
     const updatedBody = {
       ...body,
       appointmentid: appId,
     };
-
-    // Update the state
     setBody(updatedBody);
+    try {
+      // Make the asynchronous call after updating the state
+      const response = await PatientService.cancelAppointment(updatedBody);
+      console.log(response);
+      alert(response.data.message);
+
+      // Reload the page
+      window.location.reload();
+    } catch (error) {
+      console.error("Error canceling appointment:", error);
+    }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Make the asynchronous call after updating the state
-        const response = await PatientService.cancelAppointment(body);
-        console.log(response);
-        alert(response.data.message);
-
-        // Reload the page
-        window.location.reload();
-      } catch (error) {
-        console.error("Error canceling appointment:", error);
-      }
-    };
-
-    // Check if appointmentid has been updated
-    if (body.appointmentid !== "") {
-      fetchData();
-    }
-  }, [body.appointmentid, setBody]);
   const handleReschedule = async (appId, doctorid) => {
+    setTimeSlots([]);
     console.log("Reschedule button clicked. Appointment ID:", appId);
     try {
-      
       // Create a new object with the updated appointmentId
       const updatedBody = {
         ...body1,
@@ -177,31 +154,33 @@ const ViewAppointments = () => {
       // Update the state
       setBody1(updatedBody);
       // Make the asynchronous call after updating the state
-      const response = await patientService.AvailableAppointments(doctorid);
-      const appointmentsData = response;
-      console.log(response);
-      setAppointments(appointmentsData);
+      const response = await patientService.AvailableAppointments(doctorid._id);
+      const appointmentsData = response.data;
+      setTimeSlots(appointmentsData);
       setDoctorHasAppointments(appointmentsData.length > 0);
-      setAppointmentBanner(true);
+      setAppBanner(true);
       console.log(response);
     } catch (error) {
-      console.error('Error loading time slots:', error);
+      console.error("Error loading time slots:", error);
     }
   };
 
-  const handleRescheduleThis= async(tID)=>{
-    try{
+  const handleRescheduleThis = async (tID) => {
+    try {
       const updatedBody = {
         ...body1,
         appointmentid: tID,
       };
-      const response= await patientService.rescheduleAnAppointment(updatedBody)
-      alert(response.data)
       setBody1(updatedBody);
-    }catch (error) {
-      console.error('Error loading time slots:', error);
+      const response = await patientService.rescheduleAnAppointment(
+        updatedBody
+      );
+      alert(response.data);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error loading time slots:", error);
     }
-  }
+  };
 
   return (
     <div>
@@ -300,23 +279,30 @@ const ViewAppointments = () => {
                           </button>
                         )}
                         {appointment.status === "pending" && (
-                    <div>
-                        <div className="cancel-button-container">
-                      <button className="btn-cancel"
-                      style={{marginInlineEnd:0}} 
-                        onClick={() => handleCancel(appointment._id)}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                    <button className="btn btn-primary"
-                      style={{marginInlineEnd:0}} 
-                        onClick={() => handleReschedule(appointment._id, appointment.doctor)}
-                      >
-                        Reschedule
-                      </button>
-                      </div>
-                    )}
+                          <div>
+                            <div className="cancel-button-container">
+                              <button
+                                className="btn-cancel"
+                                style={{ marginInlineEnd: 0 }}
+                                onClick={() => handleCancel(appointment._id)}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                            <button
+                              className="btn btn-primary"
+                              style={{ marginInlineEnd: 0 }}
+                              onClick={() =>
+                                handleReschedule(
+                                  appointment._id,
+                                  appointment.doctor
+                                )
+                              }
+                            >
+                              Reschedule
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
@@ -373,61 +359,59 @@ const ViewAppointments = () => {
               )}
             </div>
           )}
-           {appointmentBanner && <div className="overlay"></div>}
+          {appBanner && <div className="overlay"></div>}
 
-{appointmentBanner && (
-  <div className="member-banner" style={{ overflowY: "auto" }}>
-    <div
-      className="close-icon"
-      onClick={() => setAppointmentBanner(false)}
-    >
-      &times; {/* Unicode "times" character (×) */}
-    </div>
-    {doctorHasAppointments ? (
-      appointments.map((appointment) => (
-        <div
-          key={appointment._id}
-          className="card"
-          style={{
-            width: "450px",
-            backgroundColor: "#282c34",
-            margin: "10px",
-          }}
-        >
-          <div className="card-body">
-            <h3 className="card-title" style={{ color: "white" }}>
-              Date: {formatDateOfBirth(appointment.date)}
-            </h3>
-            <h3 className="card-title" style={{ color: "white" }}>
-              Start Time: {appointment.startTime}
-            </h3>
-            <h3 className="card-title" style={{ color: "white" }}>
-              End Time: {appointment.endTime}
-            </h3>
-            <button
-              className="btn btn-primary"
-              onClick={() => {
-                console.log("Clicked Appointment ID:", appointment._id);
-                handleRescheduleThis(appointment._id);
-              }}
-            >
-              Reschedule To This Appointment
-            </button>
-          </div>
-        </div>
-      ))
-    ) : (
-      <div>
-        <h2>No Appointments</h2>
-      </div>
-    )}
-  </div>
-)}
-        
+          {appBanner && (
+            <div className="member-banner" style={{ overflowY: "auto" }}>
+              <div className="close-icon" onClick={() => setAppBanner(false)}>
+                &times; {/* Unicode "times" character (×) */}
+              </div>
+              {doctorHasAppointments ? (
+                timeSlots.map((appointment) => (
+                  <div
+                    key={appointment._id}
+                    className="card"
+                    style={{
+                      width: "450px",
+                      backgroundColor: "#282c34",
+                      margin: "10px",
+                    }}
+                  >
+                    <div className="card-body">
+                      <h3 className="card-title" style={{ color: "white" }}>
+                        Date: {formatDateOfBirth(appointment.date)}
+                      </h3>
+                      <h3 className="card-title" style={{ color: "white" }}>
+                        Start Time: {appointment.startTime}
+                      </h3>
+                      <h3 className="card-title" style={{ color: "white" }}>
+                        End Time: {appointment.endTime}
+                      </h3>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => {
+                          console.log(
+                            "Clicked Appointment ID:",
+                            appointment._id
+                          );
+                          handleRescheduleThis(appointment._id);
+                        }}
+                      >
+                        Reschedule To This Appointment
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div>
+                  <h2>No Appointments</h2>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
-    
   );
 };
 

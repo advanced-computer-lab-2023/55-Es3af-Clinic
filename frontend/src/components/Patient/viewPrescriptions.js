@@ -91,71 +91,39 @@ const PrescriptionList = (props) => {
           setLoading(false);
         });
         alert(response.data);
-        // You may also want to handle the state or perform other actions based on the response
+        window.location.reload();
       } catch (e) {
         console.error(e);
         // Handle errors if necessary
       }
     } else {
       console.error("Prescription ID is empty");
-      // Handle the case where prescription ID is empty, if necessary
     }
   }
 
   async function payWithCredit(e) {
     e.preventDefault();
-    // setCBody(async (prevCBody) => {
-    //   const updatedCBody = {
-    //     lineItems: [
-    //       {
-    //         price_data: {
-    //           currency: "egp",
-    //           product_data: {
-    //             name: "Appointment",
-    //           },
-    //           unit_amount: body.amount.toFixed(0) * 100,
-    //         },
-    //         quantity: 1,
-    //       },
-    //     ],
-    //     success_url: "http://localhost:3000/patient/viewPrescriptions",
-    //     cancel_url: "http://localhost:3000/patient",
-    //   };
-    //   console.log(updatedCBody);
-    //   try {
-    //     const response = await fetch(
-    //       "http://localhost:8000/patient/createSession",
-    //       {
-    //         method: "POST",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify(updatedCBody),
-    //       }
-    //     );
+    try {
+      const response = await fetch("http://localhost:8000/patient/payForPres", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
 
-    //     if (!response.ok) {
-    //       const errorResponse = await response.json();
-    //       console.error(errorResponse); // Log the error details
-    //       return;
-    //     }
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        console.error(errorResponse); // Log the error details
+        return;
+      }
 
-    //     const jsonResponse = await response.json();
-    //     const { url } = jsonResponse;
-    //     window.location = url;
-    //     patientService
-    //       .BookAnAppointment(body)
-    //       .then((response1) => {
-    //         alert(response1.data + "\n Amount deducted successfully");
-    //       })
-    //       .catch((e) => {
-    //         console.log(e);
-    //       });
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
-    //   return updatedCBody;
-    // });
+      const jsonResponse = await response.json();
+      const { url } = jsonResponse;
+      window.location = url;
+    } catch (e) {
+      console.log(e);
+    }
   }
   return (
     <div>

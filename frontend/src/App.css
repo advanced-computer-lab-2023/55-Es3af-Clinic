@@ -70,7 +70,9 @@
 }
 .member-banner2 {
   position: fixed;
-  top: auto;
+  top: 5%;
+  bottom: 2%;
+  overflow-y: auto;
   left: auto;
   width: 70%;
   background: #282c34;
@@ -91,7 +93,7 @@
 }
 .tabs {
   position: fixed;
-  top: 5%;
+  top: 60px;
   display: flex;
   background-color: #ddd; /* Grey background for the tabs */
   border-radius: 15px; /* Rounded corners for the entire tab container */
