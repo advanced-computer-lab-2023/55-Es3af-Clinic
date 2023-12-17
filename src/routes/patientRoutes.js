@@ -79,5 +79,7 @@ patientRoutes.patch(
   "/payUsingWallet/:prescriptionID",
   patientController.payForPrescripFromWallet
 );
+patientRoutes.post("/payForPres", patientController.payForPrescripFromCredit);
+
 //patientRoutes.get('/viewPrescriptions', patientController.getAllPrescriptionsForPatient);
 module.exports = { patientRoutes };
