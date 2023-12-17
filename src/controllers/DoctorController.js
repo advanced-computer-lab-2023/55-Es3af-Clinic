@@ -1117,17 +1117,17 @@ const updatePatientPrescription = async (req, res) => {
 }
 
 const rescheduleAnAppointment = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "55es3afclinicpharmacy@gmail.com",
+      pass: "itqq jnfy kirk druf",
+    },
+  });
+
   const prevappointmentid = req.body.prevappointmentid;
   const newAppointmentid = req.body.appointmentid;
  // Add this field for the new date  
-  try {
-    // const transporter = nodemailer.createTransport({
-    //   service: "gmail",
-    //   auth: {
-    //     user: "55es3afclinicpharmacy@gmail.com",
-    //     pass: "itqq jnfy kirk druf",
-    //   },
-    // });
 
     try {
       // if (id == '') {
@@ -1146,6 +1146,7 @@ const rescheduleAnAppointment = async (req, res) => {
 
       // Find the existing appointment
       const existingAppointment = await appointment.findById(prevappointmentid);
+      const oldDate = existingAppointment.date
      // console.log(existingAppointment);
       const doctor = await doctorModel.findById(existingAppointment.doctor);
       //console.log(doctor);
@@ -1216,24 +1217,44 @@ const rescheduleAnAppointment = async (req, res) => {
         }
       );
 
-      // Send emails
-      // const emailToPatient = await transporter.sendMail({
-      //   from: '"Clinic" <55es3afclinicpharmacy@gmail.com>',
-      //   to: patient.email,
-      //   subject: "Rescheduled Appointment",
-      //   text: `You have rescheduled an appointment with doctor ${existingAppointment.doctorName} at ${existingAppointment.date}.`,
-      //   html: <b>You have rescheduled an appointment with doctor ${existingAppointment.doctorName} at ${existingAppointment.date}.</b>,
-      // });
+      const patient = await patientModel.findById(existingAppointment.patient)
+
+      const dateAndTime = properDateAndTime(existingAppointmentDate.date);
+      const patientMessage = `Doctor ${doctor.name} rescheduled your appointment with them on ${properDateAndTime(oldDate)} to ${dateAndTime}.`;
+      const doctorMessage = `You rescheduled your appointment with patient ${existingAppointment.patientName} on ${properDateAndTime(oldDate)} to ${dateAndTime}.`;
+
+      const emailToPatient = await transporter.sendMail({
+        from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+        to: patient.email, // list of receivers
+        subject: "Rescheduled Appointment", // Subject line
+        text: patientMessage, // plain text body
+        html: `<b>${patientMessage}</b>`, // html body
+      });
+      const patientNotif = new notificationModel({
+        receivers: patient._id,
+        message: patientMessage,
+      });
+      patientNotif.save().catch();
+
+      const emailToDoctor = await transporter.sendMail({
+        from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+        to: doctor.email, // list of receivers
+        subject: "Rescheduled Appointment", // Subject line
+        text: doctorMessage, // plain text body
+        html: `<b>${doctorMessage}</b>`, // html body
+      });
+      const doctorNotif = new notificationModel({
+        receivers: doctor._id,
+        message: doctorMessage,
+      });
+      doctorNotif.save().catch();
 
       res.status(200).send("Appointment was rescheduled successfully");
     } catch (error) {
       console.error(error);
       res.status(500).send("An error occurred while rescheduling the appointment");
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("An error occurred while rescheduling the appointment");
-  }
+
 };
 
 
