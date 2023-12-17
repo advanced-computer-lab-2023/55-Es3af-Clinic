@@ -42,6 +42,8 @@ The codebase integrates middleware functions, such as those handling authenticat
 
 
 Screenshots: Pictures of how the system looks
+![WhatsApp Image 2023-12-17 at 05 34 09_9cc29700](https://github.com/advanced
+![WhatsApp Image 2023-12-17 at 05 50 44_061be18c](https://github.com/advanced-computer-lab-2023/55-Es3af-Clinic/assets/118920464/4d320553-4fcb-4980-8ee6-55eb3557805a)
 
 
 
