@@ -42,9 +42,11 @@ The codebase integrates middleware functions, such as those handling authenticat
 
 
 Screenshots: Pictures of how the system looks
-![WhatsApp Image 2023-12-17 at 05 34 09_9cc29700](https://github.com/advanced
-![WhatsApp Image 2023-12-17 at 05 50 44_061be18c](https://github.com/advanced-computer-lab-2023/55-Es3af-Clinic/assets/118920464/4d320553-4fcb-4980-8ee6-55eb3557805a)
-
+![WhatsApp Image 2023-12-17 at 05 30 01_1c9b4f99](https://github.com/advanced-computer-lab-2023/55-Es3af-Clinic/assets/118920464/5210acf8-a2bc-4aa3-a0c4-6b9d92e3b86b)
+![WhatsApp Image 2023-12-17 at 05 30 30_b5ae5de7](https://github.com/advanced-computer-lab-2023/55-Es3af-Clinic/assets/118920464/7a536ac1-c8e4-46e6-965a-dc76f77b2672)
+![WhatsApp Image 2023-12-17 at 05 31 38_1d5ca324](https://github.com/advanced-computer-lab-2023/55-Es3af-Clinic/assets/118920464/a9782984-8722-4da9-bf22-0d0f54e1befc)
+![WhatsApp Image 2023-12-17 at 05 34 09_9cc29700](https://github.com/advanced-computer-lab-2023/55-Es3af-Clinic/assets/118920464/d81729af-eb53-4f97-bb70-e3962e38c44e)
+![WhatsApp Image 2023-12-17 at 05 23 04_2886dce5](https://github.com/advanced-computer-lab-2023/55-Es3af-Clinic/assets/118920464/726b10c9-d19f-4b17-b73a-07efb1931eb9)
 
 
 
@@ -325,7 +327,9 @@ As a patient, I can: View appointments for me and my family members.
 As a patient, I can: View subscribed health packages for me and my family.
 
 Code examples: 
-
+![WhatsApp Image 2023-12-17 at 05 49 50_be96474b](https://github.com/advanced-computer-lab-2023/55-Es3af-Clinic/assets/118920464/afc40cc7-0a81-4d36-b008-1a5cbbadb773)
+![WhatsApp Image 2023-12-17 at 05 50 44_061be18c](https://github.com/advanced-computer-lab-2023/55-Es3af-Clinic/assets/118920464/8569b73a-be03-4768-a875-623d1cab2ff0)
+![WhatsApp Image 2023-12-17 at 05 48 50_eefbd4b5](https://github.com/advanced-computer-lab-2023/55-Es3af-Clinic/assets/118920464/de141e91-925e-4190-b2da-7914f94d3354)
 
 
 
@@ -487,6 +491,9 @@ POST: Add information
 PUT: Replace information
 PATCH: Update certain information
 DELETE: Delete information
+![WhatsApp Image 2023-12-17 at 05 23 59_d80d9694](https://github.com/advanced-computer-lab-2023/55-Es3af-Clinic/assets/118920464/986a8054-a7e1-4706-bf73-f4cce8954b0d)
+![WhatsApp Image 2023-12-17 at 05 23 46_38185a29](https://github.com/advanced-computer-lab-2023/55-Es3af-Clinic/assets/118920464/a5f9747b-e818-4fe4-abb5-3cb1439946e4)
+
 
 
 How to Use (2 marks) // Check The Reference Document Above// 
