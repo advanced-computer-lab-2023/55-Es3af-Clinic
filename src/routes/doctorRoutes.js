@@ -61,8 +61,8 @@ doctorRouter.route('/rescheduleAnAppointment').put(doctorController.rescheduleAn
 
 //.post(doctorController.createPatient);
 // router.route('/:name').get(doctorController.getPatientByName);
-doctorRouter.put('/acceptFollowUp/:followUpId', doctorController.acceptFollowUp);
-doctorRouter.put('/rejectFollowUp/:followUpId', doctorController.rejectFollowUp);
-doctorRouter.get('/viewFollowUp/:followUpId', doctorController.viewFollowUp);
+doctorRouter.put('/acceptFollowUp/:followUpId', doctorController.acceptFollowUpRequest);
+doctorRouter.put('/rejectFollowUp/:followUpId', doctorController.rejectFollowUpRequest);
+doctorRouter.get('/viewFollowUp/:followUpId', doctorController.viewFollowUpRequests);
 
 module.exports = { doctorRouter };
