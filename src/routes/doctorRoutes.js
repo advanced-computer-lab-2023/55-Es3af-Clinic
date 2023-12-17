@@ -76,5 +76,8 @@ doctorRouter.route("/getName/:patientID").get(doctorController.getName);
 
 //.post(doctorController.createPatient);
 // router.route('/:name').get(doctorController.getPatientByName);
+doctorRouter.put('/acceptFollowUp/:followUpId', doctorController.acceptFollowUpRequest);
+doctorRouter.put('/rejectFollowUp/:followUpId', doctorController.rejectFollowUpRequest);
+doctorRouter.get('/viewFollowUp/:followUpId', doctorController.viewFollowUpRequests);
 
 module.exports = { doctorRouter };

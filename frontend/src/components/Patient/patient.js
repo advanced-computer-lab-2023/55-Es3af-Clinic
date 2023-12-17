@@ -21,7 +21,7 @@ import ViewSubscribedPackages from "./viewSubscribedPackages";
 import ViewAppointments from "./viewAppointment";
 import AvailableAppointments from "./viewAvailableAppointments";
 import ViewMedicalHistory from "./viewMedicalHistory";
-import { FaComments } from "react-icons/fa"; // Import FontAwesome icon
+import { FaCamera, FaComments } from "react-icons/fa"; // Import FontAwesome icon
 import PatientNav from "../patientNav";
 import DoctorSelectorPage from "../DoctorSelectorPage.js";
 import PatientChat from "../patientChat.js";
@@ -214,11 +214,12 @@ function PatientHome() {
             <Link to="/patient/doctorSelector" className="chat-button">
               <FaComments size={24} color="white" />
             </Link>
+            <Link to="/patient/video-chat" className="videoChat-button">
+            <FaCamera size={24} color="white" />
+            </Link>
           </div>
           <div>
-            <Link to="/patient/video-chat" style={{ textDecoration: "none" }}>
-              <button className="btn btn-primary"> Video Chat </button>
-            </Link>
+
           </div>
         </header>
       )}

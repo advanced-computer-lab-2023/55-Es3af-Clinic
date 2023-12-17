@@ -168,6 +168,17 @@ class DoctorService {
       throw error;
     }
   }
+  async editPrescription(prescriptionData) {
+    try {
+      const response = await http.put(
+        "/doctor/editPrescription",
+        prescriptionData
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default new DoctorService();

@@ -105,16 +105,13 @@ const ViewAllPrescriptions = () => {
     try {
       const newDosageNew = prompt("Enter the new dosage:");
       if (newDosageNew !== null) {
-        console.log('Prescription ID:', prescriptionId);
-        console.log('Medicine ID:', medicineId);
-        console.log('New Dosage:', newDosageNew);
+       
 
         const newDose = {
           prescriptionId: prescriptionId,
           medicineId: medicineId,
           newDosage: newDosageNew
         }
-        console.log(newDose)
         setNewDosage(newDose)
   
         
@@ -196,7 +193,11 @@ const ViewAllPrescriptions = () => {
                         {prescription.prescriptions.map((medicine, i) => (
                           <li key={i}>
                             {/* Display medicine details */}
-                            <strong>Name: </strong> {medicine.name}<br />
+                            {medicine.medID && (
+                              <div>
+                                <strong>Name: </strong> {medicine.medID.Name}<br />
+                              </div>
+                            )}                            
                             <strong>Dosage: </strong> {medicine.dosage}<br />
                             <strong>Duration: </strong> {medicine.duration}<br />
                             <button
