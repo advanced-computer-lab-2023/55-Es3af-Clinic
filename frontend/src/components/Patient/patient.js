@@ -25,6 +25,7 @@ import { FaComments } from "react-icons/fa"; // Import FontAwesome icon
 import PatientNav from "../patientNav";
 import DoctorSelectorPage from "../DoctorSelectorPage.js";
 import PatientChat from "../patientChat.js";
+import VideoChat from "../VideoChat.js";
 
 function PatientPage() {
   return (
@@ -63,6 +64,7 @@ function PatientPage() {
       <Route path="/viewMedicalHistory" element={<ViewMedicalHistory />} />
       <Route path="/doctorSelector" element={<DoctorSelectorPage />} />
       <Route path="/patientChat" element={<PatientChat />} />
+      <Route path="/video-chat" element={<VideoChat />} />
     </Routes>
   );
 }
@@ -211,6 +213,11 @@ function PatientHome() {
             </a>
             <Link to="/patient/doctorSelector" className="chat-button">
               <FaComments size={24} color="white" />
+            </Link>
+          </div>
+          <div>
+            <Link to="/patient/video-chat" style={{ textDecoration: "none" }}>
+              <button className="btn btn-primary"> Video Chat </button>
             </Link>
           </div>
         </header>

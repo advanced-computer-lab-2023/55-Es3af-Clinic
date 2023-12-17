@@ -16,6 +16,7 @@ const packageModel = require("../Models/Packages.js");
 const nodemailer = require("nodemailer");
 const notificationModel = require("../Models/notifications.js");
 const appointments = require("../Models/Appointments.js");
+const { PDFDocument, rgb, StandardFonts } = require("pdf-lib");
 
 // const Patient = JSON.parse(fs.readFileSync('./data/patient.json'));
 // const Doctors = JSON.parse(fs.readFileSync('./data/doctor.json'));
@@ -1100,134 +1101,191 @@ const editDosage = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+const updatePatientPrescription = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { medicineUpdates } = req.body;
+    const Prescription = await prescription.findById(id);
+    if (!Prescription) {
+      return res.status(404).json({ message: "Prescription not found" });
+    }
+
+    medicineUpdates.forEach((update) => {
+      const { medID, dosage, duration } = update;
+      const medicineToUpdate = Prescription.medicine.find(
+        (med) => med.medID.toString() === medID
+      );
+
+      if (medicineToUpdate) {
+        medicineToUpdate.dosage = dosage;
+        medicineToUpdate.duration = duration;
+      }
+    });
+
+    const updatedPrescription = await Prescription.save();
+
+    return res.json({
+      message: "Prescription updated successfully",
+      Prescription,
+    });
+  } catch (error) {
+    console.error("Error updating prescription:", error);
+    return res
+      .status(500)
+      .json({ message: "Error updating prescription", error: error.message });
+  }
+};
 
 const rescheduleAnAppointment = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "55es3afclinicpharmacy@gmail.com",
+      pass: "itqq jnfy kirk druf",
+    },
+  });
+
   const prevappointmentid = req.body.prevappointmentid;
   const newAppointmentid = req.body.appointmentid;
   // Add this field for the new date
+
   try {
-    // const transporter = nodemailer.createTransport({
-    //   service: "gmail",
-    //   auth: {
-    //     user: "55es3afclinicpharmacy@gmail.com",
-    //     pass: "itqq jnfy kirk druf",
-    //   },
-    // });
+    // if (id == '') {
+    //   const token = req.cookies.jwt;
+    //   jwt.verify(token, 'supersecret', (err, decodedToken) => {
+    //     if (err) {
+    //       res.status(401).json({ message: "You are not logged in." })
+    //     }
+    //     else {
+    //       id = decodedToken.name;
+    //     }
+    //   });
+    // }
 
-    try {
-      // if (id == '') {
-      //   const token = req.cookies.jwt;
-      //   jwt.verify(token, 'supersecret', (err, decodedToken) => {
-      //     if (err) {
-      //       res.status(401).json({ message: "You are not logged in." })
-      //     }
-      //     else {
-      //       id = decodedToken.name;
-      //     }
-      //   });
-      // }
+    //const patient = await patientModel.findById(prevappointmentid.patient);
 
-      //const patient = await patientModel.findById(prevappointmentid.patient);
+    // Find the existing appointment
+    const existingAppointment = await appointment.findById(prevappointmentid);
+    const oldDate = existingAppointment.date;
+    // console.log(existingAppointment);
+    const doctor = await doctorModel.findById(existingAppointment.doctor);
+    //console.log(doctor);
+    const slotStartH = existingAppointment.date.getHours();
+    const slotStartM = existingAppointment.date.getMinutes();
+    const slotStart = `${String(slotStartH).padStart(2, "0")}:${String(
+      slotStartM
+    ).padStart(2, "0")}`;
+    const slotDate = existingAppointment.date.toISOString().split("T")[0];
+    //console.log(slotDate)
+    const slotEndH = Math.floor(
+      (slotStartH * 60 + slotStartM + existingAppointment.duration) / 60
+    );
+    const slotEndM =
+      (slotStartH * 60 + slotStartM + existingAppointment.duration) % 60;
 
-      // Find the existing appointment
-      const existingAppointment = await appointment.findById(prevappointmentid);
-      // console.log(existingAppointment);
-      const doctor = await doctorModel.findById(existingAppointment.doctor);
-      //console.log(doctor);
-      const slotStartH = existingAppointment.date.getHours();
-      const slotStartM = existingAppointment.date.getMinutes();
-      const slotStart = `${String(slotStartH).padStart(2, "0")}:${String(
-        slotStartM
-      ).padStart(2, "0")}`;
-      const slotDate = existingAppointment.date.toISOString().split("T")[0];
-      //console.log(slotDate)
-      const slotEndH = Math.floor(
-        (slotStartH * 60 + slotStartM + existingAppointment.duration) / 60
-      );
-      const slotEndM =
-        (slotStartH * 60 + slotStartM + existingAppointment.duration) % 60;
+    // Combine slotEndH and slotEndM into slotEnd
+    const slotEnd = `${String(slotEndH).padStart(2, "0")}:${String(
+      slotEndM
+    ).padStart(2, "0")}`;
 
-      // Combine slotEndH and slotEndM into slotEnd
-      const slotEnd = `${String(slotEndH).padStart(2, "0")}:${String(
-        slotEndM
-      ).padStart(2, "0")}`;
+    // Use the existing time slot information to calculate duration
+    const matchingTimeSlot = doctor.availableTimeSlots.find(
+      (slot) => slot._id == newAppointmentid
+    );
+    //console.log(matchingTimeSlot)
+    const startTime = matchingTimeSlot.startTime;
+    const endTime = matchingTimeSlot.endTime;
+    //console.log(startTime,endTime);
 
-      // Use the existing time slot information to calculate duration
-      const matchingTimeSlot = doctor.availableTimeSlots.find(
-        (slot) => slot._id == newAppointmentid
-      );
-      //console.log(matchingTimeSlot)
-      const startTime = matchingTimeSlot.startTime;
-      const endTime = matchingTimeSlot.endTime;
-      //console.log(startTime,endTime);
+    const startTimeObject = parseTime(startTime);
+    const endTimeObject = parseTime(endTime);
 
-      const startTimeObject = parseTime(startTime);
-      const endTimeObject = parseTime(endTime);
+    const [startHour, startMinute] = [
+      startTimeObject.hours,
+      startTimeObject.minutes,
+    ];
+    const [endHour, endMinute] = [endTimeObject.hours, endTimeObject.minutes];
 
-      const [startHour, startMinute] = [
-        startTimeObject.hours,
-        startTimeObject.minutes,
-      ];
-      const [endHour, endMinute] = [endTimeObject.hours, endTimeObject.minutes];
+    // console.log("startHour:", startHour);
+    // console.log("startMinute:", startMinute);
+    // console.log("endHour:", endHour);
+    // console.log("endMinute:", endMinute);
 
-      // console.log("startHour:", startHour);
-      // console.log("startMinute:", startMinute);
-      // console.log("endHour:", endHour);
-      // console.log("endMinute:", endMinute);
+    const duration = endHour * 60 + endMinute - (startHour * 60 + startMinute);
+    if (duration < 0) duration = 60;
+    // Update the appointment with the new date or time slot
+    const existingAppointmentDate = new Date(matchingTimeSlot.date);
+    existingAppointmentDate.setHours(startHour);
+    existingAppointmentDate.setMinutes(startMinute);
+    //console.log(existingAppointmentDate)
+    existingAppointment.date = existingAppointmentDate;
+    existingAppointment.duration = duration;
 
-      const duration =
-        endHour * 60 + endMinute - (startHour * 60 + startMinute);
-      if (duration < 0) duration = 60;
-      // Update the appointment with the new date or time slot
-      const existingAppointmentDate = new Date(matchingTimeSlot.date);
-      existingAppointmentDate.setHours(startHour);
-      existingAppointmentDate.setMinutes(startMinute);
-      //console.log(existingAppointmentDate)
-      existingAppointment.date = existingAppointmentDate;
-      existingAppointment.duration = duration;
+    // Save the updated appointment
+    const updatedAppointment = await existingAppointment.save();
+    //console.log(updatedAppointment)
 
-      // Save the updated appointment
-      const updatedAppointment = await existingAppointment.save();
-      //console.log(updatedAppointment)
+    // Update doctor's availableTimeSlots (assuming you have a doctorId available)
+    await doctorModel.findOneAndUpdate(
+      { _id: existingAppointment.doctor },
+      {
+        $pull: { availableTimeSlots: { _id: newAppointmentid } },
+      }
+    );
 
-      // Update doctor's availableTimeSlots (assuming you have a doctorId available)
-      await doctorModel.findOneAndUpdate(
-        { _id: existingAppointment.doctor },
-        {
-          $pull: { availableTimeSlots: { _id: newAppointmentid } },
-        }
-      );
-
-      // Add the rescheduled appointment to availableTimeSlots
-      await doctorModel.findOneAndUpdate(
-        { _id: existingAppointment.doctor },
-        {
-          $push: {
-            availableTimeSlots: {
-              date: slotDate,
-              startTime: slotStart,
-              endTime: slotEnd,
-            },
+    // Add the rescheduled appointment to availableTimeSlots
+    await doctorModel.findOneAndUpdate(
+      { _id: existingAppointment.doctor },
+      {
+        $push: {
+          availableTimeSlots: {
+            date: slotDate,
+            startTime: slotStart,
+            endTime: slotEnd,
           },
-        }
-      );
+        },
+      }
+    );
 
-      // Send emails
-      // const emailToPatient = await transporter.sendMail({
-      //   from: '"Clinic" <55es3afclinicpharmacy@gmail.com>',
-      //   to: patient.email,
-      //   subject: "Rescheduled Appointment",
-      //   text: `You have rescheduled an appointment with doctor ${existingAppointment.doctorName} at ${existingAppointment.date}.`,
-      //   html: <b>You have rescheduled an appointment with doctor ${existingAppointment.doctorName} at ${existingAppointment.date}.</b>,
-      // });
+    const patient = await patientModel.findById(existingAppointment.patient);
 
-      res.status(200).send("Appointment was rescheduled successfully");
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .send("An error occurred while rescheduling the appointment");
-    }
+    const dateAndTime = properDateAndTime(existingAppointmentDate.date);
+    const patientMessage = `Doctor ${
+      doctor.name
+    } rescheduled your appointment with them on ${properDateAndTime(
+      oldDate
+    )} to ${dateAndTime}.`;
+    const doctorMessage = `You rescheduled your appointment with patient ${
+      existingAppointment.patientName
+    } on ${properDateAndTime(oldDate)} to ${dateAndTime}.`;
+
+    const emailToPatient = await transporter.sendMail({
+      from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+      to: patient.email, // list of receivers
+      subject: "Rescheduled Appointment", // Subject line
+      text: patientMessage, // plain text body
+      html: `<b>${patientMessage}</b>`, // html body
+    });
+    const patientNotif = new notificationModel({
+      receivers: patient._id,
+      message: patientMessage,
+    });
+    patientNotif.save().catch();
+
+    const emailToDoctor = await transporter.sendMail({
+      from: '"Clinic" <55es3afclinicpharmacy@gmail.com>', // sender address
+      to: doctor.email, // list of receivers
+      subject: "Rescheduled Appointment", // Subject line
+      text: doctorMessage, // plain text body
+      html: `<b>${doctorMessage}</b>`, // html body
+    });
+    const doctorNotif = new notificationModel({
+      receivers: doctor._id,
+      message: doctorMessage,
+    });
+    doctorNotif.save().catch();
+
+    res.status(200).send("Appointment was rescheduled successfully");
   } catch (error) {
     console.error(error);
     res
@@ -1260,5 +1318,6 @@ module.exports = {
   acceptOrRevokeFollowUp,
   getAllPrescriptions,
   editDosage,
+  updatePatientPrescription,
   rescheduleAnAppointment,
 };

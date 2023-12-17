@@ -11,6 +11,76 @@ const ViewAllPrescriptions = () => {
     retrievePrescriptions();
   }, []);
 
+  const handleDownload = (data) => {
+    var pdfData = `Patient name: ${data.patient}\nMedicines:\n`
+    for(var med of data.prescriptions){
+      pdfData += `-Name: ${med.name}\n--Dosage: ${med.dosage}\n--Duration: ${med.duration}\n`
+    }
+    pdfData+= `Status: ${data.status}`
+    createAndDownloadPDF(pdfData)
+  }
+
+  const createAndDownloadPDF = async (data) => {
+    const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
+    // Create a new PDF document
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage();
+  
+    // Set up font and text
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const fontSize = 12;
+    //const text = JSON.stringify(data); // Add your desired data here
+    const lines = data.split('\n');
+    let y = page.getHeight() - 4 * fontSize;
+    for (const line of lines) {
+      page.drawText(line, {
+        x: 50,
+        y,
+        size: fontSize,
+        font,
+        color: rgb(0, 0, 0), // Black color
+      });
+  
+      // Adjust the y-coordinate for the next line
+      y -= 1.5 * fontSize; // You can adjust the spacing as needed
+    }
+  
+    // Add text to the page
+    // page.drawText(text, {
+    //   x: 50,
+    //   y: page.getHeight() - 4 * fontSize,
+    //   size: fontSize,
+    //   font,
+    //   color: rgb(0, 0, 0), // Black color
+    // });
+  
+    // Serialize the PDFDocument to bytes
+    const pdfBytes = await pdfDoc.save();
+  
+    // Create a Blob containing the PDF data
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+  
+    // Create a URL for the Blob
+    const url = URL.createObjectURL(blob);
+  
+    // Create a link element
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'Prescription.pdf'; // Set the file name here
+  
+    // Append the link to the body
+    document.body.appendChild(link);
+  
+    // Simulate a click on the link to trigger download
+    link.click();
+  
+    // Remove the link from the body
+    document.body.removeChild(link);
+  
+    // Free the URL object
+    URL.revokeObjectURL(url);
+  }
+
   const retrievePrescriptions = () => {
     setLoading(true);
     DoctorService.getAllPrescriptions()
@@ -93,7 +163,7 @@ const ViewAllPrescriptions = () => {
       ) : (
         <div className="App-header">
         {prescriptions.length > 0 ? (
-           prescriptions.map((prescription, prescriptionIndex) => (
+            prescriptions.map((prescription, prescriptionIndex) => (
               <div className="card" key={prescriptionIndex} style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}>
                 <div className="card-body">
                   <h3 style={{ color: "white" }}>Patient: {prescription.patient}</h3>
@@ -101,6 +171,7 @@ const ViewAllPrescriptions = () => {
                     <ul>
                       {prescription.prescriptions.map((medicine, i) => (
                         <li key={i}>
+                          {/*console.log(prescription)*/}
                           <strong>Name: </strong> {medicine.name}<br />
                           <strong>Dosage: </strong> {medicine.dosage}<br />
                           <strong>Duration: </strong> {medicine.duration}<br />
@@ -109,8 +180,12 @@ const ViewAllPrescriptions = () => {
                           {i < prescription.prescriptions.length - 1 ? <hr /> : ""}
                         </li>
                       ))}
+                      <button className="btn btn-primary" onClick={() => handleDownload(prescription)}>Download</button>
                     </ul>
+                    {/* Display prescription status */}
                     <strong>Status: </strong> {prescription.status}
+                    {/* Button to edit prescription */}
+                    <button onClick={() => handleEditPrescription(prescription._id)}>Edit Prescription</button>
                   </div>
                 </div>
               </div>
