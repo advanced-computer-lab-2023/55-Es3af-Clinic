@@ -80,6 +80,7 @@ patientRoutes.patch(
   patientController.payForPrescripFromWallet
 );
 patientRoutes.post("/payForPres", patientController.payForPrescripFromCredit);
+patientRoutes.get("/getName/:doctorID", patientController.getName);
 
 //patientRoutes.get('/viewPrescriptions', patientController.getAllPrescriptionsForPatient);
 module.exports = { patientRoutes };

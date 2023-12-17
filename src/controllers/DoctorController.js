@@ -1115,7 +1115,9 @@ const editPrescription = async (req, res) => {
 
     // Check if the prescription is unfilled
     if (Prescription.status === "filled") {
-      return res.status(400).json({ message: "Cannot edit a filled prescription" });
+      return res
+        .status(400)
+        .json({ message: "Cannot edit a filled prescription" });
     }
 
     // Add new medicines to the prescription
@@ -1127,7 +1129,9 @@ const editPrescription = async (req, res) => {
     res.status(200).json({ message: "Prescription updated successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error updating prescription", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error updating prescription", error: error.message });
   }
 };
 
@@ -1291,91 +1295,119 @@ const rescheduleAnAppointment = async (req, res) => {
 
 async function viewFollowUpRequests(doctorId) {
   try {
-      // Find the doctor by ID
-      const doctor = await Doctor.findById(doctorId);
+    // Find the doctor by ID
+    const doctor = await Doctor.findById(doctorId);
 
-      if (!doctor) {
-          return { success: false, message: 'Doctor not found' };
-      }
+    if (!doctor) {
+      return { success: false, message: "Doctor not found" };
+    }
 
-      // Find appointments for the doctor marked as follow-ups
-      const followUpAppointments = await Appointment.find({
-          doctor: doctorId,
-          type: 'Follow-up'
-          // You can add more conditions if needed
-      }).populate('patient', 'name'); // Populate patient details if needed
+    // Find appointments for the doctor marked as follow-ups
+    const followUpAppointments = await Appointment.find({
+      doctor: doctorId,
+      type: "Follow-up",
+      // You can add more conditions if needed
+    }).populate("patient", "name"); // Populate patient details if needed
 
-      return { success: true, followUpAppointments };
+    return { success: true, followUpAppointments };
   } catch (error) {
-      return { success: false, message: error.message };
+    return { success: false, message: error.message };
   }
 }
 
 async function acceptFollowUpRequest(doctorId, patientId, followUpDate) {
   try {
-      // Find the doctor by ID
-      const doctor = await Doctor.findById(doctorId);
+    // Find the doctor by ID
+    const doctor = await Doctor.findById(doctorId);
 
-      if (!doctor) {
-          return { success: false, message: 'Doctor not found' };
-      }
+    if (!doctor) {
+      return { success: false, message: "Doctor not found" };
+    }
 
-      // Check if the follow-up date is available in doctor's schedule
-      const availableSlots = doctor.availableTimeSlots.map(slot => slot.toString());
-      const followUpDateString = followUpDate.toString();
+    // Check if the follow-up date is available in doctor's schedule
+    const availableSlots = doctor.availableTimeSlots.map((slot) =>
+      slot.toString()
+    );
+    const followUpDateString = followUpDate.toString();
 
-      if (!availableSlots.includes(followUpDateString)) {
-          return { success: false, message: 'Follow-up date not available' };
-      }
+    if (!availableSlots.includes(followUpDateString)) {
+      return { success: false, message: "Follow-up date not available" };
+    }
 
-      // Remove the follow-up date from available time slots
-      doctor.availableTimeSlots = doctor.availableTimeSlots.filter(slot => slot.toString() !== followUpDateString);
+    // Remove the follow-up date from available time slots
+    doctor.availableTimeSlots = doctor.availableTimeSlots.filter(
+      (slot) => slot.toString() !== followUpDateString
+    );
 
-      // Save the updated doctor's schedule
-      await doctor.save();
+    // Save the updated doctor's schedule
+    await doctor.save();
 
-      // Create a new appointment for the follow-up
-      const newAppointment = new Appointment({
-          doctor: doctorId,
-          patient: patientId,
-          date: followUpDate,
-          type: 'Follow-up'
-          // You can add more properties as needed
-      });
+    // Create a new appointment for the follow-up
+    const newAppointment = new Appointment({
+      doctor: doctorId,
+      patient: patientId,
+      date: followUpDate,
+      type: "Follow-up",
+      // You can add more properties as needed
+    });
 
-      // Save the new appointment
-      await newAppointment.save();
+    // Save the new appointment
+    await newAppointment.save();
 
-      return { success: true, message: 'Follow-up request accepted' };
+    return { success: true, message: "Follow-up request accepted" };
   } catch (error) {
-      return { success: false, message: error.message };
+    return { success: false, message: error.message };
   }
 }
 
 async function rejectFollowUpRequest(appointmentId) {
   try {
-      // Find the appointment by ID
-      const appointment = await appointment.findById(appointmentId);
+    // Find the appointment by ID
+    const appointment = await appointment.findById(appointmentId);
 
-      if (!appointment) {
-          return { success: false, message: 'Appointment not found' };
-      }
+    if (!appointment) {
+      return { success: false, message: "Appointment not found" };
+    }
 
-      // Check if the appointment is a follow-up
-      if (appointment.type !== 'Follow-up') {
-          return { success: false, message: 'This appointment is not a follow-up' };
-      }
+    // Check if the appointment is a follow-up
+    if (appointment.type !== "Follow-up") {
+      return { success: false, message: "This appointment is not a follow-up" };
+    }
 
-      // Update the appointment status to "rejected"
-      appointment.status = 'rejected';
-      await appointment.save();
+    // Update the appointment status to "rejected"
+    appointment.status = "rejected";
+    await appointment.save();
 
-      return { success: true, message: 'Follow-up request rejected successfully' };
+    return {
+      success: true,
+      message: "Follow-up request rejected successfully",
+    };
   } catch (error) {
-      return { success: false, message: error.message };
+    return { success: false, message: error.message };
   }
 }
-
+const getDoctor = async (req, res) => {
+  try {
+    const token = req.cookies.jwt;
+    var id;
+    jwt.verify(token, "supersecret", (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: "You are not logged in." });
+      } else {
+        id = decodedToken.name;
+      }
+    });
+    const doctor = await doctorModel.findById(id);
+    res.send(doctor);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+};
+const getName = async (req, res) => {
+  const pID = req.params.patientID;
+  const patient = await patientModel.findById(pID);
+  res.status(200).send(patient.name);
+};
 
 module.exports = {
   addDoctor,
@@ -1406,4 +1438,6 @@ module.exports = {
   acceptFollowUpRequest,
   viewFollowUpRequests,
   rejectFollowUpRequest,
+  getDoctor,
+  getName,
 };

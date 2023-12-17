@@ -12,6 +12,9 @@ class PatientService {
   getPatient() {
     return http.get("/patient/getPatient");
   }
+  getName(doctorID) {
+    return http.get(`/patient/getName/${doctorID}`);
+  }
   async createSession(body) {
     return http.post("/patient/createSession", body);
   }
@@ -119,8 +122,8 @@ class PatientService {
   async cancelAppointment(body) {
     return http.put("/patient/cancelAppointment", body);
   }
-  async rescheduleAnAppointment(body){
-    return http.put("/patient/rescheduleAnAppointment", body)
+  async rescheduleAnAppointment(body) {
+    return http.put("/patient/rescheduleAnAppointment", body);
   }
   async payForPres(presID) {
     return http.patch(`/patient/payUsingWallet/${presID}`);

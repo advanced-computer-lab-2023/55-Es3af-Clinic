@@ -4,6 +4,12 @@ class DoctorService {
   async getAllMyPatients(doctor) {
     return http.get("/doctor/getAllMyPatients", { params: { doctor } });
   }
+  getDoctor() {
+    return http.get("/doctor/getDoctor");
+  }
+  getName(patientID) {
+    return http.get(`/doctor/getName/${patientID}`);
+  }
   async updateDoctor(doctor) {
     try {
       const token = localStorage.getItem("token");
@@ -32,9 +38,7 @@ class DoctorService {
   }
   // Get contract by doctor ID
   async getContractsByDoctorId() {
-
     return await http.get("/contract/doctor/");
-
   }
 
   async getContractById(contractId) {
@@ -105,21 +109,21 @@ class DoctorService {
       throw error;
     }
   }
-async viewHealthRecords(patientId) {
-  try {
-    const response = await http.get(`/doctor/viewHealthRecords/${patientId}`);
-    return response.data;
-  } catch (error) {
-    throw error;
+  async viewHealthRecords(patientId) {
+    try {
+      const response = await http.get(`/doctor/viewHealthRecords/${patientId}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
-}
 
-addPrescription(prescription, id){
-  return http.post(`/doctor/addPrescription/${id}`, prescription)
-}
+  addPrescription(prescription, id) {
+    return http.post(`/doctor/addPrescription/${id}`, prescription);
+  }
 
-  scheduleFollowUp(details){
-    return http.post('/doctor/scheduleFollowUpAppointment', details)
+  scheduleFollowUp(details) {
+    return http.post("/doctor/scheduleFollowUpAppointment", details);
   }
 
   // async scheduleFollowUpAppointment(appointmentData) {
@@ -138,10 +142,10 @@ addPrescription(prescription, id){
   //     throw error;
   //   }
   // }
-  async cancelAppointment(body){
-    return http.put("/doctor/cancelAppointment", body)
+  async cancelAppointment(body) {
+    return http.put("/doctor/cancelAppointment", body);
   }
-  
+
   async getAllPrescriptions() {
     try {
       const response = await http.get("/doctor/getAllPrescriptions");
@@ -151,24 +155,19 @@ addPrescription(prescription, id){
     }
   }
 
-
-  async rescheduleAnAppointment(body){
-    return http.put("/doctor/rescheduleAnAppointment", body)
+  async rescheduleAnAppointment(body) {
+    return http.put("/doctor/rescheduleAnAppointment", body);
   }
-  
+
   async editDosage(dosage) {
     try {
       const response = await http.put("/doctor/editDosage", dosage);
-  
+
       return response.data;
     } catch (error) {
       throw error;
     }
   }
-  
-  
-
 }
-
 
 export default new DoctorService();
