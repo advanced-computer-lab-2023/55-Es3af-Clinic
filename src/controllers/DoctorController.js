@@ -1361,12 +1361,12 @@ async function rejectFollowUpRequest(appointmentId) {
           return { success: false, message: 'Appointment not found' };
       }
 
-      // Check if the appointment is a follow-up
+
       if (appointment.type !== 'Follow-up') {
           return { success: false, message: 'This appointment is not a follow-up' };
       }
 
-      // Update the appointment status to "rejected"
+
       appointment.status = 'rejected';
       await appointment.save();
 
