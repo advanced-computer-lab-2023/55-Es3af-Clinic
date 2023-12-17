@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Routes, Route, Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import MyPatientList from "./viewAllMyPatients";
-import { FaComments } from "react-icons/fa"; // Import FontAwesome icon
+import { FaComments, FaCamera } from "react-icons/fa"; // Import FontAwesome icon
 //import SelectPatientList from "../components/selectPatient";
 import EditDoctor from "./updateDoctor2";
 import FilteredAppointments from "./filterAppointmentsByDateAndStatus.js";
@@ -139,11 +139,12 @@ function DoctorHome() {
           <Link to="/doctor/patientSelector" className="chat-button">
             <FaComments size={24} color="white" />
           </Link>
+          <Link to="/doctor/video-chat" className="videoChat-button">
+          <FaCamera size={24} color="white" />
+          </Link>
         </div>
         <div>
-          <Link to="/doctor/video-chat" style={{ textDecoration: "none" }}>
-            <button className="btn btn-primary"> Video Chat </button>
-          </Link>
+
         </div>
       </header>
     </div>
