@@ -50,7 +50,7 @@ doctorRouter.route('/getAppointmentsWithStatusDone').get(doctorController.getApp
 doctorRouter.route('/cancelAppointment').put(doctorController.cancelAppointment);
 doctorRouter.put('/acceptOrRevokeFollowUp', doctorController.acceptOrRevokeFollowUp);
 doctorRouter.route('/editDosage').put(doctorController.editDosage);
-doctorRouter.route('/updatePatientPrescription/:id').put(doctorController.updatePatientPrescription);
+doctorRouter.route('/editPrescription').put(doctorController.editPrescription);
 
 
 doctorRouter.route('/rescheduleAnAppointment').put(doctorController.rescheduleAnAppointment);

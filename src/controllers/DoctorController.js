@@ -1014,7 +1014,7 @@ const getAllPrescriptions = async (req, res) => {
         // For each medicine in the prescription, create a modified structure
         return {
           medID: med.medID,
-          name: med.medID.Name,
+          name: med.Name,
           dosage: med.dosage,
           duration: med.duration,
           //filled: med.medID.quantity > 0 ? "filled" : "unfilled",
@@ -1088,33 +1088,34 @@ const editDosage = async (req, res) => {
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-const updatePatientPrescription = async (req, res) => {
+const editPrescription = async (req, res) => {
+  const { prescriptionId, newMedicines } = req.body;
+
   try {
-    const { id } = req.params;
-    const { medicineUpdates } = req.body;
-    const Prescription = await prescription.findById(id);
+    // Fetch the prescription from the database
+    const Prescription = await prescription.findById(prescriptionId);
+
     if (!Prescription) {
-      return res.status(404).json({ message: 'Prescription not found' });
+      return res.status(404).json({ message: "Prescription not found" });
     }
 
-    medicineUpdates.forEach((update) => {
-      const { medID, dosage, duration } = update;
-      const medicineToUpdate = Prescription.medicine.find(med => med.medID.toString() === medID);
+    // Check if the prescription is unfilled
+    if (Prescription.status === "filled") {
+      return res.status(400).json({ message: "Cannot edit a filled prescription" });
+    }
 
-      if (medicineToUpdate) {
-        medicineToUpdate.dosage = dosage;
-        medicineToUpdate.duration = duration;
-      }
-    });
+    // Add new medicines to the prescription
+    Prescription.medicine.push(...newMedicines);
 
-    const updatedPrescription = await Prescription.save();
+    // Save the updated prescription
+    await Prescription.save();
 
-    return res.json({ message: 'Prescription updated successfully', Prescription });
+    res.status(200).json({ message: "Prescription updated successfully" });
   } catch (error) {
-    console.error('Error updating prescription:', error);
-    return res.status(500).json({ message: 'Error updating prescription', error: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Error updating prescription", error: error.message });
   }
-}
+};
 
 const rescheduleAnAppointment = async (req, res) => {
   const transporter = nodemailer.createTransport({
@@ -1284,6 +1285,6 @@ module.exports = {
   acceptOrRevokeFollowUp,
   getAllPrescriptions,
   editDosage,
-  updatePatientPrescription,
+  editPrescription,
   rescheduleAnAppointment
 };
