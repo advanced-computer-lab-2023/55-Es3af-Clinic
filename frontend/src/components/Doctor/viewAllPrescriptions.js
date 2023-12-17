@@ -197,7 +197,8 @@ const ViewAllPrescriptions = () => {
                               <div>
                                 <strong>Name: </strong> {medicine.medID.Name}<br />
                               </div>
-                            )}                            <strong>Dosage: </strong> {medicine.dosage}<br />
+                            )}                            
+                            <strong>Dosage: </strong> {medicine.dosage}<br />
                             <strong>Duration: </strong> {medicine.duration}<br />
                             <button
                               className="btn btn-primary"
