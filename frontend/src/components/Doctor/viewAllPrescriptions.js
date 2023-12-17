@@ -137,7 +137,27 @@ const ViewAllPrescriptions = () => {
     }
   }, [newDosage])
   
-  
+  const handleEditPrescription = async (prescriptionId) => {
+    try {
+      const prescriptionToUpdate = prescriptions.find(
+        (prescription) => prescription.id === prescriptionId
+      );
+
+      if (prescriptionToUpdate.status === "filled") {
+        // Prescription is already filled, display message
+        alert("You cannot edit this prescription as it is filled");
+      } else {
+        // Prescription is not filled, proceed with edit
+        // Call the backend method to update prescription with ID: prescriptionId
+        const response = await DoctorService.editPrescription(prescriptionId);
+        // Handle success response
+        retrievePrescriptions();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const formatDate = (date) => {
     const options = { year: "numeric", month: "short", day: "numeric" };
     return new Date(date).toLocaleDateString(undefined, options);
@@ -161,42 +181,60 @@ const ViewAllPrescriptions = () => {
           </div>
         </div>
       ) : (
-        <div className="App-header">
-        {prescriptions.length > 0 ? (
-            prescriptions.map((prescription, prescriptionIndex) => (
-              <div className="card" key={prescriptionIndex} style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}>
-                <div className="card-body">
-                  <h3 style={{ color: "white" }}>Patient: {prescription.patient}</h3>
-                  <div className="medicine-details" style={{ color: "white" }}>
-                    <ul>
-                      {prescription.prescriptions.map((medicine, i) => (
-                        <li key={i}>
-                          {/*console.log(prescription)*/}
-                          <strong>Name: </strong> {medicine.name}<br />
-                          <strong>Dosage: </strong> {medicine.dosage}<br />
-                          <strong>Duration: </strong> {medicine.duration}<br />
-                          <button className="btn btn-primary" onClick={() => {handleEditDosage(prescription.id, medicine.medID._id);
-                                console.log(medicine)}}>Edit Dosage</button>
-                          {i < prescription.prescriptions.length - 1 ? <hr /> : ""}
-                        </li>
-                      ))}
-                      <button className="btn btn-primary" onClick={() => handleDownload(prescription)}>Download</button>
-                    </ul>
-                    {/* Display prescription status */}
-                    <strong>Status: </strong> {prescription.status}
-                    {/* Button to edit prescription */}
-                    <button onClick={() => handleEditPrescription(prescription._id)}>Edit Prescription</button>
+          <div className="App-header">
+            {prescriptions.length > 0 ? (
+              prescriptions.map((prescription, prescriptionIndex) => (
+                <div
+                  className="card"
+                  key={prescriptionIndex}
+                  style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}
+                >
+                  <div className="card-body">
+                    <h3 style={{ color: "white" }}>Patient: {prescription.patient}</h3>
+                    <div className="medicine-details" style={{ color: "white" }}>
+                      <ul>
+                        {prescription.prescriptions.map((medicine, i) => (
+                          <li key={i}>
+                            {/* Display medicine details */}
+                            <strong>Name: </strong> {medicine.name}<br />
+                            <strong>Dosage: </strong> {medicine.dosage}<br />
+                            <strong>Duration: </strong> {medicine.duration}<br />
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => handleEditDosage(prescription.id, medicine.medID._id)}
+                            >
+                              Edit Dosage
+                            </button>
+                            {i < prescription.prescriptions.length - 1 ? <hr /> : ""}
+                          </li>
+                        ))}
+                        {/* Button to download prescription */}
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => handleDownload(prescription)}
+                        >
+                          Download
+                        </button>
+                        {/* Button to edit prescription */}
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => handleEditPrescription(prescription.id)}
+                        >
+                          Edit Prescription
+                        </button>
+                      </ul>
+                      <strong>Status: </strong> {prescription.status}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          ) : (
-            <p>You haven't written any prescriptions yet</p>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
+              ))
+            ) : (
+              <p>You haven't written any prescriptions yet</p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
 export default ViewAllPrescriptions;
