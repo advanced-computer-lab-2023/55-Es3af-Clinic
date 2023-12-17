@@ -19,6 +19,7 @@ import AddPrescription from "./addPrescription.js";
 import ViewAllPrescriptions from "./viewAllPrescriptions.js";
 import PatientSelectorPage from "../PatientSelectorPage.js";
 import DoctorChat from "../doctorChat";
+import VideoChat from "../VideoChat.js";
 
 function DoctorPage() {
   return (
@@ -49,6 +50,7 @@ function DoctorPage() {
       <Route path="/contracts" element={<MyContractList />} />
       <Route path="/patientSelector" element={<PatientSelectorPage />} />
       <Route path="/doctorChat" element={<DoctorChat />} />
+      <Route path="/video-chat" element={<VideoChat />} />
     </Routes>
   );
 }
@@ -136,6 +138,11 @@ function DoctorHome() {
           </a>
           <Link to="/doctor/patientSelector" className="chat-button">
             <FaComments size={24} color="white" />
+          </Link>
+        </div>
+        <div>
+          <Link to="/doctor/video-chat" style={{ textDecoration: "none" }}>
+            <button className="btn btn-primary"> Video Chat </button>
           </Link>
         </div>
       </header>

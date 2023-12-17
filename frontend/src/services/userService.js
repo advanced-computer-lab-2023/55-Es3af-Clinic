@@ -30,18 +30,21 @@ class UserService {
     return http.post("/forgetPassword", user);
   }
 
-  updatePassword(password, type){
-    return http.put(`/${type}/updatePassword`, password)
+  updatePassword(password, type) {
+    return http.put(`/${type}/updatePassword`, password);
   }
 
-  resetPassword(user, id){
+  resetPassword(user, id) {
     return http.put(`/resetPassword/${id}`, user);
   }
 
-  getNotification(type){
-    return http.get(`/${type}/notifi`)
+  getNotification(type) {
+    return http.get(`/${type}/notifi`);
   }
 
+  getProfile() {
+    return http.get(`/profile`);
+  }
 }
 
 export default new UserService();

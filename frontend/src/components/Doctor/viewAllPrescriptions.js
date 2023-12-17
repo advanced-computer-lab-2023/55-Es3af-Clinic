@@ -163,7 +163,7 @@ const ViewAllPrescriptions = () => {
       ) : (
         <div className="App-header">
         {prescriptions.length > 0 ? (
-           prescriptions.map((prescription, prescriptionIndex) => (
+            prescriptions.map((prescription, prescriptionIndex) => (
               <div className="card" key={prescriptionIndex} style={{ width: 450, backgroundColor: "#282c34", margin: 10 }}>
                 <div className="card-body">
                   <h3 style={{ color: "white" }}>Patient: {prescription.patient}</h3>
@@ -182,7 +182,10 @@ const ViewAllPrescriptions = () => {
                       ))}
                       <button className="btn btn-primary" onClick={() => handleDownload(prescription)}>Download</button>
                     </ul>
+                    {/* Display prescription status */}
                     <strong>Status: </strong> {prescription.status}
+                    {/* Button to edit prescription */}
+                    <button onClick={() => handleEditPrescription(prescription._id)}>Edit Prescription</button>
                   </div>
                 </div>
               </div>

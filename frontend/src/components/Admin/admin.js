@@ -6,18 +6,18 @@ import UsersList from "./listUsers";
 //import AdminService from "../services/adminService";
 import DeleteUser from "./deleteUser";
 import ViewDoctorRequests from "./viewDoctorRequests";
-import UpdatePassword from '../updatePassword';
+import UpdatePassword from "../updatePassword";
 import Packages from "./packages";
 import packageService from "../../services/packageService";
 import UpdatePackage from "../updatePackage";
 import { Link } from "react-router-dom";
 import Navbar from "../navbar";
 import AdminNav from "../adminNav";
+import VideoChat from "../VideoChat";
 
 function AdminPage() {
   return (
     <Routes>
-
       <Route path="/" element={<AdminHome />} />
       <Route path="/addAdmin/*" element={<AddAdmin />} />
       <Route path="/users/*" element={<UsersList />} />
@@ -25,9 +25,8 @@ function AdminPage() {
       <Route path="/viewDoctorData/*" element={<ViewDoctorRequests />} />
       <Route path="/view/*" element={<ViewDoctorRequests />} />
       <Route path="/packages/*" element={<Packages />} />
-      <Route path='/updatePassword' element = {<UpdatePassword/>} />
-
-
+      <Route path="/updatePassword" element={<UpdatePassword />} />
+      <Route path="/video-chat" element={<VideoChat />} />
     </Routes>
   );
 }
@@ -44,7 +43,7 @@ function AdminHome() {
           </a>
         </div>
         <div>
-          <Link to="/admin/users" style={{ textDecoration: 'none' }}>
+          <Link to="/admin/users" style={{ textDecoration: "none" }}>
             <button className="btn btn-primary"> View Users </button>
           </Link>
         </div>
@@ -55,15 +54,26 @@ function AdminHome() {
         </div>
         <div>
           <a href="/admin/viewDoctorData" rel="noopener noreferrer">
-            <button className="btn btn-primary"> View incoming doctor requests </button>
+            <button className="btn btn-primary">
+              {" "}
+              View incoming doctor requests{" "}
+            </button>
           </a>
         </div>
         <div>
           <a href="/admin/packages" rel="noopener noreferrer">
             <button className="btn btn-primary"> Packages </button>
           </a>
-          <Link to={"/admin/updatePassword/"} style={{ textDecoration: 'none' }}>
+          <Link
+            to={"/admin/updatePassword/"}
+            style={{ textDecoration: "none" }}
+          >
             <button className="btn btn-primary"> Update my Password </button>
+          </Link>
+        </div>
+        <div>
+          <Link to="/admin/video-chat" style={{ textDecoration: "none" }}>
+            <button className="btn btn-primary"> Video Chat </button>
           </Link>
         </div>
       </header>
@@ -71,4 +81,4 @@ function AdminHome() {
   );
 }
 
-export default AdminPage; 
+export default AdminPage;
