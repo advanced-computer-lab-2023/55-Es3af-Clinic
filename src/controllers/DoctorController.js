@@ -1292,14 +1292,14 @@ const rescheduleAnAppointment = async (req, res) => {
 async function viewFollowUpRequests(doctorId) {
   try {
       // Find the doctor by ID
-      const doctor = await Doctor.findById(doctorId);
+      const doctor = await doctorModel.findById(doctorId);
 
       if (!doctor) {
           return { success: false, message: 'Doctor not found' };
       }
 
       // Find appointments for the doctor marked as follow-ups
-      const followUpAppointments = await Appointment.find({
+      const followUpAppointments = await appointment.find({
           doctor: doctorId,
           type: 'Follow-up'
           // You can add more conditions if needed
@@ -1314,7 +1314,7 @@ async function viewFollowUpRequests(doctorId) {
 async function acceptFollowUpRequest(doctorId, patientId, followUpDate) {
   try {
       // Find the doctor by ID
-      const doctor = await Doctor.findById(doctorId);
+      const doctor = await doctorModel.findById(doctorId);
 
       if (!doctor) {
           return { success: false, message: 'Doctor not found' };
@@ -1335,7 +1335,7 @@ async function acceptFollowUpRequest(doctorId, patientId, followUpDate) {
       await doctor.save();
 
       // Create a new appointment for the follow-up
-      const newAppointment = new Appointment({
+      const newAppointment = new appointment({
           doctor: doctorId,
           patient: patientId,
           date: followUpDate,
