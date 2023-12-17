@@ -1130,7 +1130,6 @@ const editPrescription = async (req, res) => {
     res.status(500).json({ message: "Error updating prescription", error: error.message });
   }
 };
-};
 
 const rescheduleAnAppointment = async (req, res) => {
   const transporter = nodemailer.createTransport({
