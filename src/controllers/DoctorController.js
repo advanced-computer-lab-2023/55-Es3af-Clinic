@@ -1211,7 +1211,7 @@ const rescheduleAnAppointment = async (req, res) => {
     // console.log("endHour:", endHour);
     // console.log("endMinute:", endMinute);
 
-    const duration = endHour * 60 + endMinute - (startHour * 60 + startMinute);
+    var duration = endHour * 60 + endMinute - (startHour * 60 + startMinute);
     if (duration < 0) duration = 60;
     // Update the appointment with the new date or time slot
     const existingAppointmentDate = new Date(matchingTimeSlot.date);
