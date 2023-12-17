@@ -1021,7 +1021,7 @@ const getAllPrescriptions = async (req, res) => {
         // For each medicine in the prescription, create a modified structure
         return {
           medID: med.medID,
-          name: med.medID.Name,
+          name: med.Name,
           dosage: med.dosage,
           duration: med.duration,
           //filled: med.medID.quantity > 0 ? "filled" : "unfilled",
@@ -1101,38 +1101,33 @@ const editDosage = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-const updatePatientPrescription = async (req, res) => {
+const editPrescription = async (req, res) => {
+  const { prescriptionId, newMedicines } = req.body;
+
   try {
-    const { id } = req.params;
-    const { medicineUpdates } = req.body;
-    const Prescription = await prescription.findById(id);
+    // Fetch the prescription from the database
+    const Prescription = await prescription.findById(prescriptionId);
+
     if (!Prescription) {
+      return res.status(404).json({ message: "Prescription not found" });
       return res.status(404).json({ message: "Prescription not found" });
     }
 
-    medicineUpdates.forEach((update) => {
-      const { medID, dosage, duration } = update;
-      const medicineToUpdate = Prescription.medicine.find(
-        (med) => med.medID.toString() === medID
-      );
+    // Check if the prescription is unfilled
+    if (Prescription.status === "filled") {
+      return res.status(400).json({ message: "Cannot edit a filled prescription" });
+    }
 
-      if (medicineToUpdate) {
-        medicineToUpdate.dosage = dosage;
-        medicineToUpdate.duration = duration;
-      }
-    });
+    // Add new medicines to the prescription
+    Prescription.medicine.push(...newMedicines);
 
-    const updatedPrescription = await Prescription.save();
+    // Save the updated prescription
+    await Prescription.save();
 
-    return res.json({
-      message: "Prescription updated successfully",
-      Prescription,
-    });
+    res.status(200).json({ message: "Prescription updated successfully" });
   } catch (error) {
-    console.error("Error updating prescription:", error);
-    return res
-      .status(500)
-      .json({ message: "Error updating prescription", error: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Error updating prescription", error: error.message });
   }
 };
 
@@ -1294,6 +1289,94 @@ const rescheduleAnAppointment = async (req, res) => {
   }
 };
 
+async function viewFollowUpRequests(doctorId) {
+  try {
+      // Find the doctor by ID
+      const doctor = await Doctor.findById(doctorId);
+
+      if (!doctor) {
+          return { success: false, message: 'Doctor not found' };
+      }
+
+      // Find appointments for the doctor marked as follow-ups
+      const followUpAppointments = await Appointment.find({
+          doctor: doctorId,
+          type: 'Follow-up'
+          // You can add more conditions if needed
+      }).populate('patient', 'name'); // Populate patient details if needed
+
+      return { success: true, followUpAppointments };
+  } catch (error) {
+      return { success: false, message: error.message };
+  }
+}
+
+async function acceptFollowUpRequest(doctorId, patientId, followUpDate) {
+  try {
+      // Find the doctor by ID
+      const doctor = await Doctor.findById(doctorId);
+
+      if (!doctor) {
+          return { success: false, message: 'Doctor not found' };
+      }
+
+      // Check if the follow-up date is available in doctor's schedule
+      const availableSlots = doctor.availableTimeSlots.map(slot => slot.toString());
+      const followUpDateString = followUpDate.toString();
+
+      if (!availableSlots.includes(followUpDateString)) {
+          return { success: false, message: 'Follow-up date not available' };
+      }
+
+      // Remove the follow-up date from available time slots
+      doctor.availableTimeSlots = doctor.availableTimeSlots.filter(slot => slot.toString() !== followUpDateString);
+
+      // Save the updated doctor's schedule
+      await doctor.save();
+
+      // Create a new appointment for the follow-up
+      const newAppointment = new Appointment({
+          doctor: doctorId,
+          patient: patientId,
+          date: followUpDate,
+          type: 'Follow-up'
+          // You can add more properties as needed
+      });
+
+      // Save the new appointment
+      await newAppointment.save();
+
+      return { success: true, message: 'Follow-up request accepted' };
+  } catch (error) {
+      return { success: false, message: error.message };
+  }
+}
+
+async function rejectFollowUpRequest(appointmentId) {
+  try {
+      // Find the appointment by ID
+      const appointment = await appointment.findById(appointmentId);
+
+      if (!appointment) {
+          return { success: false, message: 'Appointment not found' };
+      }
+
+
+      if (appointment.type !== 'Follow-up') {
+          return { success: false, message: 'This appointment is not a follow-up' };
+      }
+
+
+      appointment.status = 'rejected';
+      await appointment.save();
+
+      return { success: true, message: 'Follow-up request rejected successfully' };
+  } catch (error) {
+      return { success: false, message: error.message };
+  }
+}
+
+
 module.exports = {
   addDoctor,
   getAllPatients,
@@ -1318,6 +1401,9 @@ module.exports = {
   acceptOrRevokeFollowUp,
   getAllPrescriptions,
   editDosage,
-  updatePatientPrescription,
+  editPrescription,
   rescheduleAnAppointment,
+  acceptFollowUpRequest,
+  viewFollowUpRequests,
+  rejectFollowUpRequest,
 };
