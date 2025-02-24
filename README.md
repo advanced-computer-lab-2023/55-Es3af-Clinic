@@ -9,9 +9,9 @@ Motivation:
 A virtual clinic that simplifies the patient-doctor interaction is introduced in 55Es3af. This program makes it easier for patients to find and book medical appointments, which streamlines interactions in the healthcare system. Choosing between in-person or virtual consultations, the platform guarantees a smooth and safe communication path. Features like medication reminders, easy access to whole medical histories, and effective follow-up protocols are helpful to patients. A highly sophisticated and user-friendly solution, 55Es3af is intended to optimise the way healthcare is accessible and provided while also improving the entire patient journey.
 
 
-Build Status: (5 MARKS) 
+Build Status:
 
-UI Status:** The user interface (UI) is currently under development and may not reflect the final design or functionality. Expect ongoing updates and improvements.
+UI Status:* The user interface (UI) is currently under development and may not reflect the final design or functionality. Expect ongoing updates and improvements.*
 
 
 
